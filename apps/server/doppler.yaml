@@ -1,0 +1,3 @@
+setup:
+  project: retro-api
+  config: dev_personal

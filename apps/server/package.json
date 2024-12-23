@@ -1,0 +1,28 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "predev": "npm run migrate-up",
+    "dev": "doppler run -- tsx watch src/index.ts",
+    "kysely": "doppler run -- kysely",
+    "setup-better-auth": "doppler run -- cli migrate --config ./src/lib/auth.ts",
+    "migrate-up": "npm run kysely migrate up",
+    "migrate-down": "npm run kysely migrate down",
+    "init-db": "npm run setup-better-auth && npm run migrate-up"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@hono/trpc-server": "^0.3.4",
+    "better-auth": "^1.1.2",
+    "hono": "^4.6.14",
+    "kysely": "^0.27.5",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@better-auth/cli": "^1.1.2",
+    "@types/node": "^20.11.17",
+    "@types/pg": "^8.11.10",
+    "kysely-ctl": "^0.10.1",
+    "tsx": "^4.7.1"
+  }
+}

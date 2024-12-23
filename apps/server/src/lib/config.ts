@@ -1,0 +1,22 @@
+const config = {
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  },
+  db: {
+    database: process.env.DB_NAME!,
+    host: process.env.DB_HOST!,
+    user: process.env.DB_USER!,
+    port: Number(process.env.DB_PORT!),
+    max: 10,
+  },
+  api: {
+    port: Number(process.env.API_PORT ?? 3000),
+    origin:
+      process.env.NODE_ENV === "development"
+        ? ["http://localhost:5175"]
+        : (process.env.ALLOWED_ORIGINS?.split(",") ?? []),
+  },
+};
+
+export default config;

@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "better-auth": "^1.1.2",
+    "prettier": "^3.4.2"
+  }
+}
