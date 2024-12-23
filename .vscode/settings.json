@@ -3,5 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
   },
-  "typescript.preferences.organizeImports": {}
+  "typescript.preferences.organizeImports": {},
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
