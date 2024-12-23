@@ -3,7 +3,10 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@types/lodash-es": "^4.17.12",
     "better-auth": "^1.1.2",
+    "lib0": "^0.2.99",
+    "lodash": "^4.17.21",
     "prettier": "^3.4.2"
   }
 }

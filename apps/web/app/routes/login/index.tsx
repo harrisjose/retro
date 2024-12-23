@@ -2,6 +2,7 @@ import { LoginForm } from "@/components/login-form";
 import BaloonOutlineSvg from "@/components/svg/balloon-outline";
 import { authClient } from "@/lib/auth-client";
 import config from "@/lib/config";
+import { Navigate } from "react-router";
 import type { Route } from "./+types";
 
 export default function LoginPage() {
@@ -16,6 +17,10 @@ export default function LoginPage() {
       console.error(error);
     }
   };
+
+  const { data } = authClient.useSession();
+
+  if (data?.session) return <Navigate to="/dashboard" />;
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] p-6 md:p-10">
