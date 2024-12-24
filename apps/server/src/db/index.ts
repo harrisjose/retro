@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
 import config from "../lib/config.js";
-import type { Database } from "./types.js";
+import type { DB } from "./types.js";
 
 export const dialect = new PostgresDialect({
   pool: new pg.Pool({
@@ -13,6 +13,8 @@ export const dialect = new PostgresDialect({
   }),
 });
 
-export const db = new Kysely<Database>({
+export const db = new Kysely<DB>({
   dialect,
 });
+
+export * as dbUtil from "./utils.js";
