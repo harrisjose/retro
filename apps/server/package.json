@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "predev": "npm run migrate-up",
-    "dev": "doppler run -- tsx watch src/index.ts",
+    "dev": "doppler run -- tsx watch --inspect src/index.ts",
     "kysely": "doppler run -- kysely",
     "migrate-up": "npm run kysely migrate up",
     "migrate-down": "npm run kysely migrate down",
