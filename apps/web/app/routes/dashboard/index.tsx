@@ -49,7 +49,7 @@ export default function Dashboard() {
       </div>
       <div className="max-w-screen-sm w-full mx-auto flex gap-4">
         {Object.entries(boards).map(([id, board]) => (
-          <Link to={`/board/${id}`}>
+          <Link to={`/board/${id}`} key={id}>
             <div
               key={id}
               className="h-[150px] w-[216px] px-4 py-3 bg-white rounded-lg"

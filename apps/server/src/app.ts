@@ -1,10 +1,9 @@
 import { trpcServer } from "@hono/trpc-server";
-import type { HonoRequest } from "hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
-import type { HonoTrpcContext } from "./trpc/base.js";
+import { createHonoTrpcContext } from "./trpc/base.js";
 import { appRouter } from "./trpc/index.js";
 
 const corsOptions = {
@@ -28,25 +27,7 @@ app.use(
   cors(corsOptions),
   trpcServer({
     router: appRouter,
-    createContext: async (c): Promise<HonoTrpcContext> => {
-      try {
-        const session = await auth.api.getSession({
-          headers: c.req.headers,
-        });
-        return {
-          req: c.req as any as HonoRequest,
-          session: session?.session ?? null,
-          user: session?.user ?? null,
-        };
-      } catch (error) {
-        console.error(`Error getting session: ${error}`);
-        return {
-          req: c.req as any as HonoRequest,
-          session: null,
-          user: null,
-        };
-      }
-    },
+    createContext: createHonoTrpcContext,
   })
 );
 

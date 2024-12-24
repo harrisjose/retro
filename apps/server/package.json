@@ -2,13 +2,15 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "predev": "npm run migrate-up",
-    "dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "predev": "npm run migrate-up --all",
     "kysely": "doppler run -- kysely",
+    "postmigrate-up": "npm run db:generate",
+    "postmigrate-down": "npm run db:generate",
+    "setup-better-auth": "doppler run -- cli migrate --config ./src/lib/auth.ts",
     "migrate-up": "npm run kysely migrate up",
     "migrate-down": "npm run kysely migrate down",
-    "setup-better-auth": "doppler run -- cli migrate --config ./src/lib/auth.ts",
-    "db:setup": "npm run setup-better-auth && npm run migrate-up",
+    "dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "db:setup": "npm run setup-better-auth && npm run migrate-up --all",
     "db:generate": "doppler run -- tsx src/db/generate.ts"
   },
   "dependencies": {
