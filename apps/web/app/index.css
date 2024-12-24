@@ -9,15 +9,6 @@
   font-display: swap;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -79,6 +70,12 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground select-none user-drag-none;
+  }
+}
+
+@layer utilities {
+  .user-drag-none {
+    -webkit-user-drag: none;
   }
 }
