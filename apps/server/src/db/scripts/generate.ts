@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import config from "../lib/config.js";
+import config from "../../lib/config.js";
 
 const connectionString = `postgres://${config.db.user}@${config.db.host}:${config.db.port}/${config.db.database}`;
 

@@ -41,7 +41,7 @@ export const useBoardListSync = async () => {
   }, []);
   useInterval(
     () => fetchBoardsList(),
-    5 * 60 * 1000 // 5 minutes
+    1 * 60 * 1000 // 1 minutes
   );
 };
 
@@ -60,7 +60,7 @@ export const createBoard = async () => {
   try {
     if (!workspaceId) throw new Error("Workspace ID not found");
     const board = await apiClient.boards.create.mutate({
-      name: "New board",
+      name: "Untitled",
       workspaceId,
     });
     boardsStore[board.id] = { ...board };

@@ -1,6 +1,8 @@
+import type { HttpBindings } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { collabHandler } from "./collab/index.js";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
 import { createHonoTrpcContext } from "./trpc/base.js";
@@ -12,7 +14,7 @@ const corsOptions = {
   credentials: true,
 };
 
-const app = new Hono();
+const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.use("/api/*", cors(corsOptions));
 
@@ -30,5 +32,7 @@ app.use(
     createContext: createHonoTrpcContext,
   })
 );
+
+app.get("/collab", cors(corsOptions), collabHandler);
 
 export default app;

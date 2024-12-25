@@ -9,6 +9,8 @@ export default [
   index("routes/login/index.tsx"),
   layout("components/auth-layout.tsx", [
     route("/dashboard", "routes/dashboard/index.tsx"),
-    route("/board/:id", "routes/board/index.tsx"),
+    layout("routes/board/layout.tsx", [
+      route("/board/:id", "routes/board/index.tsx"),
+    ]),
   ]),
 ] satisfies RouteConfig;

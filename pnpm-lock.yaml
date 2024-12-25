@@ -111,9 +111,21 @@ importers:
 
   apps/server:
     dependencies:
+      '@hocuspocus/extension-database':
+        specifier: ^2.15.0
+        version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+      '@hocuspocus/extension-logger':
+        specifier: ^2.15.0
+        version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+      '@hocuspocus/server':
+        specifier: ^2.15.0
+        version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.13.7(hono@4.6.14)
+      '@hono/node-ws':
+        specifier: ^1.0.5
+        version: 1.0.5(@hono/node-server@1.13.7(hono@4.6.14))
       '@hono/trpc-server':
         specifier: ^0.3.4
         version: 0.3.4(@trpc/server@10.45.2)(hono@4.6.14)
@@ -132,6 +144,9 @@ importers:
       pg:
         specifier: ^8.13.1
         version: 8.13.1
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.0
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -145,6 +160,9 @@ importers:
       '@types/pg':
         specifier: ^8.11.10
         version: 8.11.10
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.5.13
       kysely-codegen:
         specifier: ^0.17.0
         version: 0.17.0(better-sqlite3@11.7.0)(kysely@0.27.5)(pg@8.13.1)
@@ -157,6 +175,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@hocuspocus/provider':
+        specifier: ^2.15.0
+        version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
       '@radix-ui/react-label':
         specifier: ^2.1.1
         version: 2.1.1(@types/react-dom@19.0.2(@types/react@19.0.2))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -208,6 +229,12 @@ importers:
       valtio:
         specifier: ^2.1.2
         version: 2.1.2(@types/react@19.0.2)(react@19.0.0)
+      yjs:
+        specifier: ^13.6.21
+        version: 13.6.21
+      yjs-types:
+        specifier: ^0.0.1
+        version: 0.0.1(yjs@13.6.21)
     devDependencies:
       '@react-router/dev':
         specifier: ^7.1.0
@@ -749,11 +776,40 @@ packages:
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
 
+  '@hocuspocus/common@2.15.0':
+    resolution: {integrity: sha512-xmapO5PnQvf3lYFWrrOaYPjmdrEIVYOpyjInuiCkCzkUmMQCZDVM3wXjPdMJbgAtQXEPUDVkwpr6dJTLjZgTTQ==}
+
+  '@hocuspocus/extension-database@2.15.0':
+    resolution: {integrity: sha512-KWaO2SQZzI1pyDq+ZWw9iYIcqURwCVoYHI0VJ2Fsk9nUnX33BGkumcQZT/0mPAjgy+LxXyar3d4bDPBEoAL0sA==}
+    peerDependencies:
+      yjs: ^13.6.8
+
+  '@hocuspocus/extension-logger@2.15.0':
+    resolution: {integrity: sha512-ZDDcgEDCjIMmBBikca9DukowXIGrdep1AtEHltNG8E2nvuwDd08bCLptPB/YjzwnnbwKF5foIaY7aK3kOoIeHA==}
+
+  '@hocuspocus/provider@2.15.0':
+    resolution: {integrity: sha512-Zd1YYVIg1PYfxqMbwWlb89+R/pOGg+UQZWBr7u3g2RDOttdM8F9zzyUzm9XcI7CAGZAUvuqB/oiSsMyGxDsuNg==}
+    peerDependencies:
+      y-protocols: ^1.0.6
+      yjs: ^13.6.8
+
+  '@hocuspocus/server@2.15.0':
+    resolution: {integrity: sha512-JfhDOz11EOWLs3uExC5ymX2GZwsHodDpCNIwaaTBImffyQEzUqkkBGOHsnMsT9s6ST0ijnVCxCQ4nXp/qTxDZw==}
+    peerDependencies:
+      y-protocols: ^1.0.6
+      yjs: ^13.6.8
+
   '@hono/node-server@1.13.7':
     resolution: {integrity: sha512-kTfUMsoloVKtRA2fLiGSd9qBddmru9KadNyhJCwgKBxTiNkaAJEwkVN9KV/rS4HtmmNRtUh6P+YpmjRMl0d9vQ==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
+
+  '@hono/node-ws@1.0.5':
+    resolution: {integrity: sha512-p1q3Q+ThKZ28xNB0mZa2MAMPBMhX8rbk6CYs/XYbTAhLa/pccsORUoNQjEEXqTB0liRDj4WJpMaSY4qWXsAPuA==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      '@hono/node-server': ^1.11.1
 
   '@hono/trpc-server@0.3.4':
     resolution: {integrity: sha512-xFOPjUPnII70FgicDzOJy1ufIoBTu8eF578zGiDOrYOrYN8CJe140s9buzuPkX+SwJRYK8LjEBHywqZtxdm8aA==}
@@ -789,6 +845,9 @@ packages:
 
   '@levischuck/tiny-cbor@0.2.2':
     resolution: {integrity: sha512-f5CnPw997Y2GQ8FAvtuVVC19FX8mwNNC+1XJcIi16n/LTJifKO6QBgGLgN3YEmqtGMk17SKSuoWES3imJVxAVw==}
+
+  '@lifeomic/attempt@3.1.0':
+    resolution: {integrity: sha512-QZqem4QuAnAyzfz+Gj5/+SLxqwCAw2qmt7732ZXodr6VDWGeYLG6w1i/vYLa55JQM9wRuBKLmXmiZ2P0LtE5rw==}
 
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
@@ -1175,6 +1234,9 @@ packages:
   '@types/serve-static@1.15.7':
     resolution: {integrity: sha512-W8Ym+h8nhuRwaKPaDw34QUkwsGi6Rc4yYqvKFo5rm2FUEhCFbzVWrxXUxuKK8TASjWsysJY0nsmNCGhCOIsrOw==}
 
+  '@types/ws@8.5.13':
+    resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
+
   '@vercel/build-utils@8.7.0':
     resolution: {integrity: sha512-ofZX+ABiW76u5khIyYyH5xK5KSuiAteqRu5hz2k1a2WHLwF7VpeBg8gdFR+HwbVnNkHtkMA64ya5Dd/lNoABkw==}
 
@@ -1275,6 +1337,9 @@ packages:
   async-listen@3.0.1:
     resolution: {integrity: sha512-cWMaNwUJnf37C/S5TfCkk/15MwbPRwVYALA2jtjkbHjCmAPiDXyNJy2q3p1KAZzDLHAWyarUWSujUoHR4pEgrA==}
     engines: {node: '>= 14'}
+
+  async-lock@1.4.1:
+    resolution: {integrity: sha512-Az2ZTpuytrtqENulXwO3GGv1Bztugx6TT37NIo7imr/Qo0gsYiGtSdBa2B6fsXhTpVZDNfu1Qn3pk531e3q+nQ==}
 
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
@@ -2199,6 +2264,10 @@ packages:
 
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
+    engines: {node: '>=6'}
+
+  kleur@4.1.5:
+    resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
   kysely-codegen@0.17.0:
@@ -3262,6 +3331,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@11.0.3:
+    resolution: {integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==}
+    hasBin: true
+
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
@@ -3370,9 +3443,27 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
+
+  y-protocols@1.0.6:
+    resolution: {integrity: sha512-vHRF2L6iT3rwj1jub/K5tYcTT/mEYDUppgNPXwp8fmLpui9f7Yeq3OEtTLVF012j39QnV+KEQpNqoN7CWU7Y9Q==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+    peerDependencies:
+      yjs: ^13.0.0
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -3384,6 +3475,15 @@ packages:
     resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
     engines: {node: '>= 14'}
     hasBin: true
+
+  yjs-types@0.0.1:
+    resolution: {integrity: sha512-ruTBSiNYR7AyaI+fV+1SLitWIYzHfmAgBM+Py/vo4fGVckBbUMv3atqPcK1YOrL0FGJLRboqWXHS9GYA1V8kxg==}
+    peerDependencies:
+      yjs: ^13.5.29
+
+  yjs@13.6.21:
+    resolution: {integrity: sha512-/fzzyeCAfr3Qwx1D71zvumm64x+Q5MEFel6EhWlA1IBFxWPb7tei4J2a8CJyjpYHfVrRij5q3RJTK9W2Iqjouw==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
 
   yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
@@ -3872,9 +3972,65 @@ snapshots:
 
   '@hexagon/base64@1.1.28': {}
 
+  '@hocuspocus/common@2.15.0':
+    dependencies:
+      lib0: 0.2.99
+
+  '@hocuspocus/extension-database@2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)':
+    dependencies:
+      '@hocuspocus/server': 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+      yjs: 13.6.21
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - y-protocols
+
+  '@hocuspocus/extension-logger@2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)':
+    dependencies:
+      '@hocuspocus/server': 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - y-protocols
+      - yjs
+
+  '@hocuspocus/provider@2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)':
+    dependencies:
+      '@hocuspocus/common': 2.15.0
+      '@lifeomic/attempt': 3.1.0
+      lib0: 0.2.99
+      ws: 8.18.0
+      y-protocols: 1.0.6(yjs@13.6.21)
+      yjs: 13.6.21
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@hocuspocus/server@2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)':
+    dependencies:
+      '@hocuspocus/common': 2.15.0
+      async-lock: 1.4.1
+      kleur: 4.1.5
+      lib0: 0.2.99
+      uuid: 11.0.3
+      ws: 8.18.0
+      y-protocols: 1.0.6(yjs@13.6.21)
+      yjs: 13.6.21
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@hono/node-server@1.13.7(hono@4.6.14)':
     dependencies:
       hono: 4.6.14
+
+  '@hono/node-ws@1.0.5(@hono/node-server@1.13.7(hono@4.6.14))':
+    dependencies:
+      '@hono/node-server': 1.13.7(hono@4.6.14)
+      ws: 8.18.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@hono/trpc-server@0.3.4(@trpc/server@10.45.2)(hono@4.6.14)':
     dependencies:
@@ -3913,6 +4069,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@levischuck/tiny-cbor@0.2.2': {}
+
+  '@lifeomic/attempt@3.1.0': {}
 
   '@mapbox/node-pre-gyp@1.0.11':
     dependencies:
@@ -4348,6 +4506,10 @@ snapshots:
       '@types/node': 20.17.10
       '@types/send': 0.17.4
 
+  '@types/ws@8.5.13':
+    dependencies:
+      '@types/node': 20.17.10
+
   '@vercel/build-utils@8.7.0': {}
 
   '@vercel/error-utils@2.0.3': {}
@@ -4477,6 +4639,8 @@ snapshots:
   async-listen@3.0.0: {}
 
   async-listen@3.0.1: {}
+
+  async-lock@1.4.1: {}
 
   async-sema@3.1.1: {}
 
@@ -5361,6 +5525,8 @@ snapshots:
       graceful-fs: 4.2.11
 
   kleur@3.0.3: {}
+
+  kleur@4.1.5: {}
 
   kysely-codegen@0.17.0(better-sqlite3@11.7.0)(kysely@0.27.5)(pg@8.13.1):
     dependencies:
@@ -6386,6 +6552,8 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
+  uuid@11.0.3: {}
+
   v8-compile-cache-lib@3.0.1: {}
 
   valibot@0.41.0(typescript@5.7.2):
@@ -6479,13 +6647,28 @@ snapshots:
 
   wrappy@1.0.2: {}
 
+  ws@8.18.0: {}
+
   xtend@4.0.2: {}
+
+  y-protocols@1.0.6(yjs@13.6.21):
+    dependencies:
+      lib0: 0.2.99
+      yjs: 13.6.21
 
   yallist@3.1.1: {}
 
   yallist@4.0.0: {}
 
   yaml@2.6.1: {}
+
+  yjs-types@0.0.1(yjs@13.6.21):
+    dependencies:
+      yjs: 13.6.21
+
+  yjs@13.6.21:
+    dependencies:
+      lib0: 0.2.99
 
   yn@3.1.1: {}
 
