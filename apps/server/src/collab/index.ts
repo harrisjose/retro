@@ -1,3 +1,4 @@
+import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Hocuspocus } from "@hocuspocus/server";
 import type { HttpBindings } from "@hono/node-server";
@@ -7,19 +8,34 @@ import type { Server } from "node:http";
 import type { Http2SecureServer, Http2Server } from "node:http2";
 import type { WebSocket } from "ws";
 import { WebSocketServer } from "ws";
+import { db, dbUtil } from "../db/index.js";
 
 const hocuspocus = new Hocuspocus({
   name: "collab-server",
   debounce: 5000,
-  extensions: [new Logger()],
-  // async onAuthenticate(data) {
-  //   const session = await auth.api.getSession({
-  //     headers: data.context.req.headers,
-  //   });
-  //   if (!session) {
-  //     data.connection.readOnly = true;
-  //   }
-  // },
+  extensions: [
+    new Logger(),
+    new Database({
+      async fetch(data) {
+        const docId = data.documentName;
+        const doc = await db
+          .selectFrom("document")
+          .select("yDoc")
+          .where("id", "=", dbUtil.asUuid(docId))
+          .executeTakeFirst();
+        return doc?.yDoc ?? null;
+      },
+      async store(data) {
+        const docId = data.documentName;
+        const yDoc = data.state;
+        await db
+          .updateTable("document")
+          .set({ yDoc: yDoc, yDocUpdatedAt: new Date() })
+          .where("id", "=", dbUtil.asUuid(docId))
+          .execute();
+      },
+    }),
+  ],
 });
 
 const wss = new WebSocketServer({ noServer: true });
