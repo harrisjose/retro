@@ -1,8 +1,8 @@
 import { authClient } from "@/lib/auth-client";
-import { SDKProvider } from "@/lib/sdk/provider";
+import { ProfileProvider } from "@/lib/sdk/profile";
 import { Navigate, Outlet } from "react-router";
 
-const AuthRoute = () => {
+const ProtectedLayout = () => {
   const { data, isPending, error } = authClient.useSession();
   if (isPending) {
     return <div>Loading...</div>;
@@ -11,15 +11,11 @@ const AuthRoute = () => {
     return <Navigate to="/" />;
   }
 
-  return <Outlet />;
-};
-
-const AuthLayout = () => {
   return (
-    <SDKProvider>
-      <AuthRoute />
-    </SDKProvider>
+    <ProfileProvider>
+      <Outlet />
+    </ProfileProvider>
   );
 };
 
-export default AuthLayout;
+export default ProtectedLayout;

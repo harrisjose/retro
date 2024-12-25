@@ -1,8 +1,8 @@
-import { router } from "./base.js";
-import boardRouter from "./board.js";
+import { router } from "./config.js";
+import documentRouter from "./document.js";
 
 export const appRouter = router({
-  boards: boardRouter,
+  documents: documentRouter,
 });
 
 export type AppRouter = typeof appRouter;

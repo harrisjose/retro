@@ -7,10 +7,12 @@ import {
 
 export default [
   index("routes/login/index.tsx"),
-  layout("components/auth-layout.tsx", [
-    route("/dashboard", "routes/dashboard/index.tsx"),
-    layout("routes/board/layout.tsx", [
-      route("/board/:id", "routes/board/index.tsx"),
+  layout("components/protected-layout.tsx", [
+    layout("routes/dashboard/layout.tsx", [
+      route("/dashboard", "routes/dashboard/index.tsx"),
+    ]),
+    layout("routes/document/layout.tsx", [
+      route("/document/:id", "routes/document/index.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

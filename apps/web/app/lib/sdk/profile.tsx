@@ -1,7 +1,7 @@
-import { useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
+import { devtools } from "valtio/utils";
 import { authClient } from "../auth-client";
-import { SDKContext } from "./context";
 
 export type Profile = {
   id: string;
@@ -10,14 +10,35 @@ export type Profile = {
   image?: string | null;
 };
 
-export const profileStore = proxy<Profile>({
+const profileStore = proxy<Profile>({
   id: "",
   email: "",
   name: "",
   image: "",
 });
 
-export const useProfileSync = async () => {
+const ProfileContext = createContext({
+  profile: {} as Profile,
+});
+
+export const ProfileProvider = ({ children }: React.PropsWithChildren) => {
+  // Compose all stores here
+  const state = useRef(proxy({ profile: profileStore })).current;
+  // Call all subscriptions here
+  useProfileSync();
+
+  // Set-up devtools
+  useEffect(() => {
+    const unsub = devtools(state, { name: "profile", enabled: true });
+    return () => unsub?.();
+  }, []);
+
+  return (
+    <ProfileContext.Provider value={state}>{children}</ProfileContext.Provider>
+  );
+};
+
+const useProfileSync = async () => {
   const { data, isPending, error } = authClient.useSession();
 
   useEffect(() => {
@@ -38,7 +59,7 @@ export const useProfileSync = async () => {
 export const useProfile = () => {
   const { isPending } = authClient.useSession();
 
-  const { profile } = useContext(SDKContext);
+  const { profile } = useContext(ProfileContext);
   const snap = useSnapshot(profile);
 
   return { profile: snap, isLoading: isPending };

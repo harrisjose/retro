@@ -27,7 +27,7 @@ export interface Account {
   userId: string;
 }
 
-export interface Board {
+export interface Document {
   createdAt: Generated<Timestamp>;
   createdBy: string;
   deletedAt: Timestamp | null;
@@ -35,6 +35,8 @@ export interface Board {
   name: string;
   updatedAt: Generated<Timestamp>;
   workspaceId: string;
+  yDoc: Buffer | null;
+  yDocUpdatedAt: Timestamp | null;
 }
 
 export interface Session {
@@ -85,7 +87,7 @@ export interface WorkspaceUser {
 
 export interface DB {
   account: Account;
-  board: Board;
+  document: Document;
   session: Session;
   user: User;
   verification: Verification;

@@ -1,7 +1,7 @@
 import { DocProvider } from "@/lib/sdk/document";
 import { Navigate, Outlet, useParams } from "react-router";
 
-export default function BoardLayout() {
+export default function DocumentLayout() {
   const { id } = useParams();
   if (!id) {
     return <Navigate to="/dashboard" />;

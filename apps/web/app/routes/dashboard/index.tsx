@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { createBoard, useBoardList } from "@/lib/sdk";
+import { useCreateDocument, useDocumentList } from "@/lib/sdk";
 import { useProfile } from "@/lib/sdk/profile";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types";
@@ -15,16 +15,17 @@ export const meta: Route.MetaFunction = () => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { profile } = useProfile();
+  const { documents } = useDocumentList();
+  const { createDocument } = useCreateDocument();
+
   const onLogout = () => {
     authClient.signOut({ fetchOptions: { onSuccess: () => navigate("/") } });
   };
   const onCreateBoard = async () => {
-    const boardId = await createBoard();
-    console.log(`Created board ${boardId}`);
+    const documentId = await createDocument();
+    console.log(`Created document with id: ${documentId}`);
   };
-
-  const { profile } = useProfile();
-  const { boards } = useBoardList();
 
   return (
     <div className="w-full h-full min-h-screen bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] flex flex-col">
@@ -48,13 +49,13 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="max-w-screen-sm w-full mx-auto flex gap-4">
-        {Object.entries(boards).map(([id, board]) => (
-          <Link to={`/board/${id}`} key={id}>
+        {Object.entries(documents).map(([id, document]) => (
+          <Link to={`/document/${id}`} key={id}>
             <div
               key={id}
               className="h-[150px] w-[216px] px-4 py-3 bg-white rounded-lg"
             >
-              {board.name}
+              {document.name}
             </div>
           </Link>
         ))}

@@ -5,7 +5,7 @@ import { cors } from "hono/cors";
 import { collabHandler } from "./collab/index.js";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
-import { createHonoTrpcContext } from "./trpc/base.js";
+import { createHonoTrpcContext } from "./trpc/config.js";
 import { appRouter } from "./trpc/index.js";
 
 const corsOptions = {

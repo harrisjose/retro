@@ -23,7 +23,7 @@ type Card = {
 
 type YCardsList = TypedArray<Card>;
 
-export default function Board() {
+export default function DocumentPage() {
   const [cards, setCards] = useState<Card[]>([]);
 
   const doc = useYDoc();

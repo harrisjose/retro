@@ -1,11 +1,11 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { createContext, useContext, useEffect, useRef } from "react";
 import * as Y from "yjs";
-import config from "../config";
+import config from "../../config";
 
-export const DocContext = createContext<{
+const DocContext = createContext<{
   docId: string;
-  provider: HocuspocusProvider;
+  syncProvider: HocuspocusProvider;
 }>({} as any);
 
 type DocProviderProps = React.PropsWithChildren & {
@@ -13,7 +13,7 @@ type DocProviderProps = React.PropsWithChildren & {
 };
 
 export const DocProvider = ({ children, docId }: DocProviderProps) => {
-  const providerRef = useRef<HocuspocusProvider>(
+  const syncProviderRef = useRef<HocuspocusProvider>(
     new HocuspocusProvider({
       name: docId,
       url: config.collabUrl,
@@ -22,22 +22,24 @@ export const DocProvider = ({ children, docId }: DocProviderProps) => {
   );
 
   useEffect(() => {
-    providerRef.current.on("synced", () => {
+    syncProviderRef.current.on("synced", () => {
       console.log("yjs synced");
     });
     return () => {
-      providerRef.current.off("synced");
+      syncProviderRef.current.off("synced");
     };
   }, []);
 
   return (
-    <DocContext.Provider value={{ docId, provider: providerRef.current }}>
+    <DocContext.Provider
+      value={{ docId, syncProvider: syncProviderRef.current }}
+    >
       {children}
     </DocContext.Provider>
   );
 };
 
 export const useYDoc = () => {
-  const { provider } = useContext(DocContext);
-  return provider.document;
+  const { syncProvider } = useContext(DocContext);
+  return syncProvider.document;
 };
