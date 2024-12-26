@@ -33,13 +33,41 @@ export interface Document {
   deletedAt: Timestamp | null;
   id: Generated<string>;
   name: string;
+  organizationId: string;
   updatedAt: Generated<Timestamp>;
-  workspaceId: string;
   yDoc: Buffer | null;
   yDocUpdatedAt: Timestamp | null;
 }
 
+export interface Invitation {
+  email: string;
+  expiresAt: Timestamp;
+  id: string;
+  inviterId: string;
+  organizationId: string;
+  role: string | null;
+  status: string;
+}
+
+export interface Member {
+  createdAt: Timestamp;
+  id: string;
+  organizationId: string;
+  role: string;
+  userId: string;
+}
+
+export interface Organization {
+  createdAt: Timestamp;
+  id: string;
+  logo: string | null;
+  metadata: string | null;
+  name: string;
+  slug: string;
+}
+
 export interface Session {
+  activeOrganizationId: string | null;
   createdAt: Timestamp;
   expiresAt: Timestamp;
   id: string;
@@ -69,28 +97,13 @@ export interface Verification {
   value: string;
 }
 
-export interface Workspace {
-  createdAt: Generated<Timestamp>;
-  createdBy: string;
-  deletedAt: Timestamp | null;
-  id: Generated<string>;
-  name: string;
-  updatedAt: Generated<Timestamp>;
-}
-
-export interface WorkspaceUser {
-  createdAt: Generated<Timestamp>;
-  updatedAt: Generated<Timestamp>;
-  userId: string;
-  workspaceId: string;
-}
-
 export interface DB {
   account: Account;
   document: Document;
+  invitation: Invitation;
+  member: Member;
+  organization: Organization;
   session: Session;
   user: User;
   verification: Verification;
-  workspace: Workspace;
-  workspaceUser: WorkspaceUser;
 }

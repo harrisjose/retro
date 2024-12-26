@@ -16,7 +16,7 @@ const documentRouter = router({
   list: publicProcedure
     .input(
       z.object({
-        workspaceId: z.string(),
+        organizationId: z.string(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -27,7 +27,7 @@ const documentRouter = router({
         const documents = await db
           .selectFrom("document")
           .select(publicDocumentSelect)
-          .where("workspaceId", "=", dbUtil.asUuid(input.workspaceId))
+          .where("organizationId", "=", dbUtil.asUuid(input.organizationId))
           .where("deletedAt", "is", null)
           .orderBy("createdAt", "desc")
           .limit(20)
@@ -66,7 +66,7 @@ const documentRouter = router({
     .input(
       z.object({
         name: z.string(),
-        workspaceId: z.string(),
+        organizationId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -78,7 +78,7 @@ const documentRouter = router({
           .insertInto("document")
           .values({
             name: input.name,
-            workspaceId: dbUtil.asUuid(input.workspaceId),
+            organizationId: dbUtil.asUuid(input.organizationId),
             createdBy: ctx.user.id,
           })
           .returningAll()

@@ -56,10 +56,12 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
 async function fetchDocumentsList(state: DocumentListState) {
   try {
     state.loading = true;
-    const workspaceId = localStorage.getItem("workspaceId");
-    if (!workspaceId) return;
+    const { data: activeOrganization } = authClient.useActiveOrganization();
+    if (!activeOrganization) return;
 
-    const documents = await apiClient.documents.list.query({ workspaceId });
+    const documents = await apiClient.documents.list.query({
+      organizationId: activeOrganization.id,
+    });
 
     documents.forEach((document) => {
       if (document.id in state.documents) {
@@ -103,15 +105,15 @@ export const useDocumentList = () => {
 };
 
 export const useCreateDocument = () => {
-  const workspaceId = localStorage.getItem("workspaceId");
+  const organizationId = localStorage.getItem("organizationId");
   const { documents } = useContext(DocumentListContext);
 
   const createDocument = async () => {
     try {
-      if (!workspaceId) throw new Error("Workspace ID not found");
+      if (!organizationId) throw new Error("Organiztion ID not found");
       const document = await apiClient.documents.create.mutate({
         name: "Untitled",
-        workspaceId,
+        organizationId,
       });
       documents[document.id] = { ...document };
       return document.id;
