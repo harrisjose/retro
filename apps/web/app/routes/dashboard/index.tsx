@@ -16,6 +16,7 @@ export const meta: Route.MetaFunction = () => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile } = useProfile();
+  const { data: activeOrganization } = authClient.useActiveOrganization();
   const { documents } = useDocumentList();
   const { createDocument } = useCreateDocument();
 
@@ -23,7 +24,7 @@ export default function Dashboard() {
     authClient.signOut({ fetchOptions: { onSuccess: () => navigate("/") } });
   };
   const onCreateBoard = async () => {
-    const documentId = await createDocument();
+    const documentId = await createDocument(activeOrganization!.id);
     console.log(`Created document with id: ${documentId}`);
   };
 

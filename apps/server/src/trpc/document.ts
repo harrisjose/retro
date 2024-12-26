@@ -27,7 +27,7 @@ const documentRouter = router({
         const documents = await db
           .selectFrom("document")
           .select(publicDocumentSelect)
-          .where("organizationId", "=", dbUtil.asUuid(input.organizationId))
+          .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .orderBy("createdAt", "desc")
           .limit(20)
@@ -78,7 +78,7 @@ const documentRouter = router({
           .insertInto("document")
           .values({
             name: input.name,
-            organizationId: dbUtil.asUuid(input.organizationId),
+            organizationId: input.organizationId,
             createdBy: ctx.user.id,
           })
           .returningAll()

@@ -56,8 +56,11 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
 async function fetchDocumentsList(state: DocumentListState) {
   try {
     state.loading = true;
-    const { data: activeOrganization } = authClient.useActiveOrganization();
-    if (!activeOrganization) return;
+    // getFullOrganization will return the active organization by default
+    const { data: activeOrganization } =
+      await authClient.organization.getFullOrganization();
+
+    if (!activeOrganization) throw new Error("Active organization not found");
 
     const documents = await apiClient.documents.list.query({
       organizationId: activeOrganization.id,
@@ -105,12 +108,10 @@ export const useDocumentList = () => {
 };
 
 export const useCreateDocument = () => {
-  const organizationId = localStorage.getItem("organizationId");
   const { documents } = useContext(DocumentListContext);
 
-  const createDocument = async () => {
+  const createDocument = async (organizationId: string) => {
     try {
-      if (!organizationId) throw new Error("Organiztion ID not found");
       const document = await apiClient.documents.create.mutate({
         name: "Untitled",
         organizationId,
