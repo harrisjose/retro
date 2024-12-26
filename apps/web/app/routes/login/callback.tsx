@@ -1,53 +1,109 @@
+import { OrganizationForm } from "@/components/organization-form";
+import BaloonOutlineSvg from "@/components/svg/balloon-outline";
 import { authClient } from "@/lib/auth-client";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { isEmpty } from "lodash-es";
+import { Suspense } from "react";
+import { Await, Navigate, useNavigate } from "react-router";
+import { match } from "ts-pattern";
+import type { Route } from "./+types/callback";
 
-export default function LoginCallback() {
-  const navigate = useNavigate();
+type LoaderResponse = {
+  status: "setup" | "error" | "continue";
+  errorCode?: string;
+};
 
-  useEffect(() => {
-    const setupUser = async () => {
-      // getFullOrganization will return the active organization by default
+export async function clientLoader() {
+  return new Promise<LoaderResponse>(async (resolve) => {
+    try {
       const { data: activeOrganization } =
         await authClient.organization.getFullOrganization();
-
-      // TODO need to checking org permission here if needed. I guess getFullOrganization should ideally take care of it.
-      if (activeOrganization) return navigate("/dashboard");
-
-      const { data: organizations, error: orgError } =
-        await authClient.organization.list();
-      if (orgError) {
-        console.error("Failed to fetch organizations:", orgError);
-        return;
-      }
-
-      // If user has no organizations, create one
-      if (!organizations || organizations.length === 0) {
-        const { data: createdOrganization, error: createError } =
-          await authClient.organization.create({
-            name: "Personal Organization",
-            slug: crypto.randomUUID(),
-          });
-
-        if (createError) {
-          console.error("Failed to create organizations:", orgError);
-          return;
-        }
-
-        authClient.organization.setActive({
-          organizationId: createdOrganization.id,
+      if (activeOrganization) {
+        resolve({
+          status: "continue",
         });
       } else {
-        authClient.organization.setActive({
-          organizationId: organizations[0].id,
-        });
+        const { data: organizations, error } =
+          await authClient.organization.list();
+        if (error) {
+          throw error;
+        } else if (!isEmpty(organizations)) {
+          await authClient.organization.setActive({
+            organizationId: organizations[0].id,
+          });
+          resolve({
+            status: "continue",
+          });
+        } else {
+          resolve({
+            status: "setup",
+          });
+        }
       }
+    } catch (error) {
+      console.error(error);
+      resolve({
+        status: "error",
+        errorCode: "1001",
+      });
+    }
+  });
+}
 
-      return navigate("/dashboard");
-    };
+export default function LoginCallback({ loaderData }: Route.ComponentProps) {
+  const navigate = useNavigate();
 
-    setupUser();
-  }, []);
+  const createOrganization = async (name: string) => {
+    const { data: createdOrganization, error } =
+      await authClient.organization.create({
+        name,
+        slug: crypto.randomUUID(),
+      });
 
-  return <div>Loading...</div>;
+    if (error) {
+      console.error("Failed to create organizations:", error);
+    } else {
+      authClient.organization.setActive({
+        organizationId: createdOrganization.id,
+      });
+
+      navigate("/dashboard");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
+      {/* TODO @harris: Investigate why suspense doesnt work as expected - fallback doesnt show at all, whole component seems suspended */}
+      <Suspense fallback={<div className="text-center">Loading...</div>}>
+        <Await resolve={loaderData}>
+          {(value) => {
+            return match(value.status)
+              .with("setup", () => (
+                <div className="flex w-full max-w-sm flex-col gap-6">
+                  <div className="flex items-center justify-center gap-2 self-center font-medium">
+                    <div className="text-primary-foreground">
+                      <BaloonOutlineSvg className="size-6" />
+                    </div>
+                    <span className="text-xl font-bold">Mellow</span>
+                  </div>
+                  <OrganizationForm onCreate={createOrganization} />
+                </div>
+              ))
+              .with("error", () => (
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold">
+                    Oops, something went wrong.
+                  </h1>
+                  <p>
+                    Please try reloading the page or contact support if the
+                    issue persists.
+                  </p>
+                </div>
+              ))
+              .with("continue", () => <Navigate to="/dashboard" />)
+              .exhaustive();
+          }}
+        </Await>
+      </Suspense>
+    </div>
+  );
 }

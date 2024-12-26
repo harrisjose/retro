@@ -78,4 +78,7 @@
   .user-drag-none {
     -webkit-user-drag: none;
   }
+  .bg-app-gradient {
+    @apply bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC];
+  }
 }

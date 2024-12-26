@@ -56,6 +56,7 @@ const documentRouter = router({
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
           .executeTakeFirst();
+
         return document;
       } catch (error) {
         console.error(error);

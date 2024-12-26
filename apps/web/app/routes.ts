@@ -8,10 +8,13 @@ import {
 export default [
   index("routes/login/index.tsx"),
   layout("components/protected-layout.tsx", [
+    //
     route("/loginCallback", "routes/login/callback.tsx"),
+    //
     layout("routes/dashboard/layout.tsx", [
       route("/dashboard", "routes/dashboard/index.tsx"),
     ]),
+    //
     layout("routes/document/layout.tsx", [
       route("/document/:id", "routes/document/index.tsx"),
     ]),
