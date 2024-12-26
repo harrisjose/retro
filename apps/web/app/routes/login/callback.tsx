@@ -23,15 +23,20 @@ export default function LoginCallback() {
 
       // If user has no organizations, create one
       if (!organizations || organizations.length === 0) {
-        const { error: createError } = await authClient.organization.create({
-          name: "Personal Organization",
-          slug: "personal-organization",
-        });
+        const { data: createdOrganization, error: createError } =
+          await authClient.organization.create({
+            name: "Personal Organization",
+            slug: crypto.randomUUID(),
+          });
 
         if (createError) {
           console.error("Failed to create organizations:", orgError);
           return;
         }
+
+        authClient.organization.setActive({
+          organizationId: createdOrganization.id,
+        });
       } else {
         authClient.organization.setActive({
           organizationId: organizations[0].id,

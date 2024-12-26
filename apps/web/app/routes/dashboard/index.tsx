@@ -4,6 +4,7 @@ import { useCreateDocument, useDocumentList } from "@/lib/sdk";
 import { useProfile } from "@/lib/sdk/profile";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types";
+import DashboardTopbar from "./top-bar";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -31,7 +32,9 @@ export default function Dashboard() {
   return (
     <div className="w-full h-full min-h-screen bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] flex flex-col">
       <div className="flex flex-col items-center justify-center mb-10">
-        <div className="h-[60px] w-full"></div>
+        <div className="h-[60px] w-full">
+          <DashboardTopbar />
+        </div>
         <div className="size-10 p-0.5 mb-4 bg-white rounded-full overflow-clip">
           {profile.image ? (
             <img
