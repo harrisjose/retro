@@ -16,13 +16,23 @@ const corsOptions = {
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
-app.use("/api/*", cors(corsOptions));
-
-app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
-
 app.get("/api/ping", (c) => {
   return c.text("pong");
 });
+
+app.use("/api/*", cors(corsOptions));
+
+app.on(
+  ["POST", "GET"],
+  "/api/auth/**",
+  cors({
+    ...corsOptions,
+    allowHeaders: ["Content-Type", "Authorization"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+  }),
+  (c) => auth.handler(c.req.raw)
+);
 
 app.use(
   "/trpc/*",

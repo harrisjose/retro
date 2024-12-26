@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { organization } from "better-auth/plugins/organization";
 import { dialect } from "../db/index.js";
 import config from "./config.js";
-import { ac, guest, member, owner } from "./permission.js";
+import { ac, admin, member, owner } from "./permission.js";
 
 export const auth = betterAuth({
   database: {
@@ -24,7 +24,7 @@ export const auth = betterAuth({
       roles: {
         owner,
         member,
-        guest,
+        admin,
       },
     }),
   ],

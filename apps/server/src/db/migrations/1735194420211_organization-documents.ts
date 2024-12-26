@@ -14,5 +14,6 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  // Down migration removed as requested
+  // Down migration skipped since we are going to use the tables
+  // from better-auth. Anyway this migration is not reversible.
 }
