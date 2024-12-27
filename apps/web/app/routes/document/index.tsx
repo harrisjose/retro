@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useAwareness } from "@/lib/sdk/awarness";
 import { useYDoc } from "@/lib/sdk/document";
 import { cn } from "@/lib/utils";
 import { LucideTrash2 } from "lucide-react";
@@ -45,6 +46,9 @@ export default function DocumentPage() {
       YCardsList.delete(index);
     }
   };
+
+  const { awarenessList } = useAwareness();
+  console.log("awarenessList", awarenessList);
 
   return (
     <div className="w-full h-full min-h-screen bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] flex flex-col">
