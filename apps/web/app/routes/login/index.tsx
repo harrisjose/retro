@@ -1,7 +1,6 @@
 import { LoginForm } from "@/components/login-form";
 import BaloonOutlineSvg from "@/components/svg/balloon-outline";
-import { authClient } from "@/lib/auth-client";
-import config from "@/lib/config";
+import { authClient, config } from "@retro/sdk";
 import { Navigate } from "react-router";
 import type { Route } from "./+types";
 

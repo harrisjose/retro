@@ -1,5 +1,4 @@
-import { authClient } from "@/lib/auth-client";
-import { ProfileProvider } from "@/lib/sdk/profile";
+import { authClient, ProfileProvider } from "@retro/sdk";
 import { Navigate, Outlet } from "react-router";
 
 const ProtectedLayout = () => {

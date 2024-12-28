@@ -1,6 +1,6 @@
 import Canvas from "@/components/canvas";
 import Topbar from "@/components/canvas/topbar";
-import { CanvasProvider } from "@/lib/sdk";
+import { CanvasProvider } from "@retro/sdk";
 import type { Route } from "./+types";
 
 export const meta: Route.MetaFunction = ({ params }) => {

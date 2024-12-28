@@ -1,10 +1,10 @@
-import config from "@/lib/config";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
-import { authClient } from "../../auth-client";
-import { apiClient } from "../../trpc-client";
+import { authClient } from "../../lib/auth-client";
+import config from "../../lib/config";
+import { apiClient } from "../../lib/trpc-client";
 import type { Document } from "./types";
 
 type DocumentListState = {

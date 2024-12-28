@@ -1,6 +1,6 @@
 import { OrganizationForm } from "@/components/organization-form";
 import BaloonOutlineSvg from "@/components/svg/balloon-outline";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@retro/sdk";
 import { isEmpty } from "lodash-es";
 import { Suspense } from "react";
 import { Await, Navigate, useNavigate } from "react-router";

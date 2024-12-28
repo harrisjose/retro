@@ -199,6 +199,9 @@ importers:
       '@react-router/serve':
         specifier: ^7.1.0
         version: 7.1.0(react-router@7.1.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.2)
+      '@retro/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
@@ -287,6 +290,52 @@ importers:
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.7.2)(vite@5.4.11(@types/node@20.17.10))
+
+  packages/sdk:
+    dependencies:
+      '@hocuspocus/provider':
+        specifier: ^2.15.0
+        version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+      '@trpc/client':
+        specifier: ^10.45.2
+        version: 10.45.2(@trpc/server@10.45.2)
+      better-auth:
+        specifier: ^1.1.2
+        version: 1.1.2
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.0.0(react@19.0.0)
+      ts-pattern:
+        specifier: ^5.6.0
+        version: 5.6.0
+      usehooks-ts:
+        specifier: ^3.1.0
+        version: 3.1.0(react@19.0.0)
+      valtio:
+        specifier: ^2.1.2
+        version: 2.1.2(@types/react@19.0.2)(react@19.0.0)
+      yjs:
+        specifier: ^13.6.21
+        version: 13.6.21
+      yjs-types:
+        specifier: ^0.0.1
+        version: 0.0.1(yjs@13.6.21)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.17.10
+        version: 20.17.10
+      '@types/react':
+        specifier: ^19.0.1
+        version: 19.0.2
+      '@types/react-dom':
+        specifier: ^19.0.1
+        version: 19.0.2(@types/react@19.0.2)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
 packages:
 

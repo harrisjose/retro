@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@retro/sdk";
 import { Check, ChevronDown } from "lucide-react";
 
 function OrgSwitch() {

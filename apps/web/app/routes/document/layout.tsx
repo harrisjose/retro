@@ -1,4 +1,4 @@
-import { DocProvider } from "@/lib/sdk/document";
+import { DocProvider } from "@retro/sdk";
 import { Navigate, Outlet, useParams } from "react-router";
 
 export default function DocumentLayout() {

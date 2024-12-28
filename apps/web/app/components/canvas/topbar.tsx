@@ -1,4 +1,4 @@
-import { useCollaborators } from "@/lib/sdk";
+import { useCollaborators } from "@retro/sdk";
 import { isNil } from "lodash-es";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
 

@@ -1,6 +1,11 @@
 import { organizationClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { ac, admin, member, owner } from "../../../server/src/lib/permission";
+import {
+  ac,
+  admin,
+  member,
+  owner,
+} from "../../../apps/server/src/lib/permission";
 import config from "./config";
 
 export const authClient = createAuthClient({

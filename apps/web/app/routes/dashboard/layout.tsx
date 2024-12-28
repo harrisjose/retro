@@ -1,4 +1,4 @@
-import { DocumentListProvider } from "@/lib/sdk/document";
+import { DocumentListProvider } from "@retro/sdk";
 import { Outlet } from "react-router";
 
 export default function DashboardLayout() {

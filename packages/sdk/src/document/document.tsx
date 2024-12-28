@@ -1,12 +1,12 @@
-import { authClient } from "@/lib/auth-client";
-import { apiClient } from "@/lib/trpc-client";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import * as Y from "yjs";
-import config from "../../config";
+import { authClient } from "../../lib/auth-client";
+import config from "../../lib/config";
+import { apiClient } from "../../lib/trpc-client";
 import { updateProxyState } from "../utils";
 import type { Awareness, Collaborator, Document, Presence } from "./types";
 

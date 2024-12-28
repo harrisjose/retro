@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { useCreateDocument, useDocumentList, useOrganization } from "@/lib/sdk";
-import { useProfile } from "@/lib/sdk/profile";
+import {
+  authClient,
+  useCreateDocument,
+  useDocumentList,
+  useOrganization,
+  useProfile,
+} from "@retro/sdk";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types";
 import DashboardTopbar from "./top-bar";

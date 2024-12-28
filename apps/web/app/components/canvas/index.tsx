@@ -1,10 +1,10 @@
+import { cn } from "@/lib/utils";
 import {
   CanvasConstants,
   computeZoomBounds,
   useCamera,
   useSections,
-} from "@/lib/sdk";
-import { cn } from "@/lib/utils";
+} from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
 // import Zoom from "./zoom";
