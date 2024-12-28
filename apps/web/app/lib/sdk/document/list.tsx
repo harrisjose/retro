@@ -1,17 +1,11 @@
+import config from "@/lib/config";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
 import { authClient } from "../../auth-client";
 import { apiClient } from "../../trpc-client";
-
-export type Document = {
-  id: string;
-  name: string;
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import type { Document } from "./types";
 
 type DocumentListState = {
   documents: Record<string, Document>;
@@ -92,10 +86,7 @@ const useDocumentListSync = (state: DocumentListState) => {
   useEffect(() => {
     fetchDocumentsList(state);
   }, []);
-  useInterval(
-    () => fetchDocumentsList(state),
-    1 * 60 * 1000 // 1 minutes
-  );
+  useInterval(() => fetchDocumentsList(state), config.pollingInterval);
 };
 
 export const useDocumentList = () => {
