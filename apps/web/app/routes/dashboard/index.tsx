@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { useCreateDocument, useDocumentList } from "@/lib/sdk";
+import { useCreateDocument, useDocumentList, useOrganization } from "@/lib/sdk";
 import { useProfile } from "@/lib/sdk/profile";
 import { Link, useNavigate } from "react-router";
 import type { Route } from "./+types";
@@ -17,7 +17,7 @@ export const meta: Route.MetaFunction = () => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile } = useProfile();
-  const { data: activeOrganization } = authClient.useActiveOrganization();
+  const activeOrganization = useOrganization();
   const { documents } = useDocumentList();
   const { createDocument } = useCreateDocument();
 

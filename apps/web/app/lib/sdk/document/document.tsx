@@ -1,7 +1,7 @@
 import { authClient } from "@/lib/auth-client";
 import { apiClient } from "@/lib/trpc-client";
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { isNil } from "lodash-es";
+import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
@@ -66,7 +66,7 @@ const usePresenceSync = (state: DocumentState) => {
         const collaborators = states
           .map((s) => s.user)
           .filter((u) => !isNil(u));
-        state.presence.collaborators = collaborators;
+        state.presence.collaborators = uniqBy(collaborators, "id");
       }
     );
   }, []);
