@@ -7,6 +7,8 @@ import {
   useRef,
   type PropsWithChildren,
 } from "react";
+import { useReadyStatus } from "src/document/document.js";
+import { useSectionMap } from "src/sections/sections.js";
 import { proxy, useSnapshot } from "valtio";
 import { updateProxyState } from "../utils.js";
 import type { CanvasState } from "./types.js";
@@ -33,16 +35,19 @@ export const CanvasProvider = ({
         width: window.innerWidth,
         height: window.innerHeight,
       },
-      sections: { a1x: {}, b2y: {}, c3z: {}, d4w: {} },
     })
   ).current;
 
+  const isReady = useReadyStatus();
+  const sections = useSectionMap();
+
   useEffect(() => {
+    console.log("camera init");
     updateProxyState(
       state.camera.position,
-      computeInitialPosition(state.camera.scale, state.sections)
+      computeInitialPosition(state.camera.scale, sections)
     );
-  }, []);
+  }, [isReady]);
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -66,11 +71,6 @@ export const useCanvas = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state);
   return omit(snap, ["camera"]);
-};
-
-export const useSections = () => {
-  const state = useContext(CanvasContext);
-  return useSnapshot(state.sections);
 };
 
 export const useCamera = () => {

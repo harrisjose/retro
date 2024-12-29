@@ -5,15 +5,16 @@ import {
   StickerJsonMap,
   StickType,
   useCamera,
-  useSections,
+  useSectionMap,
 } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
 import StickerRenderer from "../ui/sticker-renderer";
+import SectionRenderer from "./section";
 // import Zoom from "./zoom";
 
 export default function Canvas() {
-  const sections = useSections();
+  const sections = useSectionMap();
   const { zoom, zoomTo, position, moveTo } = useCamera();
   const [zoomBounds, setZoomBounds] = useState({ min: 0.1, max: 1 });
 
@@ -108,15 +109,8 @@ export default function Canvas() {
           }}
           className={cn("flex w-fit overflow-visible absolute")}
         >
-          {Object.keys(sections).map((sId) => (
-            <div
-              key={sId}
-              className="shrink-0 bg-white rounded-lg"
-              style={{
-                width: CanvasConstants.SectionWidth,
-                height: CanvasConstants.SectionHeight,
-              }}
-            ></div>
+          {Object.keys(sections).map((sectionId) => (
+            <SectionRenderer key={sectionId} id={sectionId} />
           ))}
         </div>
         <div

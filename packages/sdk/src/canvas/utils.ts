@@ -1,4 +1,5 @@
 import { CanvasConstants } from "@retro/common";
+import type { SectionMap } from "src/sections/types.js";
 import type { CanvasState } from "./types.js";
 
 export const computeInitialZoom = () => {
@@ -38,10 +39,7 @@ export const computeZoomBounds = (sections: CanvasState["sections"]) => {
   return { min, max };
 };
 
-export const computeInitialPosition = (
-  zoom: number,
-  sections: CanvasState["sections"]
-) => {
+export const computeInitialPosition = (zoom: number, sections: SectionMap) => {
   // Calculate total width and height of the sections container
   const sectionCount = Object.keys(sections).length;
   const totalWidth =

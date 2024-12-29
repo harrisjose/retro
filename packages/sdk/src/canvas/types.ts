@@ -13,5 +13,4 @@ export type CanvasState = {
     width: number;
     height: number;
   };
-  sections: Record<string, {}>;
 };
