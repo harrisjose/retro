@@ -14,21 +14,3 @@ export const useSection = (sectionId: string) => {
   const snapshot = useSnapshot(sections[sectionId]);
   return snapshot as Section;
 };
-
-export const useBlockMap = () => {
-  const { blocks } = useContext(DocContext);
-  const snapshot = useSnapshot(blocks);
-  return snapshot;
-};
-
-export const useBlock = (blockId: string) => {
-  const { blocks } = useContext(DocContext);
-  const snapshot = useSnapshot(blocks[blockId]);
-  return snapshot;
-};
-
-export const useBlockProperties = (blockId: string) => {
-  const { properties } = useContext(DocContext);
-  const snapshot = useSnapshot(properties[blockId]);
-  return snapshot;
-};

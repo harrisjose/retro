@@ -3,10 +3,12 @@ import { toSerialized } from "@retro/common";
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import type {
+  YBlock,
   YBlockBase,
   YBlockMap,
-  YPropertiesBase,
+  YProperties,
   YPropertiesMap,
+  YSection,
   YSectionBase,
   YSectionMap,
 } from "src/sections/types.js";
@@ -88,7 +90,7 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
     console.log(`ySectionMap found with length`, ySectionMap.size);
 
     ySectionMap.forEach((ySectionBase, key) => {
-      const ySection = new YKeyValue(ySectionBase);
+      const ySection = new YKeyValue(ySectionBase) as YSection;
       const section = toSerialized(ySection);
       state.sections[key] = section;
       // Create an observer on each section so that we can granularly update the state
@@ -97,7 +99,7 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
           const currentTarget = event.currentTarget as YSectionBase;
           updateProxyState(
             state.sections[key],
-            toSerialized(new YKeyValue(currentTarget))
+            toSerialized(new YKeyValue(currentTarget) as YSection)
           );
         });
       });
@@ -113,7 +115,7 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
 
     const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
     yBlockMap.forEach((yBlockBase, key) => {
-      const yBlock = new YKeyValue(yBlockBase);
+      const yBlock = new YKeyValue(yBlockBase) as YBlock;
       const block = toSerialized(yBlock);
       state.blocks[key] = block;
 
@@ -123,7 +125,7 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
           const currentTarget = event.currentTarget as YBlockBase;
           updateProxyState(
             state.blocks[key],
-            toSerialized(new YKeyValue(currentTarget))
+            toSerialized(new YKeyValue(currentTarget) as YBlock)
           );
         });
       });
@@ -138,19 +140,15 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
     });
 
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
-    yPropertiesMap.forEach((yPropertiesBase, key) => {
-      const yProperties = new YKeyValue(yPropertiesBase);
+    yPropertiesMap.forEach((yProperties, key) => {
       const properties = toSerialized(yProperties);
       state.properties[key] = properties;
 
       // Create an observer on each properties so that we can granularly update the state
-      yProperties.yarray.observeDeep((events) => {
+      yProperties.observeDeep((events) => {
         events.forEach((event) => {
-          const currentTarget = event.currentTarget as YPropertiesBase;
-          updateProxyState(
-            state.properties[key],
-            toSerialized(new YKeyValue(currentTarget))
-          );
+          const currentTarget = event.currentTarget as YProperties;
+          updateProxyState(state.properties[key], toSerialized(currentTarget));
         });
       });
     });

@@ -1,3 +1,5 @@
+import type { RawValue, TypedKV } from "@retro/common";
+import type { StickerType } from "src/blocks/sticker.js";
 import * as Y from "yjs";
 import type { TypedMap } from "yjs-types";
 
@@ -24,7 +26,12 @@ export type Section = {
  * YSectionBase is the backing array for a YKeyValue<Section>. Remember to convert this
  * to a YKeyValue<Section> before using it.
  */
-export type YSectionBase = Y.Array<{ key: string; val: Section }>;
+export type YSectionBase = Y.Array<{
+  key: string;
+  val: Section[keyof Section];
+}>;
+
+export type YSection = TypedKV<Section>;
 export type SectionMap = Record<string, Section>;
 export type YSectionMap = TypedMap<Record<string, YSectionBase>>;
 
@@ -46,18 +53,24 @@ export type Block = {
  * YBlockBase is the backing array for a YKeyValue<Block>. Remember to convert this
  * to a YKeyValue<Block> before using it.
  */
-export type YBlockBase = Y.Array<{ key: string; val: Block }>;
+export type YBlockBase = Y.Array<{
+  key: string;
+  val: Block[keyof Block];
+}>;
+
+export type YBlock = TypedKV<Block>;
 export type BlockMap = Record<string, Block>;
 export type YBlockMap = TypedMap<Record<string, YBlockBase>>;
 
-export type Properties = {
-  color: string;
-};
+export type Properties =
+  | {
+      content: RawValue<Y.XmlFragment>;
+      color: string;
+    }
+  | {
+      stickerType: StickerType;
+    };
 
-/**
- * YPropertiesBase is the backing array for a YKeyValue<Properties>. Remember to convert this
- * to a YKeyValue<Properties> before using it.
- */
-export type YPropertiesBase = Y.Array<{ key: string; val: Properties }>;
+export type YProperties = TypedMap<Properties>;
 export type PropertiesMap = Record<string, Properties>;
-export type YPropertiesMap = TypedMap<Record<string, YPropertiesBase>>;
+export type YPropertiesMap = TypedMap<Record<string, YProperties>>;

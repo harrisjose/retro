@@ -13,6 +13,8 @@ class Raw<YType> {
   }
 }
 
+export type RawValue<YType extends Y.AbstractType<any>> = typeof Raw<YType>;
+
 /**
  * Wraps a value to prevent it from being deserialized by fromSerialized
  * @param value The value to wrap
@@ -22,14 +24,31 @@ export function raw<YType>(value: YType): Raw<YType> {
   return new Raw(value);
 }
 
+type StringKeyOf<T> = Extract<keyof T, string>;
+
+export interface TypedKV<Data extends Record<string, unknown>>
+  extends YKeyValue<any> {
+  delete<Key extends StringKeyOf<Data>>(key: Key): void;
+
+  set<Key extends StringKeyOf<Data>>(key: Key, value: Data[Key]): Data[Key];
+
+  get<Key extends StringKeyOf<Data>>(key: Key): Data[Key] | undefined;
+
+  has<Key extends StringKeyOf<Data>>(key: Key): boolean;
+
+  [Symbol.iterator]<Key extends StringKeyOf<Data>>(): IterableIterator<
+    [Key, Data[Key]]
+  >;
+}
+
 /** More about inferring nested types without being redundant
  * https://stackoverflow.com/a/63631544
  */
 export type InferSerialized<YType> = YType extends
   | TypedMap<infer T>
-  | YKeyValue<infer T>
+  | TypedKV<infer T>
   ? {
-      [Key in keyof T]: T[Key] extends TypedMap<any> | YKeyValue<any>
+      [Key in keyof T]: T[Key] extends TypedMap<any> | TypedKV<any>
         ? InferSerialized<T[Key]>
         : T[Key] extends TypedArray<infer W>
           ? W[]
@@ -76,6 +95,9 @@ function fromSerializedArray<YType extends Y.Array<any>>(
 /**
  * Deserializes a plain object to a Yjs value.
  * When including Yjs types within the value, remember to wrap them with a raw() call.
+ *
+ * Note: Does not support YKeyValue yet.
+ *
  * Example: In most scenarios, we will need to include a Y.XmlFragment within the value. It does not make
  * sense to use the serialized format for this so you would do something like:
  *
