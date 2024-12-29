@@ -6,6 +6,9 @@ export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      screens: {
+        mmax: "800px",
+      },
       fontFamily: {
         sans: ["SNPro", ...defaultTheme.fontFamily.sans],
       },
