@@ -1,4 +1,4 @@
-import type { YKeyValue } from "y-utility/y-keyvalue";
+import * as Y from "yjs";
 import type { TypedMap } from "yjs-types";
 
 /**
@@ -7,7 +7,7 @@ import type { TypedMap } from "yjs-types";
  * YKeyValues are extremely efficient to store and update but they add some impl complexity dont support nested YTypes. This
  * trade off is worth it for data that changes frequently like block positions.
  *
- * We will try to use YKV for frequently changing properties by flattening the data structure as much as possible.
+ * We will try to use YKV as much as possible for frequently changing properties by flattening the data structure.
  * The SDK can then combine them when deserializing. For data that can be more abstract in types such as block properties
  * we will use YMaps but try to avoid this as much as possible.
  */
@@ -20,12 +20,16 @@ export type Section = {
   height: number;
 };
 
-export type YSection = YKeyValue<Section>;
+/**
+ * YSectionBase is the backing array for a YKeyValue<Section>. Remember to convert this
+ * to a YKeyValue<Section> before using it.
+ */
+export type YSectionBase = Y.Array<{ key: string; val: Section }>;
 export type SectionMap = Record<string, Section>;
-export type YSectionMap = TypedMap<SectionMap>;
+export type YSectionMap = TypedMap<Record<string, YSectionBase>>;
 
 export enum BlockType {
-  Sticky = "sticky",
+  Card = "card",
   Sticker = "sticker",
 }
 
@@ -38,14 +42,22 @@ export type Block = {
   height: number;
 };
 
-export type YBlock = YKeyValue<Block>;
+/**
+ * YBlockBase is the backing array for a YKeyValue<Block>. Remember to convert this
+ * to a YKeyValue<Block> before using it.
+ */
+export type YBlockBase = Y.Array<{ key: string; val: Block }>;
 export type BlockMap = Record<string, Block>;
-export type YBlockMap = TypedMap<BlockMap>;
+export type YBlockMap = TypedMap<Record<string, YBlockBase>>;
 
-export type BlockProperties = {
+export type Properties = {
   color: string;
 };
 
-export type YBlockProperties = TypedMap<BlockProperties>;
-export type BlockPropertiesMap = Record<string, YBlockProperties>;
-export type YBlockPropertiesMap = TypedMap<BlockPropertiesMap>;
+/**
+ * YPropertiesBase is the backing array for a YKeyValue<Properties>. Remember to convert this
+ * to a YKeyValue<Properties> before using it.
+ */
+export type YPropertiesBase = Y.Array<{ key: string; val: Properties }>;
+export type PropertiesMap = Record<string, Properties>;
+export type YPropertiesMap = TypedMap<Record<string, YPropertiesBase>>;

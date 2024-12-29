@@ -313,6 +313,16 @@ importers:
         version: 5.1.4(typescript@5.7.2)(vite@5.4.11(@types/node@20.17.10))
 
   packages/common:
+    dependencies:
+      y-utility:
+        specifier: ^0.1.4
+        version: 0.1.4(yjs@13.6.21)
+      yjs:
+        specifier: ^13.6.21
+        version: 13.6.21
+      yjs-types:
+        specifier: ^0.0.1
+        version: 0.0.1(yjs@13.6.21)
     devDependencies:
       '@types/node':
         specifier: ^20.17.10
