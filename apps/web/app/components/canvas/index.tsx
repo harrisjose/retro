@@ -1,15 +1,10 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
-import {
-  computeZoomBounds,
-  StickerJsonMap,
-  StickType,
-  useCamera,
-  useSectionMap,
-} from "@retro/sdk";
+import { computeZoomBounds, useCamera, useSectionMap } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
-import StickerRenderer from "../ui/sticker-renderer";
+import BlocksRenderer from "./blocks";
+import CardCursor from "./card-cursor";
 import SectionRenderer from "./section";
 // import Zoom from "./zoom";
 
@@ -112,26 +107,9 @@ export default function Canvas() {
           {Object.keys(sections).map((sectionId) => (
             <SectionRenderer key={sectionId} id={sectionId} />
           ))}
+          <BlocksRenderer />
         </div>
-        <div
-          style={{
-            position: "absolute",
-            left: 200,
-            top: 100,
-          }}
-          className="flex flex-col gap-4"
-        >
-          <StickerRenderer
-            src={StickerJsonMap[StickType.ClinkingBeerMugs].json}
-          />
-          <StickerRenderer src={StickerJsonMap[StickType.StarStruck].json} />
-          <StickerRenderer src={StickerJsonMap[StickType.FaceInClouds].json} />
-          <StickerRenderer src={StickerJsonMap[StickType.Skull].json} />
-          <StickerRenderer
-            src={StickerJsonMap[StickType.BottleWithPoppingCork].json}
-          />
-          <StickerRenderer src={StickerJsonMap[StickType.Poop].json} />
-        </div>
+        <CardCursor />
       </div>
       {/* <Zoom
         value={{ min: zoomBounds.min, max: zoomBounds.max, current: zoom }}

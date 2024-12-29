@@ -1,17 +1,7 @@
-import type { SelectExpression } from "kysely";
 import { z } from "zod";
 import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
-import type { DB } from "../db/types.js";
 import { publicProcedure, router } from "./config.js";
-
-const publicDocumentSelect: SelectExpression<DB, "document">[] = [
-  "id",
-  "name",
-  "createdBy",
-  "createdAt",
-  "updatedAt",
-];
 
 const documentRouter = router({
   list: publicProcedure
@@ -27,7 +17,7 @@ const documentRouter = router({
         }
         const documents = await db
           .selectFrom("document")
-          .select(publicDocumentSelect)
+          .select(["id", "name", "createdBy", "createdAt", "updatedAt"])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .orderBy("createdAt", "desc")
@@ -53,7 +43,7 @@ const documentRouter = router({
         }
         const document = await db
           .selectFrom("document")
-          .select(publicDocumentSelect)
+          .select(["id", "name", "createdBy", "createdAt", "updatedAt"])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
           .executeTakeFirst();

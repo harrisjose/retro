@@ -1,6 +1,5 @@
 import { CanvasConstants } from "@retro/common";
 import type { SectionMap } from "src/sections/types.js";
-import type { CanvasState } from "./types.js";
 
 export const computeInitialZoom = () => {
   // Get the viewport dimensions
@@ -21,7 +20,7 @@ export const computeInitialZoom = () => {
   return zoom;
 };
 
-export const computeZoomBounds = (sections: CanvasState["sections"]) => {
+export const computeZoomBounds = (sections: SectionMap) => {
   const viewport = {
     width: window.innerWidth,
     height: window.innerHeight,

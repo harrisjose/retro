@@ -88,3 +88,9 @@ export const useCamera = () => {
     },
   };
 };
+
+export const useScale = () => {
+  const state = useContext(CanvasContext);
+  const snap = useSnapshot(state.camera);
+  return snap.scale;
+};
