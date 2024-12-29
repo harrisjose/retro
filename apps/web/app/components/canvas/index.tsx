@@ -1,8 +1,15 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
-import { computeZoomBounds, useCamera, useSections } from "@retro/sdk";
+import {
+  computeZoomBounds,
+  StickerJsonMap,
+  StickType,
+  useCamera,
+  useSections,
+} from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
+import StickerRenderer from "../ui/sticker-renderer";
 // import Zoom from "./zoom";
 
 export default function Canvas() {
@@ -111,6 +118,25 @@ export default function Canvas() {
               }}
             ></div>
           ))}
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: 200,
+            top: 100,
+          }}
+          className="flex flex-col gap-4"
+        >
+          <StickerRenderer
+            src={StickerJsonMap[StickType.ClinkingBeerMugs].json}
+          />
+          <StickerRenderer src={StickerJsonMap[StickType.StarStruck].json} />
+          <StickerRenderer src={StickerJsonMap[StickType.FaceInClouds].json} />
+          <StickerRenderer src={StickerJsonMap[StickType.Skull].json} />
+          <StickerRenderer
+            src={StickerJsonMap[StickType.BottleWithPoppingCork].json}
+          />
+          <StickerRenderer src={StickerJsonMap[StickType.Poop].json} />
         </div>
       </div>
       {/* <Zoom

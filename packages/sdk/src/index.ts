@@ -9,3 +9,4 @@ export * from "./document/index.js";
 export * from "./profile.js";
 export * from "./sections/index.js";
 export * from "./settings/index.js";
+export * from "./sticker/index.js";
