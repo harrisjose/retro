@@ -59,6 +59,8 @@ const documentRouter = router({
       z.object({
         name: z.string(),
         organizationId: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -74,6 +76,8 @@ const documentRouter = router({
             createdBy: ctx.user.id,
             yDoc: getInitialYDoc(),
             yDocUpdatedAt: new Date(),
+            startDate: new Date(input.startDate),
+            endDate: new Date(input.endDate),
           })
           .returningAll()
           .executeTakeFirstOrThrow();

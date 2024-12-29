@@ -101,11 +101,23 @@ export const useDocumentList = () => {
 export const useCreateDocument = () => {
   const { documents } = useContext(DocumentListContext);
 
-  const createDocument = async (organizationId: string) => {
+  const createDocument = async ({
+    organizationId,
+    name,
+    startDate,
+    endDate,
+  }: {
+    organizationId: string;
+    name: string;
+    startDate: Date;
+    endDate: Date;
+  }) => {
     try {
       const document = await apiClient.documents.create.mutate({
-        name: "Untitled",
+        name,
         organizationId,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
       });
       documents[document.id] = { ...document };
       return document.id;

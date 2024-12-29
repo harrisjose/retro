@@ -1,14 +1,10 @@
-import { Button } from "@/components/ui/button";
-import {
-  authClient,
-  useCreateDocument,
-  useDocumentList,
-  useOrganization,
-  useProfile,
-} from "@retro/sdk";
-import { Link, useNavigate } from "react-router";
+import { useMemo, useState } from "react";
 import type { Route } from "./+types";
-import DashboardTopbar from "./top-bar";
+import FilterPanel from "./FilterPanel";
+import FooterPanel from "./FooterPanel";
+import WorkspacePanel from "./Header";
+import RetroList from "./RetroList";
+import UserGreetings from "./UserGreetings";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -19,59 +15,27 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const { profile } = useProfile();
-  const activeOrganization = useOrganization();
-  const { documents } = useDocumentList();
-  const { createDocument } = useCreateDocument();
+  const [activeFilter, setActiveFilter] = useState("active");
 
-  const onLogout = () => {
-    authClient.signOut({ fetchOptions: { onSuccess: () => navigate("/") } });
-  };
-  const onCreateBoard = async () => {
-    const documentId = await createDocument(activeOrganization!.id);
-    console.log(`Created document with id: ${documentId}`);
-  };
+  const filters = useMemo(() => {
+    return [
+      { label: "Active retro", value: "active" },
+      { label: "Past retro", value: "past" },
+    ];
+  }, []);
 
   return (
-    <div className="w-full h-full min-h-screen bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] flex flex-col">
-      <div className="flex flex-col items-center justify-center mb-10">
-        <div className="h-[60px] w-full">
-          <DashboardTopbar />
-        </div>
-        <div className="size-10 p-0.5 mb-4 bg-white rounded-full overflow-clip">
-          {profile.image ? (
-            <img
-              src={profile.image ?? ""}
-              alt={profile.name ?? ""}
-              className="w-full h-full object-contain rounded-full"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC]"></div>
-          )}
-        </div>
-        <div className="opacity-30">Good morning,</div>
-        <div className="text-[48px] font-bold leading-[52px]">
-          {profile.name}
-        </div>
-      </div>
-      <div className="max-w-screen-sm w-full mx-auto flex gap-4">
-        {Object.entries(documents).map(([id, document]) => (
-          <Link to={`/document/${id}`} key={id}>
-            <div
-              key={id}
-              className="h-[150px] w-[216px] px-4 py-3 bg-white rounded-lg"
-            >
-              {document.name}
-            </div>
-          </Link>
-        ))}
-      </div>
-      <div className="flex justify-center gap-2 mt-auto mb-10">
-        <Button onClick={onCreateBoard}>Create board</Button>
-        <Button onClick={onLogout}>Log out</Button>
-      </div>
+    <div className="w-screen h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
+      <WorkspacePanel />
+      <UserGreetings />
+      <FilterPanel
+        filters={filters}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      >
+        <RetroList />
+      </FilterPanel>
+      <FooterPanel />
     </div>
   );
 }

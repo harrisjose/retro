@@ -31,9 +31,11 @@ export interface Document {
   createdAt: Generated<Timestamp>;
   createdBy: string;
   deletedAt: Timestamp | null;
+  endDate: Timestamp;
   id: Generated<string>;
   name: string;
   organizationId: string;
+  startDate: Timestamp;
   updatedAt: Generated<Timestamp>;
   yDoc: Buffer | null;
   yDocUpdatedAt: Timestamp | null;
