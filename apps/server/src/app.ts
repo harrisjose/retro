@@ -3,6 +3,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { collabHandler } from "./collab/index.js";
+import { db, dbUtil } from "./db/index.js";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
 import { createHonoTrpcContext } from "./trpc/config.js";
@@ -16,11 +17,27 @@ const corsOptions = {
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
+app.use("/api/*", cors(corsOptions));
+
 app.get("/api/ping", (c) => {
   return c.text("pong");
 });
+app.get("/api/document/:id/binary", async (c) => {
+  try {
+    const document = await db
+      .selectFrom("document")
+      .select(["yDoc", "yDocUpdatedAt"])
+      .where("id", "=", dbUtil.asUuid(c.req.param("id")))
+      .executeTakeFirstOrThrow();
 
-app.use("/api/*", cors(corsOptions));
+    return c.body(document.yDoc, 200, {
+      "Content-Type": "application/octet-stream",
+    });
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Failed to fetch yDoc" });
+  }
+});
 
 app.on(
   ["POST", "GET"],
