@@ -1,8 +1,10 @@
+import { Features } from "../components/custom/features";
 import { Footer } from "../components/custom/footer";
 import { FooterCta } from "../components/custom/footer-cta";
 import { Hero } from "../components/custom/hero";
 import { Navbar } from "../components/custom/navbar";
 import { Pricing } from "../components/custom/pricing";
+import { Whys } from "../components/custom/whys";
 import type { Route } from "./+types/_index";
 
 export function meta({}: Route.MetaArgs) {
@@ -18,6 +20,8 @@ export default function Home({}: Route.ComponentProps) {
       <Navbar />
       <main className='bg-[#FBFBFB] min-h-screen flex flex-col p-4 xs:p-0 gap-32 cursor-default'>
         <Hero />
+        <Whys />
+        <Features />
         <Pricing />
         <FooterCta />
         <Footer />

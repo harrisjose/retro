@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { cn } from "../../lib/utils";
 import BaloonOutlineSvg from "../svg/balloon-outline";
-import { InstagramIcon, XIcon } from "../svg/brand-icons";
+import { BrandIcons } from "../svg/brand-icons";
 
 export function Footer() {
   return (
@@ -21,17 +21,17 @@ export function Footer() {
         >
           <BaloonOutlineSvg className='size-[26px]' />
         </span>
-        <span className='text-2xl font-bold'>Mellow</span>
-        <span className='opacity-30 text-base ml-2 pt-1'>
+        <span className='text-lg sm:text-2xl font-bold'>Mellow</span>
+        <span className='opacity-30 text-base ml-2 pt-1 hidden sm:block'>
           Built with love from Bangalore
         </span>
       </div>
       <div className='flex items-center gap-4'>
         <Link to='https://x.com/mellow_app'>
-          <XIcon />
+          <BrandIcons.X />
         </Link>
         <Link to='https://instagram.com/mellow_app'>
-          <InstagramIcon />
+          <BrandIcons.Instagram />
         </Link>
       </div>
     </footer>
