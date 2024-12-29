@@ -1,0 +1,14 @@
+{
+  "name": "@retro/common",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2"
+  }
+}

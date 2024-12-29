@@ -21,12 +21,16 @@
     "@hono/node-server": "^1.13.7",
     "@hono/node-ws": "^1.0.5",
     "@hono/trpc-server": "^0.3.4",
+    "@retro/common": "workspace:*",
     "@trpc/server": "^10.45.2",
     "better-auth": "^1.1.2",
     "hono": "^4.6.14",
     "kysely": "^0.27.5",
     "pg": "^8.13.1",
     "ws": "^8.18.0",
+    "y-utility": "^0.1.4",
+    "yjs": "^13.6.21",
+    "yjs-types": "^0.0.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -36,6 +40,6 @@
     "@types/ws": "^8.5.13",
     "kysely-codegen": "^0.17.0",
     "kysely-ctl": "^0.10.1",
-    "tsx": "^4.7.1"
+    "tsx": "^4.12.1"
   }
 }

@@ -1,2 +1,2 @@
-export * from "./document";
-export * from "./list";
+export * from "./document.js";
+export * from "./list.js";

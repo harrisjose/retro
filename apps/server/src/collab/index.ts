@@ -17,22 +17,36 @@ const hocuspocus = new Hocuspocus({
     new Logger(),
     new Database({
       async fetch(data) {
-        const docId = data.documentName;
-        const doc = await db
-          .selectFrom("document")
-          .select("yDoc")
-          .where("id", "=", dbUtil.asUuid(docId))
-          .executeTakeFirst();
-        return doc?.yDoc ?? null;
+        try {
+          const docId = data.documentName;
+          const doc = await db
+            .selectFrom("document")
+            .select("yDoc")
+            .where("id", "=", dbUtil.asUuid(docId))
+            .executeTakeFirst();
+
+          if (!doc || !doc.yDoc) {
+            throw new Error("Document not found");
+          }
+
+          return doc.yDoc;
+        } catch (error) {
+          console.warn("Error fetching ydoc", error);
+          return null;
+        }
       },
       async store(data) {
-        const docId = data.documentName;
-        const yDoc = data.state;
-        await db
-          .updateTable("document")
-          .set({ yDoc: yDoc, yDocUpdatedAt: new Date() })
-          .where("id", "=", dbUtil.asUuid(docId))
-          .execute();
+        try {
+          const docId = data.documentName;
+          const yDoc = data.state;
+          await db
+            .updateTable("document")
+            .set({ yDoc: yDoc, yDocUpdatedAt: new Date() })
+            .where("id", "=", dbUtil.asUuid(docId))
+            .execute();
+        } catch (error) {
+          console.warn("Error storing ydoc", error);
+        }
       },
     }),
   ],

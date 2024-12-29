@@ -129,6 +129,9 @@ importers:
       '@hono/trpc-server':
         specifier: ^0.3.4
         version: 0.3.4(@trpc/server@10.45.2)(hono@4.6.14)
+      '@retro/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@trpc/server':
         specifier: ^10.45.2
         version: 10.45.2
@@ -147,6 +150,15 @@ importers:
       ws:
         specifier: ^8.18.0
         version: 8.18.0
+      y-utility:
+        specifier: ^0.1.4
+        version: 0.1.4(yjs@13.6.21)
+      yjs:
+        specifier: ^13.6.21
+        version: 13.6.21
+      yjs-types:
+        specifier: ^0.0.1
+        version: 0.0.1(yjs@13.6.21)
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -170,7 +182,7 @@ importers:
         specifier: ^0.10.1
         version: 0.10.1(kysely@0.27.5)
       tsx:
-        specifier: ^4.7.1
+        specifier: ^4.12.1
         version: 4.19.2
 
   apps/web:
@@ -199,6 +211,9 @@ importers:
       '@react-router/serve':
         specifier: ^7.1.0
         version: 7.1.0(react-router@7.1.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.2)
+      '@retro/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@retro/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -291,11 +306,23 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.7.2)(vite@5.4.11(@types/node@20.17.10))
 
+  packages/common:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.17.10
+        version: 20.17.10
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+
   packages/sdk:
     dependencies:
       '@hocuspocus/provider':
         specifier: ^2.15.0
         version: 2.15.0(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
+      '@retro/common':
+        specifier: workspace:*
+        version: link:../common
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
@@ -317,6 +344,9 @@ importers:
       valtio:
         specifier: ^2.1.2
         version: 2.1.2(@types/react@19.0.2)(react@19.0.0)
+      y-utility:
+        specifier: ^0.1.4
+        version: 0.1.4(yjs@13.6.21)
       yjs:
         specifier: ^13.6.21
         version: 13.6.21
@@ -3930,6 +3960,12 @@ packages:
     peerDependencies:
       yjs: ^13.0.0
 
+  y-utility@0.1.4:
+    resolution: {integrity: sha512-i8HSo2DGRB13PSm9B0hbljPBramKWK2Gi9R+ZCPrstyIx0VJAdcaurGdYTmcu2SBJI9HWcSCW0siSF2SyRa4lg==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      yjs: ^13.5.29
+
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
 
@@ -7489,6 +7525,11 @@ snapshots:
   xtend@4.0.2: {}
 
   y-protocols@1.0.6(yjs@13.6.21):
+    dependencies:
+      lib0: 0.2.99
+      yjs: 13.6.21
+
+  y-utility@0.1.4(yjs@13.6.21):
     dependencies:
       lib0: 0.2.99
       yjs: 13.6.21

@@ -26,7 +26,7 @@ const CollaboratorAvatars = ({
             height: avatarSize,
           }}
           src={url}
-          alt={`Avatar ${index + 1}`}
+          alt={`Collaborator ${index + 1}`}
           referrerPolicy="no-referrer"
         />
       ))}

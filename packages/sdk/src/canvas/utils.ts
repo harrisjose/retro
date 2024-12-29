@@ -1,5 +1,5 @@
-import { CanvasConstants } from "./constants";
-import type { CanvasState } from "./types";
+import { CanvasConstants } from "@retro/common";
+import type { CanvasState } from "./types.js";
 
 export const computeInitialZoom = () => {
   // Get the viewport dimensions

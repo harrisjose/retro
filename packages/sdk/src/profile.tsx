@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
-import { authClient } from "../lib/auth-client";
+import { authClient } from "../lib/auth-client.js";
 
 export type Profile = {
   id: string;

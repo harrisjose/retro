@@ -1,5 +1,6 @@
 import type { SelectExpression } from "kysely";
 import { z } from "zod";
+import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import type { DB } from "../db/types.js";
 import { publicProcedure, router } from "./config.js";
@@ -81,6 +82,8 @@ const documentRouter = router({
             name: input.name,
             organizationId: input.organizationId,
             createdBy: ctx.user.id,
+            yDoc: getInitialYDoc(),
+            yDocUpdatedAt: new Date(),
           })
           .returningAll()
           .executeTakeFirstOrThrow();

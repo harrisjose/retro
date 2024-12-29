@@ -1,4 +1,3 @@
-export * from "./canvas";
-export * from "./constants";
-export * from "./types";
-export * from "./utils";
+export * from "./canvas.js";
+export * from "./types.js";
+export * from "./utils.js";

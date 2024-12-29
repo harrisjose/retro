@@ -4,11 +4,11 @@ import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import * as Y from "yjs";
-import { authClient } from "../../lib/auth-client";
-import config from "../../lib/config";
-import { apiClient } from "../../lib/trpc-client";
-import { updateProxyState } from "../utils";
-import type { Awareness, Collaborator, Document, Presence } from "./types";
+import { authClient } from "../../lib/auth-client.js";
+import config from "../../lib/config.js";
+import { apiClient } from "../../lib/trpc-client.js";
+import { updateProxyState } from "../utils.js";
+import type { Awareness, Collaborator, Document, Presence } from "./types.js";
 
 type DocumentState = {
   docId: string;

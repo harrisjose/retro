@@ -8,9 +8,9 @@ import {
   type PropsWithChildren,
 } from "react";
 import { proxy, useSnapshot } from "valtio";
-import { updateProxyState } from "../utils";
-import type { CanvasState } from "./types";
-import { computeInitialPosition, computeInitialZoom } from "./utils";
+import { updateProxyState } from "../utils.js";
+import type { CanvasState } from "./types.js";
+import { computeInitialPosition, computeInitialZoom } from "./utils.js";
 
 const CanvasContext = createContext<CanvasState>({} as any);
 
@@ -28,6 +28,7 @@ export const CanvasProvider = ({
           y: 0,
         },
       },
+      // TODO: Use this for all calculations
       viewport: {
         width: window.innerWidth,
         height: window.innerHeight,

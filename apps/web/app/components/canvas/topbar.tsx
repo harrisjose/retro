@@ -21,7 +21,7 @@ export default function Topbar() {
           Summary
         </div>
         <CollaboratorAvatars
-          className="-space-x-1 shadow-[0px_0px_1px_0px_#00000057] h-[28px] rounded-2xl flex items-center justify-center p-1.5"
+          className="-space-x-1 bg-white shadow-[0px_0px_1px_0px_#00000057] h-[28px] rounded-2xl flex items-center justify-center p-1.5"
           avatarUrls={collaborators
             .map((c) => c.image)
             .filter((i) => !isNil(i))}
