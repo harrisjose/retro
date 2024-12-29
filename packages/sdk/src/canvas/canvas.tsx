@@ -1,3 +1,4 @@
+import { updateProxyState } from "@retro/common";
 import { omit } from "lodash-es";
 import {
   createContext,
@@ -10,7 +11,6 @@ import {
 import { useReadyStatus } from "src/document/document.js";
 import { useSectionMap } from "src/sections/sections.js";
 import { proxy, useSnapshot } from "valtio";
-import { updateProxyState } from "../utils.js";
 import type { CanvasState } from "./types.js";
 import { computeInitialPosition, computeInitialZoom } from "./utils.js";
 

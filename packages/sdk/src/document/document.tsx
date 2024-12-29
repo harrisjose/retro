@@ -1,7 +1,7 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { toSerialized } from "@retro/common";
-import { isNil, uniqBy } from "lodash-es";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { toSerialized, updateProxyState } from "@retro/common";
+import { isNil, uniqBy, without } from "lodash-es";
+import { createContext, useContext, useEffect, useRef } from "react";
 import type {
   YBlock,
   YBlockBase,
@@ -20,7 +20,6 @@ import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import { updateProxyState } from "../utils.js";
 import type {
   Awareness,
   Collaborator,
@@ -81,13 +80,11 @@ const usePresenceSync = (state: DocumentState) => {
   }, []);
 };
 
-const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
+const useYDocSync = (state: DocumentState) => {
   const yDoc = state.syncProvider.document;
 
   useEffect(() => {
     const ySectionMap = yDoc.getMap("sections") as YSectionMap;
-
-    console.log(`ySectionMap found with length`, ySectionMap.size);
 
     ySectionMap.forEach((ySectionBase, key) => {
       const ySection = new YKeyValue(ySectionBase) as YSection;
@@ -108,8 +105,18 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
     ySectionMap.observeDeep((events) => {
       events.forEach((event) => {
         const currentTarget = event.currentTarget as YSectionMap;
-        const changes = event.changes.keys;
-        console.log(JSON.stringify(changes, null, 2), "sectionMap");
+        const keys = Array.from(currentTarget.keys());
+        const newSectionIds = without(keys, ...Object.keys(state.sections));
+        const removedSectionIds = without(Object.keys(state.sections), ...keys);
+        removedSectionIds.forEach((id) => {
+          delete state.sections[id];
+        });
+        newSectionIds.forEach(
+          (id) =>
+            new YKeyValue(
+              (event.currentTarget as YSectionMap).get(id) as YSectionBase
+            ) as YSection
+        );
       });
     });
 
@@ -133,9 +140,20 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
     // Create an observer on the yBlockMap so that we can sync new/removed blocks
     yBlockMap.observeDeep((events) => {
       events.forEach((event) => {
-        const currentTarget = event.currentTarget as YBlockMap;
-        const changes = event.changes.keys;
-        console.log(JSON.stringify(changes, null, 2), "blockMap");
+        const keys = Array.from((event.currentTarget as YBlockMap).keys());
+
+        const newBlockIds = without(keys, ...Object.keys(state.blocks));
+        const removedBlockIds = without(Object.keys(state.blocks), ...keys);
+        removedBlockIds.forEach((id) => {
+          delete state.blocks[id];
+        });
+        newBlockIds.forEach((id) => {
+          state.blocks[id] = toSerialized(
+            new YKeyValue(
+              (event.currentTarget as YBlockMap).get(id) as YBlockBase
+            ) as YBlock
+          );
+        });
       });
     });
 
@@ -156,28 +174,45 @@ const useYDocSync = (state: DocumentState, isInitialSyncDone: boolean) => {
     yPropertiesMap.observeDeep((events) => {
       events.forEach((event) => {
         const currentTarget = event.currentTarget as YPropertiesMap;
-        const changes = event.changes.keys;
-        console.log(JSON.stringify(changes, null, 2), "propertiesMap");
+        const keys = Array.from(currentTarget.keys());
+        const newPropertyIds = without(keys, ...Object.keys(state.properties));
+        const removedPropertyIds = without(
+          Object.keys(state.properties),
+          ...keys
+        );
+        removedPropertyIds.forEach((id) => {
+          delete state.properties[id];
+        });
+        newPropertyIds.forEach((id) => {
+          state.properties[id] = toSerialized(
+            currentTarget.get(id) as YProperties
+          );
+        });
       });
     });
 
-    // Mark as ready for components to start rendering
-    if (ySectionMap.size > 0) state.isReady = true;
-  }, [isInitialSyncDone]);
+    state.isReady = true;
+  }, []);
 };
 
 type DocProviderProps = React.PropsWithChildren & {
   docId: string;
+  initialData: {
+    document: Document;
+    yDoc: Y.Doc;
+  };
 };
 
-export const DocProvider = ({ children, docId }: DocProviderProps) => {
-  const [isInitialSyncDone, setIsInitialSyncDone] = useState(false);
-
+export const DocProvider = ({
+  children,
+  docId,
+  initialData,
+}: DocProviderProps) => {
   const state = useRef<DocumentState>(
     proxy({
       docId,
       // document entity (from db) store
-      document: { id: docId } as Document,
+      document: initialData.document,
       loading: false,
       error: null,
       // yjs related stores
@@ -189,11 +224,7 @@ export const DocProvider = ({ children, docId }: DocProviderProps) => {
         new HocuspocusProvider({
           name: docId,
           url: config.collabUrl,
-          document: new Y.Doc(),
-          onSynced() {
-            console.info("Intial sync done");
-            setIsInitialSyncDone(true);
-          },
+          document: initialData.yDoc,
         })
       ),
       presence: {
@@ -204,11 +235,11 @@ export const DocProvider = ({ children, docId }: DocProviderProps) => {
   ).current;
 
   useDocumentSync(state);
-  useYDocSync(state, isInitialSyncDone);
+  useYDocSync(state);
   usePresenceSync(state);
 
   useEffect(() => {
-    const unsub = devtools(state, { name: "currentDocument", enabled: true });
+    const unsub = devtools(state, { name: "documentState", enabled: true });
     return () => unsub?.();
   }, []);
 
@@ -232,6 +263,7 @@ export const useYDoc = () => {
   const { syncProvider } = useContext(DocContext);
   return syncProvider.document;
 };
+
 export const useReadyStatus = () => {
   const state = useContext(DocContext);
   const snap = useSnapshot(state);
