@@ -24,7 +24,7 @@ export function FooterCta() {
       </h2>
       <div className="mt-4">
         <Button variant="inverted" className="px-6 py-3 rounded-xl">
-          Get Started
+          Get Started for free
         </Button>
       </div>
     </section>

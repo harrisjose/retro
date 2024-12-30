@@ -54,7 +54,7 @@ function BasePlan() {
         size={"xl"}
         className="px-6 rounded-xl mt-auto"
       >
-        Get Started
+        Get Started<span className="opacity-40">- 60 day free trail</span>
       </Button>
     </PricingCard>
   );
