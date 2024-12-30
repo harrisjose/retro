@@ -1,3 +1,4 @@
+import { cn } from "../../lib/utils";
 import { FeatureIcons } from "../svg/feature-icons";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
@@ -47,24 +48,31 @@ const features = [
 export function Features() {
   return (
     <section
-      id='features'
-      className='max-w-screen-mmax mx-auto w-full flex flex-col gap-6'
+      id="features"
+      className="max-w-screen-mmax mx-auto w-full flex flex-col gap-6"
     >
-      <hgroup className='flex flex-col items-center'>
-        <span className='pb-4'>
+      <hgroup className="flex flex-col items-center">
+        <span className="pb-4">
           <FeatureIcons.FeatureIcon />
         </span>
-        <h2 className='text-[48px] leading-[52px] tracking-[-0.02em] font-[700]'>
+        <h2 className="text-[48px] leading-[52px] tracking-[-0.02em] font-[700]">
           Why Mellow?
         </h2>
+        <h3
+          className={cn(
+            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2"
+          )}
+        >
+          Helping teams reflect, align, and move forward with confidence.
+        </h3>
       </hgroup>
-      <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-6'>
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-6">
         {features.map((feature) => (
-          <Card key={feature.title} className='pr-4'>
-            <CardHeader className='pt-16'>
+          <Card key={feature.title} className="pr-4">
+            <CardHeader className="pt-16">
               <feature.icon />
             </CardHeader>
-            <CardTitle className='pt-4 pb-2'>{feature.title}</CardTitle>
+            <CardTitle className="pt-4 pb-2">{feature.title}</CardTitle>
             <CardDescription>{feature.description}</CardDescription>
           </Card>
         ))}

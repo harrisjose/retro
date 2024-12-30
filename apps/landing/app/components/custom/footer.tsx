@@ -12,26 +12,28 @@ export function Footer() {
         "border-t border-[#0000000F]"
       )}
     >
-      <div className='flex items-center gap-2'>
+      <div className="flex items-center gap-2">
         <span
           className={cn(
             "flex h-6  items-center justify-center rounded-md",
-            "w-6 text-primary-foreground"
+            " text-primary-foreground"
           )}
         >
-          <BaloonOutlineSvg className='size-[26px]' />
+          <BaloonOutlineSvg />
         </span>
-        <span className='text-lg sm:text-2xl font-bold'>Mellow</span>
-        <span className='opacity-30 text-base ml-2 pt-1 hidden sm:block'>
+        <span className="opacity-30 text-base ml-2 pt-1 hidden sm:block">
           Built with love from Bangalore
         </span>
       </div>
-      <div className='flex items-center gap-4'>
-        <Link to='https://x.com/mellow_app'>
+      <div className="flex items-center gap-1">
+        <Link to="https://x.com/mellow_app">
           <BrandIcons.X />
         </Link>
-        <Link to='https://instagram.com/mellow_app'>
+        <Link to="https://instagram.com/mellow_app">
           <BrandIcons.Instagram />
+        </Link>
+        <Link to="https://instagram.com/mellow_app">
+          <BrandIcons.LinkedIn />
         </Link>
       </div>
     </footer>
