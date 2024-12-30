@@ -1,21 +1,26 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { toSerialized, updateProxyState } from "@retro/common";
-import { isNil, uniqBy, without } from "lodash-es";
+import {
+  bindProxyToKVRef,
+  bindProxyToRef,
+  observeKeysInMapRef,
+  updateProxyState,
+} from "@retro/common";
+import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import type {
-  YBlock,
+  Block,
+  Properties,
+  Section,
   YBlockBase,
   YBlockMap,
   YProperties,
   YPropertiesMap,
-  YSection,
   YSectionBase,
   YSectionMap,
 } from "src/sections/types.js";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
-import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
@@ -85,111 +90,58 @@ const useYDocSync = (state: DocumentState) => {
 
   useEffect(() => {
     const ySectionMap = yDoc.getMap("sections") as YSectionMap;
-
     ySectionMap.forEach((ySectionBase, key) => {
-      const ySection = new YKeyValue(ySectionBase) as YSection;
-      const section = toSerialized(ySection);
-      state.sections[key] = section;
-      // Create an observer on each section so that we can granularly update the state
-      ySection.yarray.observeDeep((events) => {
-        events.forEach((event) => {
-          const currentTarget = event.currentTarget as YSectionBase;
-          updateProxyState(
-            state.sections[key],
-            toSerialized(new YKeyValue(currentTarget) as YSection)
-          );
-        });
-      });
+      state.sections[key] = {} as Section;
+      bindProxyToKVRef(state.sections[key], ySectionBase);
     });
-    // Create an observer on the ySectionMap so that we can sync new/removed sections
-    ySectionMap.observeDeep((events) => {
-      events.forEach((event) => {
-        const currentTarget = event.currentTarget as YSectionMap;
-        const keys = Array.from(currentTarget.keys());
-        const newSectionIds = without(keys, ...Object.keys(state.sections));
-        const removedSectionIds = without(Object.keys(state.sections), ...keys);
-        removedSectionIds.forEach((id) => {
-          delete state.sections[id];
-        });
-        newSectionIds.forEach(
-          (id) =>
-            new YKeyValue(
-              (event.currentTarget as YSectionMap).get(id) as YSectionBase
-            ) as YSection
-        );
-      });
-    });
-
+    // Observe the ySectionMap so that we can sync new/removed sections
+    observeKeysInMapRef(
+      ySectionMap,
+      state.sections,
+      (key, currentTarget) => {
+        state.sections[key] = {} as Section;
+        bindProxyToKVRef(state.sections[key], currentTarget as YSectionBase);
+      },
+      (key) => {
+        delete state.sections[key];
+      }
+    );
+    //
     const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
     yBlockMap.forEach((yBlockBase, key) => {
-      const yBlock = new YKeyValue(yBlockBase) as YBlock;
-      const block = toSerialized(yBlock);
-      state.blocks[key] = block;
-
-      // Create an observer on each block so that we can granularly update the state
-      yBlock.yarray.observeDeep((events) => {
-        events.forEach((event) => {
-          const currentTarget = event.currentTarget as YBlockBase;
-          updateProxyState(
-            state.blocks[key],
-            toSerialized(new YKeyValue(currentTarget) as YBlock)
-          );
-        });
-      });
+      state.blocks[key] = {} as Block;
+      bindProxyToKVRef(state.blocks[key], yBlockBase);
     });
-    // Create an observer on the yBlockMap so that we can sync new/removed blocks
-    yBlockMap.observeDeep((events) => {
-      events.forEach((event) => {
-        const keys = Array.from((event.currentTarget as YBlockMap).keys());
-
-        const newBlockIds = without(keys, ...Object.keys(state.blocks));
-        const removedBlockIds = without(Object.keys(state.blocks), ...keys);
-        removedBlockIds.forEach((id) => {
-          delete state.blocks[id];
-        });
-        newBlockIds.forEach((id) => {
-          state.blocks[id] = toSerialized(
-            new YKeyValue(
-              (event.currentTarget as YBlockMap).get(id) as YBlockBase
-            ) as YBlock
-          );
-        });
-      });
-    });
-
+    // Observe the yBlockMap so that we can sync new/removed blocks
+    observeKeysInMapRef(
+      yBlockMap,
+      state.blocks,
+      (key, currentTarget) => {
+        state.blocks[key] = {} as Block;
+        bindProxyToKVRef(state.blocks[key], currentTarget as YBlockBase);
+      },
+      (key) => {
+        delete state.blocks[key];
+      }
+    );
+    //
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
     yPropertiesMap.forEach((yProperties, key) => {
-      const properties = toSerialized(yProperties);
-      state.properties[key] = properties;
-
-      // Create an observer on each properties so that we can granularly update the state
-      yProperties.observeDeep((events) => {
-        events.forEach((event) => {
-          const currentTarget = event.currentTarget as YProperties;
-          updateProxyState(state.properties[key], toSerialized(currentTarget));
-        });
-      });
+      state.properties[key] = {} as Properties;
+      bindProxyToRef(state.properties[key], yProperties);
     });
-    // Create an observer on the yPropertiesMap so that we can sync new/removed properties
-    yPropertiesMap.observeDeep((events) => {
-      events.forEach((event) => {
-        const currentTarget = event.currentTarget as YPropertiesMap;
-        const keys = Array.from(currentTarget.keys());
-        const newPropertyIds = without(keys, ...Object.keys(state.properties));
-        const removedPropertyIds = without(
-          Object.keys(state.properties),
-          ...keys
-        );
-        removedPropertyIds.forEach((id) => {
-          delete state.properties[id];
-        });
-        newPropertyIds.forEach((id) => {
-          state.properties[id] = toSerialized(
-            currentTarget.get(id) as YProperties
-          );
-        });
-      });
-    });
+    // Observe the yPropertiesMap so that we can sync new/removed properties
+    observeKeysInMapRef(
+      yPropertiesMap,
+      state.properties,
+      (key, currentTarget) => {
+        state.properties[key] = {} as Properties;
+        bindProxyToRef(state.properties[key], currentTarget as YProperties);
+      },
+      (key) => {
+        delete state.properties[key];
+      }
+    );
 
     state.isReady = true;
   }, []);
