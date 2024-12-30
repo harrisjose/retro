@@ -1,3 +1,4 @@
+import { FilterEnum } from "@retro/sdk/src/document";
 import { useMemo, useState } from "react";
 import type { Route } from "./+types";
 import FilterPanel from "./FilterPanel";
@@ -15,12 +16,14 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export default function Dashboard() {
-  const [activeFilter, setActiveFilter] = useState("active");
+  const [activeFilter, setActiveFilter] = useState<FilterEnum>(
+    FilterEnum.ACTIVE
+  );
 
   const filters = useMemo(() => {
     return [
-      { label: "Active retro", value: "active" },
-      { label: "Past retro", value: "past" },
+      { label: "Active retro", value: FilterEnum.ACTIVE },
+      { label: "Past retro", value: FilterEnum.PAST },
     ];
   }, []);
 
@@ -33,7 +36,7 @@ export default function Dashboard() {
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       >
-        <RetroList />
+        <RetroList filter={activeFilter} />
       </FilterPanel>
       <FooterPanel />
     </div>

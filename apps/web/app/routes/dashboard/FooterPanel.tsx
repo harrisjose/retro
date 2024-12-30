@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getFormattedEndDate, getFormattedStartDate } from "@retro/common";
 import { authClient } from "@retro/sdk/lib/auth-client";
 import { useCreateDocument } from "@retro/sdk/src/document";
 import { useCallback, useState } from "react";
@@ -55,8 +56,8 @@ const FooterPanel = () => {
     const documentId = await createDocument({
       organizationId: activeOrganization!.id,
       name,
-      startDate: startDate!,
-      endDate: endDate!,
+      startDate: getFormattedStartDate(startDate!),
+      endDate: getFormattedEndDate(endDate!),
     });
     setOpen(false);
     console.log(`Created document with id: ${documentId}`);
