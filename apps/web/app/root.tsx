@@ -22,6 +22,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* uncomment when needed */}
+        {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script> */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />

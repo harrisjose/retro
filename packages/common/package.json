@@ -2,11 +2,16 @@
   "name": "@retro/common",
   "private": true,
   "type": "module",
-  "main": "src/index.js",
   "scripts": {
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@nytimes/react-prosemirror": "^1.0.0",
+    "@tiptap/pm": "^2.10.4",
+    "clsx": "^2.1.1",
+    "prosemirror-flat-list": "^0.5.4",
+    "tailwind-merge": "^2.5.5",
+    "y-prosemirror": "^1.2.15",
     "y-utility": "^0.1.4",
     "yjs": "^13.6.21",
     "yjs-types": "^0.0.1"
@@ -14,5 +19,10 @@
   "devDependencies": {
     "@types/node": "^20.17.10",
     "typescript": "^5.7.2"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./prosemirror": "./src/prosemirror.ts",
+    "./flat-list-css": "./node_modules/prosemirror-flat-list/dist/style.css"
   }
 }
