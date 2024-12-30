@@ -3,11 +3,19 @@ import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
 
+// TODO: @aki check with @harris
+export enum FilterEnum {
+  ALL = "all",
+  ACTIVE = "active",
+  PAST = "past",
+}
+
 const documentRouter = router({
   list: publicProcedure
     .input(
       z.object({
         organizationId: z.string(),
+        filter: z.nativeEnum(FilterEnum),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -17,9 +25,24 @@ const documentRouter = router({
         }
         const documents = await db
           .selectFrom("document")
-          .select(["id", "name", "createdBy", "createdAt", "updatedAt"])
+          .select([
+            "id",
+            "name",
+            "createdBy",
+            "createdAt",
+            "updatedAt",
+            "startDate",
+            "endDate",
+            "yDocUpdatedAt",
+          ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
+          .$if(input.filter === FilterEnum.ACTIVE, (b) =>
+            b.where("endDate", ">=", new Date())
+          )
+          .$if(input.filter === FilterEnum.PAST, (b) =>
+            b.where("endDate", "<", new Date())
+          )
           .orderBy("createdAt", "desc")
           .limit(20)
           .execute();
@@ -59,6 +82,8 @@ const documentRouter = router({
       z.object({
         name: z.string(),
         organizationId: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -74,6 +99,8 @@ const documentRouter = router({
             createdBy: ctx.user.id,
             yDoc: getInitialYDoc(),
             yDocUpdatedAt: new Date(),
+            startDate: new Date(input.startDate),
+            endDate: new Date(input.endDate),
           })
           .returningAll()
           .executeTakeFirstOrThrow();

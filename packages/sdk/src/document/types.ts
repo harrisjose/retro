@@ -26,6 +26,8 @@ export type Document = {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  startDate: string;
+  endDate: string;
 };
 
 export type DocumentState = {

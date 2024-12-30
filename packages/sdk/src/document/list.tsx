@@ -12,13 +12,22 @@ type DocumentListState = {
   loading: boolean;
   error: Error | null;
   lastUpdatedAt: number;
+  filter: FilterEnum;
 };
+
+// TODO: @aki check with @harris
+export enum FilterEnum {
+  ALL = "all",
+  ACTIVE = "active",
+  PAST = "past",
+}
 
 export const DocumentListContext = createContext<DocumentListState>({
   documents: {} as Record<string, Document>,
   loading: false,
   error: null,
   lastUpdatedAt: 0,
+  filter: FilterEnum.ACTIVE,
 });
 
 export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
@@ -29,8 +38,10 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
       lastUpdatedAt: 0,
       loading: false,
       error: null,
+      filter: FilterEnum.ACTIVE,
     })
   ).current;
+
   // Call all subscriptions here
   useDocumentListSync(state);
 
@@ -58,6 +69,7 @@ async function fetchDocumentsList(state: DocumentListState) {
 
     const documents = await apiClient.documents.list.query({
       organizationId: activeOrganization.id,
+      filter: state.filter,
     });
 
     documents.forEach((document) => {
@@ -89,11 +101,12 @@ const useDocumentListSync = (state: DocumentListState) => {
   useInterval(() => fetchDocumentsList(state), config.pollingInterval);
 };
 
-export const useDocumentList = () => {
+export const useDocumentList = (filter: FilterEnum = FilterEnum.ACTIVE) => {
   const { isPending } = authClient.useSession();
 
-  const { documents } = useContext(DocumentListContext);
-  const snap = useSnapshot(documents);
+  const state = useContext(DocumentListContext);
+  state.filter = filter;
+  const snap = useSnapshot(state.documents);
 
   return { documents: snap, isLoading: isPending };
 };
@@ -101,11 +114,23 @@ export const useDocumentList = () => {
 export const useCreateDocument = () => {
   const { documents } = useContext(DocumentListContext);
 
-  const createDocument = async (organizationId: string) => {
+  const createDocument = async ({
+    organizationId,
+    name,
+    startDate,
+    endDate,
+  }: {
+    organizationId: string;
+    name: string;
+    startDate: Date;
+    endDate: Date;
+  }) => {
     try {
       const document = await apiClient.documents.create.mutate({
-        name: "Untitled",
+        name,
         organizationId,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
       });
       documents[document.id] = { ...document };
       return document.id;

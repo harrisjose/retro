@@ -12,7 +12,8 @@
     "migrate-down": "npm run kysely migrate down",
     "dev": "doppler run -- tsx watch --inspect src/index.ts",
     "db:setup": "npm run setup-better-auth && npm run migrate-up --all",
-    "db:generate": "doppler run -- tsx src/db/scripts/generate.ts"
+    "db:generate": "doppler run -- tsx src/db/scripts/generate.ts",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
