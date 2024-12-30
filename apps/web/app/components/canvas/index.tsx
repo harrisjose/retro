@@ -4,7 +4,7 @@ import { computeZoomBounds, useCamera, useSectionMap } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
 import BlocksRenderer from "./blocks";
-import CardCursor from "./card-cursor";
+import { CanvasInsertionHandler } from "./canvas-insertion-handler";
 import SectionRenderer from "./section";
 // import Zoom from "./zoom";
 
@@ -109,8 +109,8 @@ export default function Canvas() {
           ))}
           <BlocksRenderer />
         </div>
-        <CardCursor />
       </div>
+      <CanvasInsertionHandler />
       {/* <Zoom
         value={{ min: zoomBounds.min, max: zoomBounds.max, current: zoom }}
         onChange={zoomTo}

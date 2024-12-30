@@ -1,4 +1,5 @@
 import Canvas from "@/components/canvas";
+import { InsertionMenu } from "@/components/canvas/insertion-menu";
 import Topbar from "@/components/canvas/topbar";
 import { CanvasProvider } from "@retro/sdk";
 import type { Route } from "./+types";
@@ -22,6 +23,7 @@ export default function DocumentPage({ params }: Route.ComponentProps) {
       <CanvasProvider id={params.id}>
         <Canvas />
         <Topbar />
+        <InsertionMenu />
       </CanvasProvider>
     </div>
   );

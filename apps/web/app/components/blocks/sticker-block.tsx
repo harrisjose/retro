@@ -5,7 +5,7 @@ import {
   useBlockProperties,
   type StickerProperties,
 } from "@retro/sdk";
-import StickerRenderer from "../ui/sticker-renderer";
+import StickerRenderer from "../canvas/sticker-renderer";
 
 export default function StickerBlock({ id }: { id: string }) {
   const block = useBlock(id);
@@ -22,7 +22,7 @@ export default function StickerBlock({ id }: { id: string }) {
         height: block.height,
       }}
     >
-      <StickerRenderer src={StickerJsonMap[stickerType].json} />
+      <StickerRenderer src={StickerJsonMap[stickerType].json} id={id} />
     </div>
   );
 }

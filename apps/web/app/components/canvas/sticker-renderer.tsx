@@ -1,10 +1,12 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
+import { useCanvasInsertion } from "@retro/sdk";
 import { useEffect, useState } from "react";
 
-const StickerRenderer = ({ src }: { src: string }) => {
+const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
+  const { lastInsertedBlockId } = useCanvasInsertion();
 
   const dotLottieRefCallback = (dotLottie: DotLottie) => {
     setDotLottie(dotLottie);
@@ -18,13 +20,21 @@ const StickerRenderer = ({ src }: { src: string }) => {
       }
     };
 
+    const onLoad = () => {
+      if (dotLottie && lastInsertedBlockId === id) {
+        setAnimationInProgress(true);
+        dotLottie.play();
+      }
+    };
     if (dotLottie) {
       dotLottie.addEventListener("complete", onComplete);
+      dotLottie.addEventListener("load", onLoad);
     }
 
     return () => {
       if (dotLottie) {
         dotLottie.removeEventListener("complete", onComplete);
+        dotLottie.removeEventListener("load", onLoad);
       }
     };
   }, [dotLottie]);
@@ -38,10 +48,17 @@ const StickerRenderer = ({ src }: { src: string }) => {
       onMouseEnter={() => {
         if (dotLottie && !animationInProgress) {
           dotLottie.play();
+          setAnimationInProgress(true);
         }
       }}
       style={{
-        width: "120px",
+        width: "64px",
+        height: "64px",
+      }}
+      speed={1.5}
+      renderConfig={{
+        devicePixelRatio: 2,
+        autoResize: true,
       }}
       src={src}
       dotLottieRefCallback={dotLottieRefCallback}

@@ -16,8 +16,8 @@ import * as Y from "yjs";
 
 const insertBlock =
   (yBlockMap: YBlockMap, yPropertiesMap: YPropertiesMap) =>
-  (input: Omit<Block, "id">, properties: Properties) => {
-    const blockId = random.uuidv4();
+  (input: Exclude<Block, "id">, properties: Properties) => {
+    const blockId = input.id ?? random.uuidv4();
     yBlockMap.set(blockId, new Y.Array() as YBlockBase);
 
     const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
@@ -39,7 +39,7 @@ export const useCreateBlock = () => {
   const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
   const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
 
-  const createBlock = (input: Omit<Block, "id">, properties: Properties) => {
+  const createBlock = (input: Exclude<Block, "id">, properties: Properties) => {
     yDoc.transact(() => {
       insertBlock(yBlockMap, yPropertiesMap)(input, properties);
     });
