@@ -9,8 +9,8 @@ export default function BlocksRenderer() {
     <>
       {Object.entries(blocks).map(([id, block]) => {
         return match(block.type)
-          .with(BlockType.Card, () => <CardBlock id={id} />)
-          .with(BlockType.Sticker, () => <StickerBlock id={id} />)
+          .with(BlockType.Card, () => <CardBlock key={id} id={id} />)
+          .with(BlockType.Sticker, () => <StickerBlock key={id} id={id} />)
           .exhaustive();
       })}
     </>

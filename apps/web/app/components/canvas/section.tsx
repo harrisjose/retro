@@ -1,3 +1,4 @@
+import { raw } from "@retro/common";
 import {
   BlockType,
   CardColor,
@@ -7,10 +8,17 @@ import {
   useSection,
 } from "@retro/sdk";
 import { useRef } from "react";
+import * as Y from "yjs";
 
 const getRandomStickerType = () => {
   return Object.values(StickerType)[
     Math.floor(Math.random() * Object.values(StickerType).length)
+  ];
+};
+
+const getRandomCardColor = () => {
+  return Object.values(CardColor)[
+    Math.floor(Math.random() * Object.values(CardColor).length)
   ];
 };
 
@@ -66,7 +74,8 @@ export default function SectionRenderer({ id }: { id: string }) {
           height: 240,
         },
         {
-          color: CardColor.Pink,
+          color: getRandomCardColor(),
+          content: raw(new Y.XmlFragment()),
         }
       );
     }
