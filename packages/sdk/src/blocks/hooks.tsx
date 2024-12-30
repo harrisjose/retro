@@ -57,7 +57,7 @@ export const useBlockMap = () => {
 export const useBlock = (blockId: string) => {
   const { blocks } = useContext(DocContext);
   const snapshot = useSnapshot(blocks);
-  return snapshot[blockId];
+  return snapshot[blockId] as Block;
 };
 
 export const useBlockProperties = (blockId: string) => {
