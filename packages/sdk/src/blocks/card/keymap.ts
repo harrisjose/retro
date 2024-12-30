@@ -1,10 +1,8 @@
 import {
   chainCommands,
   exitCode,
-  redo,
   selectParentNode,
   toggleMark,
-  undo,
   undoInputRule,
   type Command,
 } from "@retro/common/prosemirror";
@@ -30,9 +28,10 @@ export function buildKeymap(
     keys[key] = cmd;
   }
 
-  bind("Mod-z", undo);
-  bind("Shift-Mod-z", redo);
-  if (!mac) bind("Mod-y", redo);
+  // TODO: add undo/redo after enabling yDoc scope for undoManager
+  // bind("Mod-z", undo);
+  // bind("Shift-Mod-z", redo);
+  // if (!mac) bind("Mod-y", redo);
 
   bind("Backspace", undoInputRule);
   bind("Escape", selectParentNode);
