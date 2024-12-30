@@ -1,4 +1,4 @@
-import type { RawValue, TypedKV } from "@retro/common";
+import type { TypedKV } from "@retro/common";
 import type { StickerType } from "src/blocks/sticker.js";
 import * as Y from "yjs";
 import type { TypedMap } from "yjs-types";
@@ -62,15 +62,34 @@ export type YBlock = TypedKV<Block>;
 export type BlockMap = Record<string, Block>;
 export type YBlockMap = TypedMap<Record<string, YBlockBase>>;
 
-export type Properties =
-  | {
-      content: RawValue<Y.XmlFragment>;
-      color: string;
-    }
-  | {
-      stickerType: StickerType;
-    };
+// Properties for each block type
+export enum CardColor {
+  Pink = "pink",
+  Blue = "blue",
+  Green = "green",
+  Yellow = "yellow",
+}
 
-export type YProperties = TypedMap<Properties>;
+export type CardProperties = {
+  content: string;
+  color: CardColor;
+};
+
+export type YCardProperties = TypedMap<
+  CardProperties & {
+    content: Y.XmlFragment;
+  }
+>;
+
+export type StickerProperties = {
+  stickerType: StickerType;
+};
+
+export type YStickerProperties = TypedMap<StickerProperties>;
+
+//
+export type Properties = CardProperties | StickerProperties;
+
+export type YProperties = YCardProperties | YStickerProperties;
 export type PropertiesMap = Record<string, Properties>;
 export type YPropertiesMap = TypedMap<Record<string, YProperties>>;

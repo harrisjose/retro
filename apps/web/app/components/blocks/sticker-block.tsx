@@ -1,0 +1,28 @@
+import {
+  StickerJsonMap,
+  StickerType,
+  useBlock,
+  useBlockProperties,
+  type StickerProperties,
+} from "@retro/sdk";
+import StickerRenderer from "../ui/sticker-renderer";
+
+export default function StickerBlock({ id }: { id: string }) {
+  const block = useBlock(id);
+  const properties = useBlockProperties(id) as StickerProperties;
+  const stickerType = (properties as { stickerType: StickerType }).stickerType;
+
+  return (
+    <div
+      className="absolute"
+      style={{
+        left: block.x,
+        top: block.y,
+        width: block.width,
+        height: block.height,
+      }}
+    >
+      <StickerRenderer src={StickerJsonMap[stickerType].json} />
+    </div>
+  );
+}

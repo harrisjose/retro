@@ -51,7 +51,7 @@ export const useCreateBlock = () => {
 export const useBlockMap = () => {
   const { blocks } = useContext(DocContext);
   const snapshot = useSnapshot(blocks);
-  return snapshot;
+  return snapshot as Record<string, Block>;
 };
 
 export const useBlock = (blockId: string) => {
@@ -64,4 +64,17 @@ export const useBlockProperties = (blockId: string) => {
   const { properties } = useContext(DocContext);
   const snapshot = useSnapshot(properties);
   return snapshot[blockId];
+};
+
+export const useRawBlockProperty = <T extends any>(
+  blockId: string,
+  propertyName: string
+) => {
+  const yDoc = useYDoc();
+  const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+  const yProperties = yPropertiesMap.get(blockId) as T;
+
+  if (!yProperties) return null;
+
+  return ((yProperties as any).get(propertyName) as T) ?? null;
 };

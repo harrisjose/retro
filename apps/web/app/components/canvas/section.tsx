@@ -1,5 +1,6 @@
 import {
   BlockType,
+  CardColor,
   StickerType,
   useCamera,
   useCreateBlock,
@@ -21,6 +22,7 @@ export default function SectionRenderer({ id }: { id: string }) {
   const createBlock = useCreateBlock();
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const targetBlockType = event.metaKey ? BlockType.Sticker : BlockType.Card;
     const originalPos = { x: event.clientX, y: event.clientY };
     const parentRect =
       sectionRef.current?.parentElement?.getBoundingClientRect();
@@ -41,18 +43,33 @@ export default function SectionRenderer({ id }: { id: string }) {
     console.log("Position relative to parent:", relativeToParent);
     console.log("Scaled position:", scaledPos);
 
-    createBlock(
-      {
-        type: BlockType.Sticker,
-        x: scaledPos.x,
-        y: scaledPos.y,
-        width: 120,
-        height: 120,
-      },
-      {
-        stickerType: getRandomStickerType(),
-      }
-    );
+    if (targetBlockType === BlockType.Sticker) {
+      createBlock(
+        {
+          type: BlockType.Sticker,
+          x: scaledPos.x,
+          y: scaledPos.y,
+          width: 50,
+          height: 50,
+        },
+        {
+          stickerType: getRandomStickerType(),
+        }
+      );
+    } else {
+      createBlock(
+        {
+          type: BlockType.Card,
+          x: scaledPos.x,
+          y: scaledPos.y,
+          width: 200,
+          height: 240,
+        },
+        {
+          color: CardColor.Pink,
+        }
+      );
+    }
   };
 
   return (
