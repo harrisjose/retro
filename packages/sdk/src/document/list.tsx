@@ -1,3 +1,4 @@
+import { DocumentFilterEnum } from "@retro/common";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, useSnapshot } from "valtio";
@@ -12,22 +13,15 @@ type DocumentListState = {
   loading: boolean;
   error: Error | null;
   lastUpdatedAt: number;
-  filter: FilterEnum;
+  filter: DocumentFilterEnum;
 };
-
-// TODO: @aki check with @harris
-export enum FilterEnum {
-  ALL = "all",
-  ACTIVE = "active",
-  PAST = "past",
-}
 
 export const DocumentListContext = createContext<DocumentListState>({
   documents: {} as Record<string, Document>,
   loading: false,
   error: null,
   lastUpdatedAt: 0,
-  filter: FilterEnum.ACTIVE,
+  filter: DocumentFilterEnum.ACTIVE,
 });
 
 export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
@@ -38,7 +32,7 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
       lastUpdatedAt: 0,
       loading: false,
       error: null,
-      filter: FilterEnum.ACTIVE,
+      filter: DocumentFilterEnum.ACTIVE,
     })
   ).current;
 
@@ -114,7 +108,7 @@ export const useDocumentList = () => {
   const state = useContext(DocumentListContext);
   const snap = useSnapshot(state);
 
-  const setFilter = (filter: FilterEnum) => {
+  const setFilter = (filter: DocumentFilterEnum) => {
     state.filter = filter;
   };
 

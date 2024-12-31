@@ -2,15 +2,15 @@ import BoardSvg from "@/components/svg/board-view";
 import List from "@/components/svg/list";
 import Search from "@/components/svg/search";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { FilterEnum } from "@retro/sdk";
+import type { DocumentFilterEnum } from "@retro/common";
 
 type FilterPanelProps = {
   filters: {
     label: string;
     value: string;
   }[];
-  activeFilter: FilterEnum;
-  onFilterChange: (filter: FilterEnum) => void;
+  activeFilter: DocumentFilterEnum;
+  onFilterChange: (filter: DocumentFilterEnum) => void;
 };
 
 const FilterPanel = ({
@@ -25,7 +25,7 @@ const FilterPanel = ({
         defaultValue="account"
         className="w-[680px] relative"
         value={activeFilter}
-        onValueChange={(value) => onFilterChange(value as FilterEnum)}
+        onValueChange={(value) => onFilterChange(value as DocumentFilterEnum)}
       >
         <div className="flex border-b border-black border-opacity-5">
           {filters.map((filter) => {

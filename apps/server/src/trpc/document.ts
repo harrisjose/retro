@@ -1,21 +1,14 @@
+import { DocumentFilterEnum } from "@retro/common";
 import { z } from "zod";
 import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
-
-// TODO: @aki check with @harris
-export enum FilterEnum {
-  ALL = "all",
-  ACTIVE = "active",
-  PAST = "past",
-}
-
 const documentRouter = router({
   list: publicProcedure
     .input(
       z.object({
         organizationId: z.string(),
-        filter: z.nativeEnum(FilterEnum),
+        filter: z.nativeEnum(DocumentFilterEnum),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -38,10 +31,10 @@ const documentRouter = router({
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
-          .$if(input.filter === FilterEnum.ACTIVE, (b) =>
+          .$if(input.filter === DocumentFilterEnum.ACTIVE, (b) =>
             b.where("endDate", ">=", now)
           )
-          .$if(input.filter === FilterEnum.PAST, (b) =>
+          .$if(input.filter === DocumentFilterEnum.PAST, (b) =>
             b.where("endDate", "<", now)
           )
           .orderBy("createdAt", "desc")
