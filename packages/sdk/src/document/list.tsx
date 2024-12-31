@@ -94,21 +94,36 @@ async function fetchDocumentsList(state: DocumentListState) {
   }
 }
 
+async function clearDocuments(state: DocumentListState) {
+  Object.keys(state.documents).forEach((key) => {
+    delete state.documents[key];
+  });
+}
+
 const useDocumentListSync = (state: DocumentListState) => {
+  const filter = useSnapshot(state).filter;
   useEffect(() => {
+    console.log("Initiating doc fetch");
+    clearDocuments(state);
     fetchDocumentsList(state);
-  }, []);
+  }, [filter]);
   useInterval(() => fetchDocumentsList(state), config.pollingInterval);
 };
 
-export const useDocumentList = (filter: FilterEnum = FilterEnum.ACTIVE) => {
-  const { isPending } = authClient.useSession();
-
+export const useDocumentList = () => {
   const state = useContext(DocumentListContext);
-  state.filter = filter;
-  const snap = useSnapshot(state.documents);
+  const snap = useSnapshot(state);
 
-  return { documents: snap, isLoading: isPending };
+  const setFilter = (filter: FilterEnum) => {
+    state.filter = filter;
+  };
+
+  return {
+    isLoading: snap.loading,
+    documents: snap.documents,
+    activeFilter: snap.filter,
+    setFilter,
+  };
 };
 
 export const useCreateDocument = () => {

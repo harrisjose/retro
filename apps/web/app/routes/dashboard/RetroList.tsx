@@ -1,18 +1,18 @@
 import DueDate from "@/components/svg/duedate";
 import RetroSvg from "@/components/svg/retro.svg?react";
 import { getRelativeTime, getRemainingTime } from "@retro/common";
-import { FilterEnum, useDocumentList } from "@retro/sdk/src/document";
+import { useDocumentList } from "@retro/sdk/src/document";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import RetroEmpty from "./RetroEmpty";
 
-const RetroList = ({ filter }: { filter: FilterEnum }) => {
-  const { documents, isLoading } = useDocumentList(filter);
+const RetroList = () => {
+  const { documents, isLoading } = useDocumentList();
+
+  const documentList = useMemo(() => Object.values(documents), [documents]);
 
   // TODO: @aki change later
   if (isLoading) return <>Loading...</>;
-
-  const documentList = useMemo(() => Object.values(documents), [documents]);
 
   if (documentList.length === 0) return <RetroEmpty />;
 
