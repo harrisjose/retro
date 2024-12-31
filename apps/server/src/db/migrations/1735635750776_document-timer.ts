@@ -11,8 +11,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .onDelete("cascade")
         .notNull()
     )
-    .addColumn("startTime", "timestamp")
-    .addColumn("endTime", "timestamp")
+    .addColumn("startTime", "timestamp", (col) => col.notNull())
+    .addColumn("endTime", "timestamp", (col) => col.notNull())
     .addColumn("pausedAt", "timestamp")
     .execute();
 }

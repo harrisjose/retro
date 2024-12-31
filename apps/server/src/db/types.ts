@@ -43,9 +43,9 @@ export interface Document {
 
 export interface DocumentTimer {
   documentId: string;
-  endTime: Timestamp | null;
+  endTime: Timestamp;
   pausedAt: Timestamp | null;
-  startTime: Timestamp | null;
+  startTime: Timestamp;
 }
 
 export interface Invitation {

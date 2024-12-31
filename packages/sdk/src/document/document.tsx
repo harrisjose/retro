@@ -50,6 +50,24 @@ const fetchDocument = async (state: Omit<DocumentState, "syncProvider">) => {
   }
 };
 
+const fetchDocumentTimer = async (state: DocumentState) => {
+  const timer = await apiClient.documentTimer.get.query({
+    documentId: state.docId,
+  });
+
+  state.timer.startTime = timer?.startTime ?? null;
+  state.timer.endTime = timer?.endTime ?? null;
+  state.timer.pausedAt = timer?.pausedAt ?? null;
+};
+
+const useDocumentTimerSync = (state: DocumentState) => {
+  useEffect(() => {
+    fetchDocumentTimer(state);
+  }, []);
+
+  useInterval(() => fetchDocumentTimer(state), config.pollingInterval);
+};
+
 const useDocumentSync = (state: DocumentState) => {
   useEffect(() => {
     fetchDocument(state);
@@ -171,6 +189,11 @@ export const DocProvider = ({
       sections: {},
       blocks: {},
       properties: {},
+      timer: {
+        startTime: null,
+        endTime: null,
+        pausedAt: null,
+      },
       // sync
       syncProvider: ref(
         new HocuspocusProvider({
@@ -189,7 +212,7 @@ export const DocProvider = ({
   useDocumentSync(state);
   useYDocSync(state);
   usePresenceSync(state);
-
+  useDocumentTimerSync(state);
   useEffect(() => {
     const unsub = devtools(state, { name: "documentState", enabled: true });
     return () => unsub?.();
@@ -210,6 +233,70 @@ export const useCollaborators = () => {
   return snapshot.collaborators ?? [];
 };
 
+export const useDocumentTimer = () => {
+  const state = useContext(DocContext);
+  const {
+    timer,
+    document: { id },
+  } = useSnapshot(state);
+
+  const startTimer = async (numberOfSeconds: number) => {
+    await apiClient.documentTimer.start.mutate({
+      documentId: id,
+      numberOfSeconds,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  const pauseTimer = async () => {
+    await apiClient.documentTimer.pause.mutate({
+      documentId: id,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  const stopTimer = async () => {
+    await apiClient.documentTimer.stop.mutate({
+      documentId: id,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  const resumeTimer = async () => {
+    await apiClient.documentTimer.resume.mutate({
+      documentId: id,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  const incrementTimer = async (numberOfSeconds: number) => {
+    await apiClient.documentTimer.incrementTimer.mutate({
+      documentId: id,
+      numberOfSeconds,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  const decrementTimer = async (numberOfSeconds: number) => {
+    await apiClient.documentTimer.decrementTimer.mutate({
+      documentId: id,
+      numberOfSeconds,
+    });
+    await fetchDocumentTimer(state);
+  };
+
+  return {
+    startTime: timer.startTime,
+    endTime: timer.endTime,
+    pausedAt: timer.pausedAt,
+    startTimer,
+    pauseTimer,
+    stopTimer,
+    resumeTimer,
+    incrementTimer,
+    decrementTimer,
+  };
+};
 //
 export const useYDoc = () => {
   const { syncProvider } = useContext(DocContext);
