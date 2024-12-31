@@ -24,7 +24,7 @@ export const getRemainingTime = (date: Date): string => {
   const daysRemaining = differenceInDays(date, now);
   const hoursRemaining = differenceInHours(date, now);
 
-  if (daysRemaining > 1) return "";
+  if (daysRemaining > 1 || hoursRemaining > 24) return "";
   if (hoursRemaining > 0) return `${hoursRemaining} hrs`;
 
   const minutesRemaining = differenceInMinutes(date, now);

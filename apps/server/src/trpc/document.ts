@@ -23,6 +23,7 @@ const documentRouter = router({
         if (!ctx.user) {
           throw new Error("Unauthorized");
         }
+        const now = new Date();
         const documents = await db
           .selectFrom("document")
           .select([
@@ -38,10 +39,10 @@ const documentRouter = router({
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .$if(input.filter === FilterEnum.ACTIVE, (b) =>
-            b.where("endDate", ">=", new Date())
+            b.where("endDate", ">=", now)
           )
           .$if(input.filter === FilterEnum.PAST, (b) =>
-            b.where("endDate", "<", new Date())
+            b.where("endDate", "<", now)
           )
           .orderBy("createdAt", "desc")
           .limit(20)
