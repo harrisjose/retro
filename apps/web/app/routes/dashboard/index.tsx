@@ -1,4 +1,4 @@
-import { DocumentFilterEnum } from "@retro/common";
+import { DocumentListFilter } from "@retro/common";
 import { useDocumentList } from "@retro/sdk/src/document";
 import { useMemo } from "react";
 import type { Route } from "./+types";
@@ -21,8 +21,8 @@ export default function Dashboard() {
 
   const filters = useMemo(() => {
     return [
-      { label: "Active retro", value: DocumentFilterEnum.ACTIVE },
-      { label: "Past retro", value: DocumentFilterEnum.PAST },
+      { label: "Active retro", value: DocumentListFilter.ACTIVE },
+      { label: "Past retro", value: DocumentListFilter.PAST },
     ];
   }, []);
 

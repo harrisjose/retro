@@ -1,4 +1,4 @@
-import { DocumentFilterEnum } from "@retro/common";
+import { DocumentListFilter } from "@retro/common";
 import { z } from "zod";
 import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
@@ -8,7 +8,7 @@ const documentRouter = router({
     .input(
       z.object({
         organizationId: z.string(),
-        filter: z.nativeEnum(DocumentFilterEnum),
+        filter: z.nativeEnum(DocumentListFilter),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -31,10 +31,10 @@ const documentRouter = router({
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
-          .$if(input.filter === DocumentFilterEnum.ACTIVE, (b) =>
+          .$if(input.filter === DocumentListFilter.ACTIVE, (b) =>
             b.where("endDate", ">=", now)
           )
-          .$if(input.filter === DocumentFilterEnum.PAST, (b) =>
+          .$if(input.filter === DocumentListFilter.PAST, (b) =>
             b.where("endDate", "<", now)
           )
           .orderBy("createdAt", "desc")

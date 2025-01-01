@@ -1,4 +1,4 @@
-import { DocumentFilterEnum } from "@retro/common";
+import { DocumentListFilter } from "@retro/common";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, useSnapshot } from "valtio";
@@ -13,7 +13,7 @@ type DocumentListState = {
   loading: boolean;
   error: Error | null;
   lastUpdatedAt: number;
-  filter: DocumentFilterEnum;
+  filter: DocumentListFilter;
 };
 
 export const DocumentListContext = createContext<DocumentListState>({
@@ -21,7 +21,7 @@ export const DocumentListContext = createContext<DocumentListState>({
   loading: false,
   error: null,
   lastUpdatedAt: 0,
-  filter: DocumentFilterEnum.ACTIVE,
+  filter: DocumentListFilter.ACTIVE,
 });
 
 export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
@@ -32,7 +32,7 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
       lastUpdatedAt: 0,
       loading: false,
       error: null,
-      filter: DocumentFilterEnum.ACTIVE,
+      filter: DocumentListFilter.ACTIVE,
     })
   ).current;
 
@@ -97,7 +97,7 @@ async function clearDocuments(state: DocumentListState) {
 const useDocumentListSync = (state: DocumentListState) => {
   const filter = useSnapshot(state).filter;
   useEffect(() => {
-    console.log("Initiating doc fetch");
+    console.log("Initiating list fetch");
     clearDocuments(state);
     fetchDocumentsList(state);
   }, [filter]);
@@ -108,7 +108,7 @@ export const useDocumentList = () => {
   const state = useContext(DocumentListContext);
   const snap = useSnapshot(state);
 
-  const setFilter = (filter: DocumentFilterEnum) => {
+  const setFilter = (filter: DocumentListFilter) => {
     state.filter = filter;
   };
 
