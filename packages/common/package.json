@@ -6,16 +6,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@nytimes/react-prosemirror": "^1.0.0",
-    "@tiptap/pm": "^2.10.4",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
-    "prosemirror-flat-list": "^0.5.4",
-    "tailwind-merge": "^2.5.5",
-    "y-prosemirror": "^1.2.15",
-    "y-utility": "^0.1.4",
-    "yjs": "^13.6.21",
-    "yjs-types": "^0.0.1"
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",

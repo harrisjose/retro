@@ -24,6 +24,7 @@
     "@react-router/serve": "^7.1.0",
     "@retro/common": "workspace:*",
     "@retro/sdk": "workspace:*",
+    "@retro/pm": "workspace:*",
     "@trpc/client": "^10.45.2",
     "@use-gesture/react": "^10.3.1",
     "better-auth": "^1.1.2",
@@ -41,9 +42,7 @@
     "tailwindcss-animate": "^1.0.7",
     "ts-pattern": "^5.6.0",
     "usehooks-ts": "^3.1.0",
-    "valtio": "^2.1.2",
-    "yjs": "^13.6.21",
-    "yjs-types": "^0.0.1"
+    "valtio": "^2.1.2"
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.0",

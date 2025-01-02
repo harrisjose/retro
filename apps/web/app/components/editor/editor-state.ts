@@ -10,7 +10,7 @@ import {
   listInputRules,
   listKeymap,
   ySyncPlugin,
-} from "@retro/common/prosemirror";
+} from "@retro/pm";
 import { useCallback, useState } from "react";
 import * as Y from "yjs";
 import { buildKeymap } from "./keymap.js";

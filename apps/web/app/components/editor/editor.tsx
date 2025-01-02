@@ -1,10 +1,10 @@
 import { cn } from "@retro/common";
-import { ProseMirror } from "@retro/common/prosemirror";
+import { ProseMirror } from "@retro/pm";
 import { memo, useState } from "react";
 import * as Y from "yjs";
 import { useEditorState } from "./editor-state.js";
 
-import "@retro/common/flat-list-css";
+import "@retro/pm/flat-list-css";
 
 export function MemoProsemirrorEditor({
   fragment,

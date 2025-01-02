@@ -23,6 +23,15 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      y-utility:
+        specifier: ^0.1.4
+        version: 0.1.4(yjs@13.6.21)
+      yjs:
+        specifier: ^13.6.21
+        version: 13.6.21
+      yjs-types:
+        specifier: ^0.0.1
+        version: 0.0.1(yjs@13.6.21)
 
   apps/landing:
     dependencies:
@@ -150,15 +159,6 @@ importers:
       ws:
         specifier: ^8.18.0
         version: 8.18.0
-      y-utility:
-        specifier: ^0.1.4
-        version: 0.1.4(yjs@13.6.21)
-      yjs:
-        specifier: ^13.6.21
-        version: 13.6.21
-      yjs-types:
-        specifier: ^0.0.1
-        version: 0.0.1(yjs@13.6.21)
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -229,6 +229,9 @@ importers:
       '@retro/common':
         specifier: workspace:*
         version: link:../../packages/common
+      '@retro/pm':
+        specifier: workspace:*
+        version: link:../../packages/pm
       '@retro/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -286,12 +289,6 @@ importers:
       valtio:
         specifier: ^2.1.2
         version: 2.1.2(@types/react@19.0.2)(react@19.0.0)
-      yjs:
-        specifier: ^13.6.21
-        version: 13.6.21
-      yjs-types:
-        specifier: ^0.0.1
-        version: 0.0.1(yjs@13.6.21)
     devDependencies:
       '@react-router/dev':
         specifier: ^7.1.0
@@ -332,36 +329,34 @@ importers:
 
   packages/common:
     dependencies:
-      '@nytimes/react-prosemirror':
-        specifier: ^1.0.0
-        version: 1.0.0(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@tiptap/pm':
-        specifier: ^2.10.4
-        version: 2.10.4
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.17.10
+        version: 20.17.10
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+
+  packages/pm:
+    dependencies:
+      '@nytimes/react-prosemirror':
+        specifier: ^1.0.0
+        version: 1.0.0(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@tiptap/pm':
+        specifier: ^2.10.4
+        version: 2.10.4
       prosemirror-flat-list:
         specifier: ^0.5.4
         version: 0.5.4
-      tailwind-merge:
-        specifier: ^2.5.5
-        version: 2.5.5
       y-prosemirror:
         specifier: ^1.2.15
         version: 1.2.15(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.1)(y-protocols@1.0.6(yjs@13.6.21))(yjs@13.6.21)
-      y-utility:
-        specifier: ^0.1.4
-        version: 0.1.4(yjs@13.6.21)
-      yjs:
-        specifier: ^13.6.21
-        version: 13.6.21
-      yjs-types:
-        specifier: ^0.0.1
-        version: 0.0.1(yjs@13.6.21)
     devDependencies:
       '@types/node':
         specifier: ^20.17.10

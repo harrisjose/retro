@@ -1,0 +1,22 @@
+{
+  "name": "@retro/pm",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./flat-list-css": "./node_modules/prosemirror-flat-list/dist/style.css"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@nytimes/react-prosemirror": "^1.0.0",
+    "@tiptap/pm": "^2.10.4",
+    "prosemirror-flat-list": "^0.5.4",
+    "y-prosemirror": "^1.2.15"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2"
+  }
+}
