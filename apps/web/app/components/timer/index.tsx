@@ -4,65 +4,34 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { useDocumentTimer } from "@retro/sdk";
-import { useMemo } from "react";
-import { Button } from "../ui/button";
+import ArrowDown from "../svg/arrow-down.svg?react";
+import TimerSvg from "../svg/timer.svg?react";
 import { CountdownTimer } from "./countdown-timer";
+import CountdownTimerEditor from "./countdown-timer-editor";
 
-export const TimerMusicWrapper = () => {
-  const {
-    startTime,
-    endTime,
-    startTimer,
-    pauseTimer,
-    stopTimer,
-    pausedAt,
-    resumeTimer,
-    incrementTimer,
-    decrementTimer,
-  } = useDocumentTimer();
-
-  console.log("timer", startTime, endTime, pausedAt);
-  const ActionButton = useMemo(() => {
-    if (pausedAt) {
-      return (
-        <>
-          <Button onClick={() => resumeTimer()}>Resume</Button>
-          <Button onClick={() => stopTimer()}>Stop</Button>
-        </>
-      );
-    }
-
-    if (startTime && !pausedAt) {
-      return (
-        <>
-          <Button onClick={() => pauseTimer()}>Pause</Button>
-          <Button onClick={() => stopTimer()}>Stop</Button>
-          <Button onClick={() => incrementTimer(60)}>+1m</Button>
-          <Button onClick={() => decrementTimer(60)}>-1m</Button>
-        </>
-      );
-    }
-
-    return <Button onClick={() => startTimer(6 * 60)}>Start</Button>;
-  }, [startTime, pausedAt]);
+export const DocumentTimerWrapper = () => {
+  const { status } = useDocumentTimer();
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        {startTime && endTime ? (
-          <div>
-            <CountdownTimer
-              startTime={startTime}
-              endTime={endTime}
-              pausedAt={pausedAt}
-            />
-          </div>
-        ) : (
-          <Button variant="ghost">06:00</Button>
-        )}
+        <div className="flex items-center justify-center gap-1">
+          <TimerSvg />
+
+          {status === "active" || status === "paused" ? (
+            <CountdownTimer />
+          ) : (
+            <></>
+          )}
+          <ArrowDown />
+        </div>
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col w-[360px] bg-black rounded-[12px] p-3">
-        <div>{ActionButton}</div>
+      <PopoverContent
+        className="w-[190px] bg-white p-4 rounded-2xl shadow-[0px_0px_20px_0px_rgba(0,0,0,0.1)]"
+        sideOffset={10}
+        align={"start"}
+      >
+        <CountdownTimerEditor />
       </PopoverContent>
     </Popover>
   );

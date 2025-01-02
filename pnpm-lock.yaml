@@ -381,6 +381,9 @@ importers:
       better-auth:
         specifier: ^1.1.2
         version: 1.1.2
+      derive-valtio:
+        specifier: ^0.2.0
+        version: 0.2.0(valtio@2.1.2(@types/react@19.0.2)(react@19.0.0))
       lib0:
         specifier: ^0.2.99
         version: 0.2.99
@@ -2285,6 +2288,11 @@ packages:
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
+
+  derive-valtio@0.2.0:
+    resolution: {integrity: sha512-6slhaFHtfaL3t5dLYaQt6s4G2xZymhu0Ktdl7OMeVk8+46RgR8ft6FL0Tr4F31W+yPH03nJe1SSP4JFy2hSMRA==}
+    peerDependencies:
+      valtio: '>=2.0.0-rc.0'
 
   destr@2.0.3:
     resolution: {integrity: sha512-2N3BOUU4gYMpTP24s5rF5iP7BDr7uNTCs4ozw3kf/eKfvWSIu93GEBi5m427YoyJoeOzQ5smuu4nNAPGb8idSQ==}
@@ -6444,6 +6452,10 @@ snapshots:
   delegates@1.0.0: {}
 
   depd@2.0.0: {}
+
+  derive-valtio@0.2.0(valtio@2.1.2(@types/react@19.0.2)(react@19.0.0)):
+    dependencies:
+      valtio: 2.1.2(@types/react@19.0.2)(react@19.0.0)
 
   destr@2.0.3: {}
 

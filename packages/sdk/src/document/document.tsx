@@ -5,7 +5,9 @@ import {
   observeKeysInMapRef,
   updateProxyState,
 } from "@retro/common";
-import { isNil, uniqBy } from "lodash-es";
+import { derive } from "derive-valtio";
+import { isNil, isNull, uniqBy } from "lodash-es";
+
 import { createContext, useContext, useEffect, useRef } from "react";
 import type {
   Block,
@@ -285,6 +287,19 @@ export const useDocumentTimer = () => {
     await fetchDocumentTimer(state);
   };
 
+  const derivedState = derive({
+    status: (get) => {
+      const { timer } = get(state);
+      if (timer.startTime && timer.pausedAt) {
+        return "paused";
+      }
+      if (timer.startTime && timer.endTime && isNull(timer.pausedAt)) {
+        return "active";
+      }
+      return "inactive";
+    },
+  });
+
   return {
     startTime: timer.startTime,
     endTime: timer.endTime,
@@ -295,6 +310,7 @@ export const useDocumentTimer = () => {
     resumeTimer,
     incrementTimer,
     decrementTimer,
+    status: derivedState.status,
   };
 };
 //
