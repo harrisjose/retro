@@ -13,6 +13,7 @@ export function Navbar() {
       <div className="flex gap-4 items-center">
         <Link to="#pricing">Pricing</Link>
         <Link to="#features">Features</Link>
+        <Link to="#faq">FAQ</Link>
         <Button>Get Started for free</Button>
       </div>
     </nav>
