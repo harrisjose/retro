@@ -1,8 +1,4 @@
-import {
-  createListSpec,
-  Schema,
-  type MarkSpec,
-} from "@retro/common/prosemirror";
+import { createListSpec, Schema, type MarkSpec } from "@retro/pm";
 
 export const cardSchema = new Schema({
   nodes: {

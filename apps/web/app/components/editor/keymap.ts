@@ -5,7 +5,7 @@ import {
   toggleMark,
   undoInputRule,
   type Command,
-} from "@retro/common/prosemirror";
+} from "@retro/pm";
 import type { CardSchemaType } from "./schema.js";
 
 const mac =
