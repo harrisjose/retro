@@ -119,11 +119,41 @@ const CountdownTimerEditor = () => {
     isMinutes: boolean
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 2);
-    const num =
-      value === ""
-        ? ""
-        : Math.min(isMinutes ? 99 : 59, parseInt(value)).toString();
-    isMinutes ? setMinutes(num) : setSeconds(num);
+
+    if (value.length === 2) {
+      const numValue = parseInt(value);
+
+      if (isMinutes) {
+        const validMinutes = Math.min(99, numValue).toString().padStart(2, "0");
+        setMinutes(validMinutes);
+        // Focus seconds input when 2 digits entered for minutes
+        const secondsInput = e.target.nextElementSibling
+          ?.nextElementSibling as HTMLInputElement;
+        if (secondsInput) {
+          secondsInput.focus();
+          secondsInput.setSelectionRange(0, secondsInput.value.length);
+        }
+      } else {
+        // Handle seconds > 60
+        if (numValue >= 60) {
+          const extraMinutes = Math.floor(numValue / 60);
+          const remainingSeconds = numValue % 60;
+          const newMinutes = Math.min(
+            99,
+            (parseInt(minutes) || 0) + extraMinutes
+          )
+            .toString()
+            .padStart(2, "0");
+          setMinutes(newMinutes);
+          setSeconds(remainingSeconds.toString().padStart(2, "0"));
+        } else {
+          setSeconds(numValue.toString().padStart(2, "0"));
+        }
+      }
+    } else {
+      // For single digit input, just update the state
+      isMinutes ? setMinutes(value) : setSeconds(value);
+    }
   };
 
   const handleKeyDown = (
@@ -136,7 +166,8 @@ const CountdownTimerEditor = () => {
 
     if (
       (e.key === "ArrowRight" && isAtEnd && isMinutes) ||
-      (e.key === "ArrowLeft" && isAtStart && !isMinutes)
+      (e.key === "ArrowLeft" && isAtStart && !isMinutes) ||
+      (e.key === "Backspace" && isAtStart && !isMinutes)
     ) {
       e.preventDefault();
       const siblingInput = isMinutes
