@@ -2,24 +2,12 @@
   "version": 3,
   "routes": [
     {
-      "src": "/favicon.ico",
-      "dest": "/favicon.ico"
-    },
-    {
-      "src": "/hero-image.svg",
-      "dest": "/hero-image.svg"
-    },
-    {
-      "src": "/mellow-balloon.png",
-      "dest": "/mellow-balloon.png"
-    },
-    {
-      "src": "/SNPro-Variable.woff2",
-      "dest": "/SNPro-Variable.woff2"
-    },
-    {
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
