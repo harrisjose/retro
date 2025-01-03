@@ -41,6 +41,13 @@ export interface Document {
   yDocUpdatedAt: Timestamp | null;
 }
 
+export interface DocumentTimer {
+  documentId: string;
+  endTime: Timestamp;
+  pausedAt: Timestamp | null;
+  startTime: Timestamp;
+}
+
 export interface Invitation {
   email: string;
   expiresAt: Timestamp;
@@ -102,6 +109,7 @@ export interface Verification {
 export interface DB {
   account: Account;
   document: Document;
+  documentTimer: DocumentTimer;
   invitation: Invitation;
   member: Member;
   organization: Organization;

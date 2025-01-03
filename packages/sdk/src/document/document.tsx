@@ -6,6 +6,7 @@ import {
   updateProxyState,
 } from "@retro/common";
 import { isNil, uniqBy } from "lodash-es";
+
 import { createContext, useContext, useEffect, useRef } from "react";
 import type {
   Block,
@@ -48,6 +49,24 @@ const fetchDocument = async (state: Omit<DocumentState, "syncProvider">) => {
     state.error = error as Error;
     state.loading = false;
   }
+};
+
+export const fetchDocumentTimer = async (state: DocumentState) => {
+  const timer = await apiClient.documentTimer.get.query({
+    documentId: state.docId,
+  });
+
+  state.timer.startTime = timer?.startTime ?? null;
+  state.timer.endTime = timer?.endTime ?? null;
+  state.timer.pausedAt = timer?.pausedAt ?? null;
+};
+
+const useDocumentTimerSync = (state: DocumentState) => {
+  useEffect(() => {
+    fetchDocumentTimer(state);
+  }, []);
+
+  useInterval(() => fetchDocumentTimer(state), config.pollingInterval);
 };
 
 const useDocumentSync = (state: DocumentState) => {
@@ -171,6 +190,11 @@ export const DocProvider = ({
       sections: {},
       blocks: {},
       properties: {},
+      timer: {
+        startTime: null,
+        endTime: null,
+        pausedAt: null,
+      },
       // sync
       syncProvider: ref(
         new HocuspocusProvider({
@@ -189,7 +213,7 @@ export const DocProvider = ({
   useDocumentSync(state);
   useYDocSync(state);
   usePresenceSync(state);
-
+  useDocumentTimerSync(state);
   useEffect(() => {
     const unsub = devtools(state, { name: "documentState", enabled: true });
     return () => unsub?.();

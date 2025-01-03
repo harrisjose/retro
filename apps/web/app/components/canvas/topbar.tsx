@@ -1,5 +1,6 @@
 import { useCollaborators, useSectionMap } from "@retro/sdk";
 import { isNil } from "lodash-es";
+import { DocumentTimerWrapper } from "../timer";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
 
 export default function Topbar() {
@@ -8,6 +9,10 @@ export default function Topbar() {
 
   return (
     <div className="mt-4 h-[28px] relative z-20">
+      <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] p-[6px] rounded-2xl bg-white absolute left-[24px] top-[-2px]">
+        <DocumentTimerWrapper />
+      </div>
+
       <div className="flex gap-2 justify-center items-center">
         {Object.entries(sectionMap).map(([id, section]) => (
           <div
