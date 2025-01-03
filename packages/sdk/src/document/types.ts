@@ -12,12 +12,6 @@ export type Collaborator = {
   email: string;
 };
 
-export type Timer = {
-  startTime: string | null;
-  endTime: string | null;
-  pausedAt: string | null;
-};
-
 export type Presence = {
   collaborators: Collaborator[];
 };
@@ -50,6 +44,4 @@ export type DocumentState = {
   syncProvider: HocuspocusProvider;
   isReady: boolean;
   presence: Presence;
-
-  timer: Timer;
 };

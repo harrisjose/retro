@@ -51,24 +51,6 @@ const fetchDocument = async (state: Omit<DocumentState, "syncProvider">) => {
   }
 };
 
-export const fetchDocumentTimer = async (state: DocumentState) => {
-  const timer = await apiClient.documentTimer.get.query({
-    documentId: state.docId,
-  });
-
-  state.timer.startTime = timer?.startTime ?? null;
-  state.timer.endTime = timer?.endTime ?? null;
-  state.timer.pausedAt = timer?.pausedAt ?? null;
-};
-
-const useDocumentTimerSync = (state: DocumentState) => {
-  useEffect(() => {
-    fetchDocumentTimer(state);
-  }, []);
-
-  useInterval(() => fetchDocumentTimer(state), config.pollingInterval);
-};
-
 const useDocumentSync = (state: DocumentState) => {
   useEffect(() => {
     fetchDocument(state);
@@ -182,20 +164,15 @@ export const DocProvider = ({
   const state = useRef<DocumentState>(
     proxy({
       docId,
-      // document entity (from db) store
+      // Entity (from db) stores
       document: initialData.document,
       loading: false,
       error: null,
-      // yjs related stores
+      // Yjs related stores
       sections: {},
       blocks: {},
       properties: {},
-      timer: {
-        startTime: null,
-        endTime: null,
-        pausedAt: null,
-      },
-      // sync
+      // Sync & presence
       syncProvider: ref(
         new HocuspocusProvider({
           name: docId,
@@ -213,7 +190,8 @@ export const DocProvider = ({
   useDocumentSync(state);
   useYDocSync(state);
   usePresenceSync(state);
-  useDocumentTimerSync(state);
+
+  // Devtools
   useEffect(() => {
     const unsub = devtools(state, { name: "documentState", enabled: true });
     return () => unsub?.();
