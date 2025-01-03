@@ -4,5 +4,7 @@
     "source.organizeImports": "always"
   },
   "typescript.preferences.organizeImports": {},
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

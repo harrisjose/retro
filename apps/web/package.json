@@ -23,11 +23,9 @@
     "@react-router/node": "^7.1.0",
     "@react-router/serve": "^7.1.0",
     "@retro/common": "workspace:*",
-    "@retro/sdk": "workspace:*",
     "@retro/pm": "workspace:*",
-    "@trpc/client": "^10.45.2",
+    "@retro/sdk": "workspace:*",
     "@use-gesture/react": "^10.3.1",
-    "better-auth": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -41,8 +39,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "ts-pattern": "^5.6.0",
-    "usehooks-ts": "^3.1.0",
-    "valtio": "^2.1.2"
+    "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.0",
@@ -53,7 +50,6 @@
     "cross-env": "^7.0.3",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
-    "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4"

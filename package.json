@@ -8,6 +8,7 @@
     "lib0": "^0.2.99",
     "lodash-es": "^4.17.21",
     "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
     "y-utility": "^0.1.4",
     "yjs": "^13.6.21",
     "yjs-types": "^0.0.1"
