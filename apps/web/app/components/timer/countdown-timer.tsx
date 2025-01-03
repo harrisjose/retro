@@ -34,7 +34,7 @@ export const CountdownTimer = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [endTime, pausedAt]);
+  }, [endTime, pausedAt, status]);
 
   const [minutes, seconds] = useMemo(() => {
     const mins = Math.floor(timeLeft / 60)

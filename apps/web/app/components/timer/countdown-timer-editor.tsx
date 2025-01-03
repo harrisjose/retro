@@ -64,6 +64,7 @@ const CountdownTimerEditor = () => {
     resumeTimer,
     stopTimer,
     pauseTimer,
+    resetTimer,
   } = useDocumentTimer();
 
   const [minutes, setMinutes] = useState<string>("");
@@ -101,6 +102,7 @@ const CountdownTimerEditor = () => {
           clearInterval(interval);
           setMinutes("00");
           setSeconds("00");
+          setTimeout(() => resetTimer(), 2000);
           return;
         }
 
@@ -157,7 +159,7 @@ const CountdownTimerEditor = () => {
   };
 
   const handleIncrement = () => {
-    if (status === "active") {
+    if (status === "active" || status === "paused") {
       incrementTimer(60);
     } else {
       const newMinutes = (parseInt(minutes) || 0) + 1;
@@ -166,7 +168,7 @@ const CountdownTimerEditor = () => {
   };
 
   const handleDecrement = () => {
-    if (status === "active") {
+    if (status === "active" || status === "paused") {
       decrementTimer(60);
     } else {
       const newMinutes = (parseInt(minutes) || 0) - 1;

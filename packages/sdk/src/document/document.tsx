@@ -5,8 +5,7 @@ import {
   observeKeysInMapRef,
   updateProxyState,
 } from "@retro/common";
-import { derive } from "derive-valtio";
-import { isNil, isNull, uniqBy } from "lodash-es";
+import { isNil, uniqBy } from "lodash-es";
 
 import { createContext, useContext, useEffect, useRef } from "react";
 import type {
@@ -52,7 +51,7 @@ const fetchDocument = async (state: Omit<DocumentState, "syncProvider">) => {
   }
 };
 
-const fetchDocumentTimer = async (state: DocumentState) => {
+export const fetchDocumentTimer = async (state: DocumentState) => {
   const timer = await apiClient.documentTimer.get.query({
     documentId: state.docId,
   });
@@ -235,84 +234,6 @@ export const useCollaborators = () => {
   return snapshot.collaborators ?? [];
 };
 
-export const useDocumentTimer = () => {
-  const state = useContext(DocContext);
-  const {
-    timer,
-    document: { id },
-  } = useSnapshot(state);
-
-  const startTimer = async (numberOfSeconds: number) => {
-    await apiClient.documentTimer.start.mutate({
-      documentId: id,
-      numberOfSeconds,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const pauseTimer = async () => {
-    await apiClient.documentTimer.pause.mutate({
-      documentId: id,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const stopTimer = async () => {
-    await apiClient.documentTimer.stop.mutate({
-      documentId: id,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const resumeTimer = async () => {
-    await apiClient.documentTimer.resume.mutate({
-      documentId: id,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const incrementTimer = async (numberOfSeconds: number) => {
-    await apiClient.documentTimer.incrementTimer.mutate({
-      documentId: id,
-      numberOfSeconds,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const decrementTimer = async (numberOfSeconds: number) => {
-    await apiClient.documentTimer.decrementTimer.mutate({
-      documentId: id,
-      numberOfSeconds,
-    });
-    await fetchDocumentTimer(state);
-  };
-
-  const derivedState = derive({
-    status: (get) => {
-      const { timer } = get(state);
-      if (timer.startTime && timer.pausedAt) {
-        return "paused";
-      }
-      if (timer.startTime && timer.endTime && isNull(timer.pausedAt)) {
-        return "active";
-      }
-      return "inactive";
-    },
-  });
-
-  return {
-    startTime: timer.startTime,
-    endTime: timer.endTime,
-    pausedAt: timer.pausedAt,
-    startTimer,
-    pauseTimer,
-    stopTimer,
-    resumeTimer,
-    incrementTimer,
-    decrementTimer,
-    status: derivedState.status,
-  };
-};
 //
 export const useYDoc = () => {
   const { syncProvider } = useContext(DocContext);
