@@ -32,7 +32,18 @@ export const createHonoTrpcContext = async (
   }
 };
 
-export const t = initTRPC.context<HonoTrpcContext>().create();
+export const t = initTRPC.context<HonoTrpcContext>().create({
+  sse: {
+    ping: {
+      enabled: true,
+      intervalMs: 30_000,
+    },
+    client: {
+      // Reconnect if no messages or pings are received for 30 seconds
+      reconnectAfterInactivityMs: 30_000,
+    },
+  },
+});
 
 export const publicProcedure = t.procedure;
 export const router = t.router;

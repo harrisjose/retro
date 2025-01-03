@@ -1,6 +1,23 @@
+import EventEmitter, { on } from "events";
 import { z } from "zod";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
+
+enum TimerEvent {
+  Start = "start",
+  Pause = "pause",
+  Resume = "resume",
+  Stop = "stop",
+  Increment = "increment",
+  Decrement = "decrement",
+}
+
+const ee = new (class TimerEventEmitter extends EventEmitter {
+  emit(type: TimerEvent, ...args: any[]) {
+    super.emit("*", ...args);
+    return super.emit(type, ...args) || super.emit("", ...args);
+  }
+})();
 
 const documentTimerRouter = router({
   get: publicProcedure
@@ -29,6 +46,31 @@ const documentTimerRouter = router({
       } catch (error) {
         console.error(error);
         throw new Error("Failed to fetch document timer");
+      }
+    }),
+
+  onTimerChange: publicProcedure
+    .input(
+      z.object({
+        documentId: z.string(),
+      })
+    )
+    .subscription(async function* ({ input, ctx, signal }) {
+      // Passing the AbortSignal from the request automatically
+      // cancels the event emitter when the request is aborted
+      const iterable = on(ee, "*", { signal });
+
+      for await (const _ of iterable) {
+        const now = new Date();
+        const timer = await db
+          .selectFrom("documentTimer")
+          .select(["documentId", "startTime", "endTime", "pausedAt"])
+          .where("documentId", "=", dbUtil.asUuid(input.documentId))
+          .where("startTime", "<=", now)
+          .where("endTime", ">=", now)
+          .limit(1)
+          .executeTakeFirst();
+        yield timer;
       }
     }),
 
@@ -72,7 +114,6 @@ const documentTimerRouter = router({
         throw new Error("Failed to start document timer");
       }
     }),
-
   pause: publicProcedure
     .input(
       z.object({
@@ -118,7 +159,6 @@ const documentTimerRouter = router({
         throw new Error("Failed to pause document timer");
       }
     }),
-
   resume: publicProcedure
     .input(
       z.object({

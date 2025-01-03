@@ -1,6 +1,6 @@
 import { router } from "./config.js";
+import documentTimerRouter from "./document-timer.js";
 import documentRouter from "./document.js";
-import documentTimerRouter from "./documentTimer.js";
 
 export const appRouter = router({
   documents: documentRouter,
