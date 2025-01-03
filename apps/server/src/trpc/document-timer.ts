@@ -1,6 +1,7 @@
 import EventEmitter, { on } from "events";
 import { z } from "zod";
 import { db, dbUtil } from "../db/index.js";
+import type { DocumentTimer } from "../db/types.js";
 import { publicProcedure, router } from "./config.js";
 
 enum TimerEvent {
@@ -12,6 +13,7 @@ enum TimerEvent {
   Decrement = "decrement",
 }
 
+// Overrides the default EventEmitter to support the "*" wildcard
 const ee = new (class TimerEventEmitter extends EventEmitter {
   emit(type: TimerEvent, ...args: any[]) {
     super.emit("*", ...args);
@@ -59,18 +61,8 @@ const documentTimerRouter = router({
       // Passing the AbortSignal from the request automatically
       // cancels the event emitter when the request is aborted
       const iterable = on(ee, "*", { signal });
-
-      for await (const _ of iterable) {
-        const now = new Date();
-        const timer = await db
-          .selectFrom("documentTimer")
-          .select(["documentId", "startTime", "endTime", "pausedAt"])
-          .where("documentId", "=", dbUtil.asUuid(input.documentId))
-          .where("startTime", "<=", now)
-          .where("endTime", ">=", now)
-          .limit(1)
-          .executeTakeFirst();
-        yield timer;
+      for await (const [data] of iterable) {
+        yield data as DocumentTimer | null;
       }
     }),
 
@@ -107,6 +99,8 @@ const documentTimerRouter = router({
           )
           .returningAll()
           .executeTakeFirstOrThrow();
+
+        ee.emit(TimerEvent.Start, timer);
 
         return timer;
       } catch (error) {
@@ -153,6 +147,7 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
+        ee.emit(TimerEvent.Pause, timer);
         return timer;
       } catch (error) {
         console.error(error);
@@ -205,6 +200,8 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
+        ee.emit(TimerEvent.Resume, timer);
+
         return timer;
       } catch (error) {
         console.error(error);
@@ -228,6 +225,8 @@ const documentTimerRouter = router({
           .where("documentId", "=", dbUtil.asUuid(input.documentId))
           .returningAll()
           .executeTakeFirstOrThrow();
+
+        ee.emit(TimerEvent.Stop, null);
 
         return timer;
       } catch (error) {
@@ -275,6 +274,8 @@ const documentTimerRouter = router({
           .where("documentId", "=", dbUtil.asUuid(input.documentId))
           .returningAll()
           .executeTakeFirstOrThrow();
+
+        ee.emit(TimerEvent.Increment, timer);
 
         return timer;
       } catch (error) {
@@ -326,6 +327,8 @@ const documentTimerRouter = router({
           .where("documentId", "=", dbUtil.asUuid(input.documentId))
           .returningAll()
           .executeTakeFirstOrThrow();
+
+        ee.emit(TimerEvent.Decrement, timer);
 
         return timer;
       } catch (error) {

@@ -1,8 +1,6 @@
 import { derive } from "derive-valtio";
-import config from "lib/config.js";
 import { isNull } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
-import { useInterval } from "usehooks-ts";
 import { proxy, useSnapshot } from "valtio";
 import { apiClient } from "../lib/trpc-client.js";
 
@@ -19,28 +17,46 @@ export type TimerState = {
 
 export const TimerContext = createContext<TimerState>({} as any);
 
-const fetchDocumentTimer = async (state: TimerState) => {
-  const timer = await apiClient.documentTimer.get.query({
-    documentId: state.documentId!,
-  });
-
-  state.timer.startTime = timer?.startTime ?? null;
-  state.timer.endTime = timer?.endTime ?? null;
-  state.timer.pausedAt = timer?.pausedAt ?? null;
-};
-
 const resetTimer = (state: TimerState) => {
   state.timer.startTime = null;
   state.timer.endTime = null;
   state.timer.pausedAt = null;
 };
 
+const setTimer = (state: TimerState, timer: Timer | null | undefined) => {
+  // Timer could be null/undefined if the timer was stopped
+  state.timer.startTime = timer?.startTime ?? null;
+  state.timer.endTime = timer?.endTime ?? null;
+  state.timer.pausedAt = timer?.pausedAt ?? null;
+};
+
+const fetchDocumentTimer = async (state: TimerState) => {
+  const timer = await apiClient.documentTimer.get.query({
+    documentId: state.documentId!,
+  });
+
+  setTimer(state, timer);
+};
+
+const subscribeToTimer = (state: TimerState) => {
+  const subscription = apiClient.documentTimer.onTimerChange.subscribe(
+    { documentId: state.documentId! },
+    {
+      onData: (data) => {
+        const timer = ((data as any) ?? {}) as Timer;
+        setTimer(state, timer);
+      },
+    }
+  );
+  return () => subscription.unsubscribe();
+};
+
 const useDocumentTimerSync = (state: TimerState) => {
   useEffect(() => {
     fetchDocumentTimer(state);
+    const unsubscribe = subscribeToTimer(state);
+    return () => unsubscribe();
   }, []);
-
-  useInterval(() => fetchDocumentTimer(state), config.pollingInterval);
 };
 
 export const TimerProvider = ({
