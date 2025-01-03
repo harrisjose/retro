@@ -1,5 +1,5 @@
 import { DEFAULT_TIMER_SECONDS, useDocumentTimer } from "@retro/sdk";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import MinusSVG from "../svg/minus.svg?react";
 import PauseSvg from "../svg/pause.svg?react";
 import PlaySvg from "../svg/play.svg?react";
@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 const formatTimer = (value: string) =>
   (parseInt(value) || 0).toString().padStart(2, "0");
 
-const CountDownTimerActionButtons = ({
+const TimerActionButtons = ({
   status,
   startTimer,
   resumeTimer,
@@ -67,15 +67,21 @@ const CountdownTimerEditor = () => {
     resetTimer,
   } = useDocumentTimer();
 
-  const [minutes, setMinutes] = useState<string>("");
-  const [seconds, setSeconds] = useState<string>("");
+  const minutesRef = useRef<HTMLInputElement>(null);
+  const secondsRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (status === "inactive") {
-      setMinutes(
-        formatTimer(Math.floor(DEFAULT_TIMER_SECONDS / 60).toString())
+    if (!minutesRef.current || !secondsRef.current) return;
+
+    const updateTimerDisplay = (totalSeconds: number) => {
+      minutesRef.current!.value = formatTimer(
+        Math.floor(totalSeconds / 60).toString()
       );
-      setSeconds(formatTimer((DEFAULT_TIMER_SECONDS % 60).toString()));
+      secondsRef.current!.value = formatTimer((totalSeconds % 60).toString());
+    };
+
+    if (status === "inactive") {
+      updateTimerDisplay(DEFAULT_TIMER_SECONDS);
       return;
     }
 
@@ -86,73 +92,74 @@ const CountdownTimerEditor = () => {
       Math.floor((end.getTime() - currentTime.getTime()) / 1000)
     );
 
-    setMinutes(formatTimer(Math.floor(totalSeconds / 60).toString()));
-    setSeconds(formatTimer((totalSeconds % 60).toString()));
+    updateTimerDisplay(totalSeconds);
 
-    if (status === "active") {
-      const interval = setInterval(() => {
-        const currentTime = new Date();
-        const end = new Date(endTime!);
-        const totalSeconds = Math.max(
-          0,
-          Math.floor((end.getTime() - currentTime.getTime()) / 1000)
-        );
+    if (status !== "active") return;
 
-        if (totalSeconds <= 0) {
-          clearInterval(interval);
-          setMinutes("00");
-          setSeconds("00");
-          setTimeout(() => resetTimer(), 2000);
-          return;
-        }
+    const interval = setInterval(() => {
+      const currentTime = new Date();
+      const end = new Date(endTime!);
+      const totalSeconds = Math.max(
+        0,
+        Math.floor((end.getTime() - currentTime.getTime()) / 1000)
+      );
 
-        setMinutes(formatTimer(Math.floor(totalSeconds / 60).toString()));
-        setSeconds(formatTimer((totalSeconds % 60).toString()));
-      }, 1000);
+      if (totalSeconds <= 0) {
+        clearInterval(interval);
+        updateTimerDisplay(0);
+        setTimeout(() => resetTimer(), 2000);
+        return;
+      }
 
-      return () => clearInterval(interval);
-    }
-  }, [endTime, pausedAt, status]);
+      updateTimerDisplay(totalSeconds);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [endTime, pausedAt, status, resetTimer]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     isMinutes: boolean
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 2);
+    const minutesInput = minutesRef.current;
+    const secondsInput = secondsRef.current;
 
+    if (!minutesInput || !secondsInput) return;
+
+    // Do all the validations and input focus switch when 2 digits are entered
     if (value.length === 2) {
       const numValue = parseInt(value);
 
       if (isMinutes) {
-        const validMinutes = Math.min(99, numValue).toString().padStart(2, "0");
-        setMinutes(validMinutes);
-        // Focus seconds input when 2 digits entered for minutes
-        const secondsInput = e.target.nextElementSibling
-          ?.nextElementSibling as HTMLInputElement;
-        if (secondsInput) {
-          secondsInput.focus();
-          secondsInput.setSelectionRange(0, secondsInput.value.length);
-        }
+        // After typing 2 digits in minutes, focus on seconds input
+        minutesInput.value = Math.min(99, numValue).toString().padStart(2, "0");
+        secondsInput.focus();
+        secondsInput.setSelectionRange(0, secondsInput.value.length);
       } else {
-        // Handle seconds > 60
+        // If the seconds input is greater than 60, add the extra minutes to the minutes input
         if (numValue >= 60) {
           const extraMinutes = Math.floor(numValue / 60);
           const remainingSeconds = numValue % 60;
           const newMinutes = Math.min(
             99,
-            (parseInt(minutes) || 0) + extraMinutes
+            (parseInt(minutesInput.value) || 0) + extraMinutes
           )
             .toString()
             .padStart(2, "0");
-          setMinutes(newMinutes);
-          setSeconds(remainingSeconds.toString().padStart(2, "0"));
+          minutesInput.value = newMinutes;
+          secondsInput.value = remainingSeconds.toString().padStart(2, "0");
         } else {
-          setSeconds(numValue.toString().padStart(2, "0"));
+          secondsInput.value = numValue.toString().padStart(2, "0");
         }
       }
     } else {
-      // For single digit input, just update the state
-      isMinutes ? setMinutes(value) : setSeconds(value);
+      // For single digit input
+      if (isMinutes) {
+        minutesInput.value = value;
+      } else {
+        secondsInput.value = value;
+      }
     }
   };
 
@@ -164,6 +171,7 @@ const CountdownTimerEditor = () => {
     const isAtEnd = input.selectionStart === input.value.length;
     const isAtStart = input.selectionStart === 0;
 
+    // This is to switch the focus between minutes and seconds when using arrow keys
     if (
       (e.key === "ArrowRight" && isAtEnd && isMinutes) ||
       (e.key === "ArrowLeft" && isAtStart && !isMinutes) ||
@@ -183,7 +191,10 @@ const CountdownTimerEditor = () => {
   };
 
   const onStartTimer = () => {
-    const totalSeconds = parseInt(minutes) * 60 + parseInt(seconds);
+    if (!minutesRef.current || !secondsRef.current) return;
+    const totalSeconds =
+      parseInt(minutesRef.current.value) * 60 +
+      parseInt(secondsRef.current.value);
     if (totalSeconds > 0) {
       startTimer(totalSeconds);
     }
@@ -192,18 +203,22 @@ const CountdownTimerEditor = () => {
   const handleIncrement = () => {
     if (status === "active" || status === "paused") {
       incrementTimer(60);
-    } else {
-      const newMinutes = (parseInt(minutes) || 0) + 1;
-      setMinutes(formatTimer(Math.min(99, newMinutes).toString()));
+    } else if (minutesRef.current) {
+      const newMinutes = (parseInt(minutesRef.current.value) || 0) + 1;
+      minutesRef.current.value = formatTimer(
+        Math.min(99, newMinutes).toString()
+      );
     }
   };
 
   const handleDecrement = () => {
     if (status === "active" || status === "paused") {
       decrementTimer(60);
-    } else {
-      const newMinutes = (parseInt(minutes) || 0) - 1;
-      setMinutes(formatTimer(Math.max(0, newMinutes).toString()));
+    } else if (minutesRef.current) {
+      const newMinutes = (parseInt(minutesRef.current.value) || 0) - 1;
+      minutesRef.current.value = formatTimer(
+        Math.max(0, newMinutes).toString()
+      );
     }
   };
 
@@ -214,43 +229,31 @@ const CountdownTimerEditor = () => {
           <MinusSVG className="fill-primary" />
         </button>
         <div className="flex items-center gap-1 border-b border-dotted border-gray-300">
-          {status === "inactive" ? (
-            <>
-              <input
-                type="text"
-                value={minutes}
-                onChange={(e) => handleInputChange(e, true)}
-                onKeyDown={(e) => handleKeyDown(e, true)}
-                onBlur={(e) => (e.target.value = formatTimer(minutes))}
-                className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
-              />
-              <span className="text-[32px] leading-9">:</span>
-              <input
-                type="text"
-                value={seconds}
-                onChange={(e) => handleInputChange(e, false)}
-                onKeyDown={(e) => handleKeyDown(e, false)}
-                onBlur={(e) => (e.target.value = formatTimer(seconds))}
-                className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
-              />
-            </>
-          ) : (
-            <>
-              <div className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9">
-                {minutes}
-              </div>
-              <span className="text-[32px] leading-9">:</span>
-              <div className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9">
-                {seconds}
-              </div>
-            </>
-          )}
+          <input
+            ref={minutesRef}
+            type="text"
+            onChange={(e) => handleInputChange(e, true)}
+            onKeyDown={(e) => handleKeyDown(e, true)}
+            onBlur={(e) => (e.target.value = formatTimer(e.target.value))}
+            disabled={status === "active" || status === "paused"}
+            className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
+          />
+          <span className="text-[32px] leading-9">:</span>
+          <input
+            ref={secondsRef}
+            type="text"
+            onChange={(e) => handleInputChange(e, false)}
+            onKeyDown={(e) => handleKeyDown(e, false)}
+            disabled={status === "active" || status === "paused"}
+            onBlur={(e) => (e.target.value = formatTimer(e.target.value))}
+            className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
+          />
         </div>
         <button onClick={handleIncrement} className="outline-none">
           <PlusSVG className="fill-primary" />
         </button>
       </div>
-      <CountDownTimerActionButtons
+      <TimerActionButtons
         status={status as "inactive" | "paused" | "active"}
         startTimer={onStartTimer}
         resumeTimer={resumeTimer}
