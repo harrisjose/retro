@@ -90,19 +90,22 @@ const CountdownTimerEditor = () => {
 
     if (status === "active") {
       const interval = setInterval(() => {
-        const mins = parseInt(minutes) || 0;
-        const secs = parseInt(seconds) || 0;
-        const totalSecs = mins * 60 + secs - 1;
+        const currentTime = new Date();
+        const end = new Date(endTime!);
+        const totalSeconds = Math.max(
+          0,
+          Math.floor((end.getTime() - currentTime.getTime()) / 1000)
+        );
 
-        if (totalSecs <= 0) {
+        if (totalSeconds <= 0) {
           clearInterval(interval);
           setMinutes("00");
           setSeconds("00");
           return;
         }
 
-        setMinutes(formatTimer(Math.floor(totalSecs / 60).toString()));
-        setSeconds(formatTimer((totalSecs % 60).toString()));
+        setMinutes(formatTimer(Math.floor(totalSeconds / 60).toString()));
+        setSeconds(formatTimer((totalSeconds % 60).toString()));
       }, 1000);
 
       return () => clearInterval(interval);
@@ -178,25 +181,37 @@ const CountdownTimerEditor = () => {
           <MinusSVG className="fill-primary" />
         </button>
         <div className="flex items-center gap-1 border-b border-dotted border-gray-300">
-          <input
-            type="text"
-            value={minutes}
-            onChange={(e) => handleInputChange(e, true)}
-            onKeyDown={(e) => handleKeyDown(e, true)}
-            onBlur={(e) => (e.target.value = formatTimer(minutes))}
-            disabled={status === "active"}
-            className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
-          />
-          <span className="text-[32px] leading-9">:</span>
-          <input
-            type="text"
-            value={seconds}
-            onChange={(e) => handleInputChange(e, false)}
-            onKeyDown={(e) => handleKeyDown(e, false)}
-            onBlur={(e) => (e.target.value = formatTimer(seconds))}
-            disabled={status === "active"}
-            className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
-          />
+          {status === "inactive" ? (
+            <>
+              <input
+                type="text"
+                value={minutes}
+                onChange={(e) => handleInputChange(e, true)}
+                onKeyDown={(e) => handleKeyDown(e, true)}
+                onBlur={(e) => (e.target.value = formatTimer(minutes))}
+                className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
+              />
+              <span className="text-[32px] leading-9">:</span>
+              <input
+                type="text"
+                value={seconds}
+                onChange={(e) => handleInputChange(e, false)}
+                onKeyDown={(e) => handleKeyDown(e, false)}
+                onBlur={(e) => (e.target.value = formatTimer(seconds))}
+                className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9"
+              />
+            </>
+          ) : (
+            <>
+              <div className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9">
+                {minutes}
+              </div>
+              <span className="text-[32px] leading-9">:</span>
+              <div className="w-[39px] text-center outline-none border-none bg-transparent text-[32px] leading-9">
+                {seconds}
+              </div>
+            </>
+          )}
         </div>
         <button onClick={handleIncrement} className="outline-none">
           <PlusSVG className="fill-primary" />
