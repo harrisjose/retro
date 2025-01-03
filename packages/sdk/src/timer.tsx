@@ -1,4 +1,3 @@
-import { derive } from "derive-valtio";
 import { isNull } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
@@ -98,28 +97,24 @@ export const useDocumentTimer = () => {
       documentId,
       numberOfSeconds,
     });
-    await fetchDocumentTimer(state);
   };
 
   const pauseTimer = async () => {
     await apiClient.documentTimer.pause.mutate({
       documentId,
     });
-    await fetchDocumentTimer(state);
   };
 
   const stopTimer = async () => {
     await apiClient.documentTimer.stop.mutate({
       documentId,
     });
-    await fetchDocumentTimer(state);
   };
 
   const resumeTimer = async () => {
     await apiClient.documentTimer.resume.mutate({
       documentId,
     });
-    await fetchDocumentTimer(state);
   };
 
   const incrementTimer = async (numberOfSeconds: number) => {
@@ -127,7 +122,6 @@ export const useDocumentTimer = () => {
       documentId,
       numberOfSeconds,
     });
-    await fetchDocumentTimer(state);
   };
 
   const decrementTimer = async (numberOfSeconds: number) => {
@@ -135,21 +129,17 @@ export const useDocumentTimer = () => {
       documentId,
       numberOfSeconds,
     });
-    await fetchDocumentTimer(state);
   };
 
-  const derivedState = derive({
-    status: (get) => {
-      const { timer } = get(state);
-      if (timer.startTime && timer.pausedAt) {
-        return "paused";
-      }
-      if (timer.startTime && timer.endTime && isNull(timer.pausedAt)) {
-        return "active";
-      }
-      return "inactive";
-    },
-  });
+  const status = (() => {
+    if (timer.startTime && timer.pausedAt) {
+      return "paused";
+    }
+    if (timer.startTime && timer.endTime && isNull(timer.pausedAt)) {
+      return "active";
+    }
+    return "inactive";
+  })();
 
   return {
     startTime: timer.startTime,
@@ -161,7 +151,7 @@ export const useDocumentTimer = () => {
     resumeTimer,
     incrementTimer,
     decrementTimer,
-    resetTimer,
-    status: derivedState.status,
+    resetTimer: () => resetTimer(state),
+    status,
   };
 };
