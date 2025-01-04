@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasInsertionHandler } from "./canvas-insertion-handler";
 import SectionRenderer from "./section";
-// import Zoom from "./zoom";
+import Zoom from "./zoom";
 
 export default function Canvas() {
   const sections = useSectionMap();
@@ -111,10 +111,7 @@ export default function Canvas() {
         </div>
       </div>
       <CanvasInsertionHandler />
-      {/* <Zoom
-        value={{ min: zoomBounds.min, max: zoomBounds.max, current: zoom }}
-        onChange={zoomTo}
-      /> */}
+      <Zoom value={zoom} bounds={zoomBounds} onChange={zoomTo} />
     </>
   );
 }
