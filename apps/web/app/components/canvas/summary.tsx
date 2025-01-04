@@ -1,0 +1,18 @@
+import { CanvasConstants } from "@retro/common";
+import { useRef } from "react";
+
+export default function SummarySection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div
+      key={`intro-section`}
+      ref={sectionRef}
+      className="shrink-0 rounded-2xl border border-dashed border-[#00000029]"
+      style={{
+        width: 822,
+        height: CanvasConstants.SectionHeight,
+      }}
+    ></div>
+  );
+}

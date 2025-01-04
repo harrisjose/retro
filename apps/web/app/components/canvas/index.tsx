@@ -5,7 +5,9 @@ import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasInsertionHandler } from "./canvas-insertion-handler";
+import IntroSection from "./intro";
 import SectionRenderer from "./section";
+import SummarySection from "./summary";
 import Zoom from "./zoom";
 
 export default function Canvas() {
@@ -89,7 +91,7 @@ export default function Canvas() {
       <div
         ref={canvasRootRef}
         id="canvas-root"
-        className="absolute top-0 left-0 w-full h-full z-0 touch-none flex items-center justify-start bg-[#FAF8F6]"
+        className="absolute top-0 left-0 w-full h-full z-0 touch-none flex items-center justify-start bg-[#F5F5F5]"
       >
         <div
           id="canvas-scale-wrapper"
@@ -104,10 +106,12 @@ export default function Canvas() {
           }}
           className={cn("flex w-fit overflow-visible absolute")}
         >
+          <IntroSection />
           {Object.keys(sections).map((sectionId) => (
             <SectionRenderer key={sectionId} id={sectionId} />
           ))}
           <BlocksRenderer />
+          <SummarySection />
         </div>
       </div>
       <CanvasInsertionHandler />

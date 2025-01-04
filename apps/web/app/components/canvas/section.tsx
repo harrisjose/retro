@@ -9,7 +9,7 @@ export default function SectionRenderer({ id }: { id: string }) {
     <div
       key={id}
       ref={sectionRef}
-      className="shrink-0 bg-white rounded-lg"
+      className="shrink-0 bg-white rounded-2xl border border-[#0000000F]"
       style={{
         width: section.width,
         height: section.height,
