@@ -15,7 +15,7 @@ export const DocumentTimerWrapper = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-center gap-1 cursor-pointer">
           <TimerSvg />
 
           {status === "active" || status === "paused" ? (

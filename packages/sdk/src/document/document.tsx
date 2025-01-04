@@ -26,11 +26,12 @@ import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import type {
-  Awareness,
-  Collaborator,
-  Document,
-  DocumentState,
+import {
+  MusicStatus,
+  type Awareness,
+  type Collaborator,
+  type Document,
+  type DocumentState,
 } from "./types.js";
 
 export const DocContext = createContext<DocumentState>({} as any);

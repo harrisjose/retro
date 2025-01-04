@@ -5,6 +5,7 @@ import {
   useSectionMap,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
+import { DocumentMusic } from "../music";
 import { DocumentTimerWrapper } from "../timer";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
 
@@ -19,6 +20,8 @@ export default function Topbar() {
         <TimerProvider documentId={documentId}>
           <DocumentTimerWrapper />
         </TimerProvider>
+        <div className="h-full w-[2px] bg-[#000000]/20"></div>
+        <DocumentMusic />
       </div>
 
       <div className="flex gap-2 justify-center items-center">

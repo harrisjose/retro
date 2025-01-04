@@ -19,7 +19,6 @@ const documentMusicRouter = router({
           .selectFrom("documentMusic")
           .select(["documentId", "musicId", "status"])
           .where("documentId", "=", dbUtil.asUuid(input.documentId))
-          .where("status", "=", "active")
           .limit(1)
           .executeTakeFirst();
 
@@ -30,7 +29,7 @@ const documentMusicRouter = router({
       }
     }),
 
-  create: publicProcedure
+  start: publicProcedure
     .input(
       z.object({
         documentId: z.string(),
