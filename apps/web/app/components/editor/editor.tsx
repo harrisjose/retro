@@ -33,7 +33,7 @@ export function MemoProsemirrorEditor({
           "prose-code:text-xs prose-code:!tracking-tight",
           // list fixes
           "[&>.prosemirror-flat-list]:!ml-4",
-          "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2"
+          "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
         )}
       />
     </ProseMirror>

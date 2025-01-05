@@ -83,7 +83,7 @@ export default function Canvas() {
       wheel: {
         from: () => [position.x, position.y],
       },
-    }
+    },
   );
 
   return (

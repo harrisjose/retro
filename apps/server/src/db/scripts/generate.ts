@@ -8,7 +8,7 @@ try {
     `kysely-codegen --dialect postgres --runtime-enums --url "${connectionString}" --out-file ./src/db/types.ts`,
     {
       stdio: "inherit",
-    }
+    },
   );
 } catch (error) {
   console.error("Failed to generate types:", error);

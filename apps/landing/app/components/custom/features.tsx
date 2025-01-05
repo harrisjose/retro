@@ -60,7 +60,7 @@ export function Features() {
         </h2>
         <h3
           className={cn(
-            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2"
+            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2",
           )}
         >
           Helping teams reflect, align, and move forward with confidence.

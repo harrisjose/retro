@@ -71,7 +71,7 @@ export const CanvasInsertionHandler = () => {
         },
         {
           stickerType: blockToInsert.properties.stickerType,
-        }
+        },
       );
     } else if (blockToInsert.type === BlockType.Card) {
       const cardId = random.uuidv4();
@@ -89,7 +89,7 @@ export const CanvasInsertionHandler = () => {
         {
           color: blockToInsert.properties.color,
           content: raw(new Y.XmlFragment()),
-        }
+        },
       );
     }
 

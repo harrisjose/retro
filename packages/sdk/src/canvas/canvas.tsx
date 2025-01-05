@@ -37,7 +37,7 @@ export const CanvasProvider = ({
         width: window.innerWidth,
         height: window.innerHeight,
       },
-    })
+    }),
   ).current;
 
   const isReady = useReadyStatus();
@@ -47,7 +47,7 @@ export const CanvasProvider = ({
     console.log("camera init");
     updateProxyState(
       state.camera.position,
-      computeInitialPosition(state.camera.scale, sections)
+      computeInitialPosition(state.camera.scale, sections),
     );
   }, [isReady]);
 

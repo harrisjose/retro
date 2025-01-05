@@ -45,7 +45,7 @@ const subscribeToTimer = (state: TimerState) => {
         const timer = ((data as any) ?? {}) as Timer;
         setTimer(state, timer);
       },
-    }
+    },
   );
   return () => subscription.unsubscribe();
 };
@@ -70,7 +70,7 @@ export const TimerProvider = ({
         endTime: null,
         pausedAt: null,
       },
-    })
+    }),
   ).current;
 
   useDocumentTimerSync(state);
@@ -88,7 +88,7 @@ export const useDocumentTimer = () => {
 
   if (!documentId) {
     throw new Error(
-      "Document ID is required. Please wrap your component in a TimerProvider."
+      "Document ID is required. Please wrap your component in a TimerProvider.",
     );
   }
 

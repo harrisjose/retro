@@ -6,17 +6,17 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("workspace")
     .addColumn("id", "uuid", (col) =>
-      col.primaryKey().defaultTo(sql`gen_random_uuid()`)
+      col.primaryKey().defaultTo(sql`gen_random_uuid()`),
     )
     .addColumn("name", "text", (col) => col.notNull())
     .addColumn("createdBy", "text", (col) =>
-      col.references("user.id").onUpdate("cascade").notNull()
+      col.references("user.id").onUpdate("cascade").notNull(),
     )
     .addColumn("createdAt", "timestamp", (col) =>
-      col.notNull().defaultTo(sql`now()`)
+      col.notNull().defaultTo(sql`now()`),
     )
     .addColumn("updatedAt", "timestamp", (col) =>
-      col.notNull().defaultTo(sql`now()`)
+      col.notNull().defaultTo(sql`now()`),
     )
     .addColumn("deletedAt", "timestamp")
     .execute();
@@ -29,20 +29,20 @@ export async function up(db: Kysely<any>): Promise<void> {
         .references("workspace.id")
         .onUpdate("cascade")
         .onDelete("cascade")
-        .notNull()
+        .notNull(),
     )
     .addColumn("userId", "text", (col) =>
       col
         .references("user.id")
         .onUpdate("cascade")
         .onDelete("cascade")
-        .notNull()
+        .notNull(),
     )
     .addColumn("createdAt", "timestamp", (col) =>
-      col.notNull().defaultTo(sql`now()`)
+      col.notNull().defaultTo(sql`now()`),
     )
     .addColumn("updatedAt", "timestamp", (col) =>
-      col.notNull().defaultTo(sql`now()`)
+      col.notNull().defaultTo(sql`now()`),
     )
     .addPrimaryKeyConstraint("workspaceUserPk", ["workspaceId", "userId"])
     .execute();

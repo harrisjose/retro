@@ -15,5 +15,5 @@ withCollab(
   {
     app,
     baseUrl: `http://localhost:${config.api.port}`,
-  }
+  },
 );

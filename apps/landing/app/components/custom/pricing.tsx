@@ -11,7 +11,7 @@ function PricingCard({
       className={cn(
         "relative w-full h-[480px] p-8 rounded-[28px] flex flex-col gap-8",
         "border border-[#00000014]",
-        className
+        className,
       )}
     >
       {children}
@@ -79,7 +79,7 @@ function CustomPlan() {
           "absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2",
           "w-20 rotate-[-35deg]",
           "transition-[transform] duration-300 ease-out",
-          "group-hover/customplan:scale-105 group-hover/customplan:rotate-[-30deg]"
+          "group-hover/customplan:scale-105 group-hover/customplan:rotate-[-30deg]",
         )}
       />
     </PricingCard>
@@ -98,7 +98,7 @@ export function Pricing() {
         </h2>
         <h3
           className={cn(
-            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2"
+            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2",
           )}
         >
           Start free, scale effortlessly, and save with tailored plans for your

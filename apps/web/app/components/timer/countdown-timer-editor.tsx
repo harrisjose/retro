@@ -75,7 +75,7 @@ const CountdownTimerEditor = () => {
 
     const updateTimerDisplay = (totalSeconds: number) => {
       minutesRef.current!.value = formatTimer(
-        Math.floor(totalSeconds / 60).toString()
+        Math.floor(totalSeconds / 60).toString(),
       );
       secondsRef.current!.value = formatTimer((totalSeconds % 60).toString());
     };
@@ -89,7 +89,7 @@ const CountdownTimerEditor = () => {
     const end = new Date(endTime!);
     const totalSeconds = Math.max(
       0,
-      Math.floor((end.getTime() - currentTime.getTime()) / 1000)
+      Math.floor((end.getTime() - currentTime.getTime()) / 1000),
     );
 
     updateTimerDisplay(totalSeconds);
@@ -101,7 +101,7 @@ const CountdownTimerEditor = () => {
       const end = new Date(endTime!);
       const totalSeconds = Math.max(
         0,
-        Math.floor((end.getTime() - currentTime.getTime()) / 1000)
+        Math.floor((end.getTime() - currentTime.getTime()) / 1000),
       );
 
       if (totalSeconds <= 0) {
@@ -119,7 +119,7 @@ const CountdownTimerEditor = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    isMinutes: boolean
+    isMinutes: boolean,
   ) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 2);
     const minutesInput = minutesRef.current;
@@ -143,7 +143,7 @@ const CountdownTimerEditor = () => {
           const remainingSeconds = numValue % 60;
           const newMinutes = Math.min(
             99,
-            (parseInt(minutesInput.value) || 0) + extraMinutes
+            (parseInt(minutesInput.value) || 0) + extraMinutes,
           )
             .toString()
             .padStart(2, "0");
@@ -165,7 +165,7 @@ const CountdownTimerEditor = () => {
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    isMinutes: boolean
+    isMinutes: boolean,
   ) => {
     const input = e.target as HTMLInputElement;
     const isAtEnd = input.selectionStart === input.value.length;
@@ -206,7 +206,7 @@ const CountdownTimerEditor = () => {
     } else if (minutesRef.current) {
       const newMinutes = (parseInt(minutesRef.current.value) || 0) + 1;
       minutesRef.current.value = formatTimer(
-        Math.min(99, newMinutes).toString()
+        Math.min(99, newMinutes).toString(),
       );
     }
   };
@@ -217,7 +217,7 @@ const CountdownTimerEditor = () => {
     } else if (minutesRef.current) {
       const newMinutes = (parseInt(minutesRef.current.value) || 0) - 1;
       minutesRef.current.value = formatTimer(
-        Math.max(0, newMinutes).toString()
+        Math.max(0, newMinutes).toString(),
       );
     }
   };

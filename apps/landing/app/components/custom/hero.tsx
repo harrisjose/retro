@@ -7,14 +7,14 @@ export function Hero() {
       <hgroup className="flex flex-col items-center gap-4 text-pretty text-center">
         <h1
           className={cn(
-            "font-[900] text-[64px] leading-[68px] tracking-[-0.02em]"
+            "font-[900] text-[64px] leading-[68px] tracking-[-0.02em]",
           )}
         >
           Run Engaging Retros That Bring Teams Together
         </h1>
         <h3
           className={cn(
-            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2"
+            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2",
           )}
         >
           Helping teams reflect, align, and move forward with confidence.
@@ -27,7 +27,7 @@ export function Hero() {
       </div>
       <h3
         className={cn(
-          "text-[14px] leading-[16px] tracking-[-0.02em] opacity-50 -mt-3"
+          "text-[14px] leading-[16px] tracking-[-0.02em] opacity-50 -mt-3",
         )}
       >
         No credit card required!
@@ -38,7 +38,7 @@ export function Hero() {
           aria-hidden="true"
           className={cn(
             "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-none w-auto h-auto",
-            "transition-[transform] duration-300 ease-out"
+            "transition-[transform] duration-300 ease-out",
           )}
         />
       </div>

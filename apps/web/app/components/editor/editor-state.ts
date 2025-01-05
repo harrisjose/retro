@@ -41,7 +41,7 @@ export function createCardEditorState(fragment: Y.XmlFragment) {
 export function useEditorState(fragment: Y.XmlFragment) {
   // useState initializer is only called once so future fragment changes do not matter
   const [editorState, setPmState] = useState(() =>
-    createCardEditorState(fragment)
+    createCardEditorState(fragment),
   );
 
   const dispatch = useCallback(
@@ -50,7 +50,7 @@ export function useEditorState(fragment: Y.XmlFragment) {
       setPmState(result.state);
       return result;
     },
-    [editorState]
+    [editorState],
   );
 
   return { editorState, dispatch };

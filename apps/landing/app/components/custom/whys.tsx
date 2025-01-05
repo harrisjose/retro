@@ -35,13 +35,13 @@ const whys = [
 
 export function Whys() {
   return (
-    <section className='grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 max-w-screen-mmax mx-auto'>
+    <section className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 max-w-screen-mmax mx-auto">
       {whys.map((why) => (
-        <Card className='border-0 bg-background' key={why.title}>
+        <Card className="border-0 bg-background" key={why.title}>
           <CardHeader>
             <why.icon />
           </CardHeader>
-          <CardTitle className='pt-4 pb-2'>{why.title}</CardTitle>
+          <CardTitle className="pt-4 pb-2">{why.title}</CardTitle>
           <CardDescription>{why.description}</CardDescription>
         </Card>
       ))}

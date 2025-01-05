@@ -9,7 +9,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .references("document.id")
         .onUpdate("cascade")
         .onDelete("cascade")
-        .notNull()
+        .notNull(),
     )
     .addColumn("startTime", "timestamp", (col) => col.notNull())
     .addColumn("endTime", "timestamp", (col) => col.notNull())

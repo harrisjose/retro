@@ -9,14 +9,14 @@ export function Footer() {
       className={cn(
         "w-full max-w-screen-mmax mx-auto",
         "grow flex items-center justify-between gap-6 py-6",
-        "border-t border-[#0000000F]"
+        "border-t border-[#0000000F]",
       )}
     >
       <div className="flex items-center gap-2">
         <span
           className={cn(
             "flex h-6  items-center justify-center rounded-md",
-            " text-primary-foreground"
+            " text-primary-foreground",
           )}
         >
           <BaloonOutlineSvg />

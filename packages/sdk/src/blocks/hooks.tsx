@@ -68,7 +68,7 @@ export const useBlockProperties = (blockId: string) => {
 
 export const useRawBlockProperty = <T extends any>(
   blockId: string,
-  propertyName: string
+  propertyName: string,
 ) => {
   const yDoc = useYDoc();
   const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;

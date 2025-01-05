@@ -15,7 +15,7 @@ const mac =
 
 export function buildKeymap(
   schema: CardSchemaType,
-  mapKeys?: { [key: string]: false | string }
+  mapKeys?: { [key: string]: false | string },
 ) {
   let keys: { [key: string]: Command } = {},
     type;

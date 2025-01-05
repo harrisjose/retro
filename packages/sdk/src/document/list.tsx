@@ -33,7 +33,7 @@ export const DocumentListProvider = ({ children }: React.PropsWithChildren) => {
       loading: false,
       error: null,
       filter: DocumentListFilter.ACTIVE,
-    })
+    }),
   ).current;
 
   // Call all subscriptions here

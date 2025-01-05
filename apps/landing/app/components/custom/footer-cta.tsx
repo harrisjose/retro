@@ -8,13 +8,13 @@ export function FooterCta() {
       className={cn(
         "max-w-screen-mmax mx-auto w-full flex flex-col text-center",
         "text-white bg-black rounded-[28px] gap-2.5 p-8",
-        "group/footercta"
+        "group/footercta",
       )}
     >
       <span
         className={cn(
           "transition-transform duration-500",
-          "group-hover/footercta:rotate-[360deg]"
+          "group-hover/footercta:rotate-[360deg]",
         )}
       >
         ✦

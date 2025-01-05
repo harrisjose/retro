@@ -48,7 +48,7 @@ app.on(
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
   }),
-  (c) => auth.handler(c.req.raw)
+  (c) => auth.handler(c.req.raw),
 );
 
 app.use(
@@ -57,7 +57,7 @@ app.use(
   trpcServer({
     router: appRouter,
     createContext: createHonoTrpcContext,
-  })
+  }),
 );
 
 app.get("/collab", cors(corsOptions), collabHandler);

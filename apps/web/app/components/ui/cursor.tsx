@@ -33,10 +33,10 @@ export function Cursor({
   onPositionChange,
 }: CursorProps) {
   const cursorX = useMotionValue(
-    typeof window !== "undefined" ? window.innerWidth / 2 : 0
+    typeof window !== "undefined" ? window.innerWidth / 2 : 0,
   );
   const cursorY = useMotionValue(
-    typeof window !== "undefined" ? window.innerHeight / 2 : 0
+    typeof window !== "undefined" ? window.innerHeight / 2 : 0,
   );
   const cursorRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(!attachToParent);

@@ -19,7 +19,7 @@ export function FAQ() {
         </h2>
         <h3
           className={cn(
-            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2"
+            "text-[24px] leading-[28px] tracking-[-0.02em] opacity-70 mt-2",
           )}
         >
           Helping teams reflect, align, and move forward with confidence.
@@ -34,7 +34,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes! You can try Mellow free for 60 days, no credit card required.
@@ -49,7 +49,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             You can reach us at support@mellow.team or through the in-app chat
@@ -65,7 +65,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes, Mellow integrates with Slack, Microsoft Teams, and other
@@ -81,7 +81,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes! You can try Mellow free for 60 days, no credit card required.
@@ -96,7 +96,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             You can reach us at support@mellow.team or through the in-app chat
@@ -112,7 +112,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes, Mellow integrates with Slack, Microsoft Teams, and other
@@ -128,7 +128,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes, Mellow integrates with Slack, Microsoft Teams, and other
@@ -144,7 +144,7 @@ export function FAQ() {
           </AccordionTrigger>
           <AccordionContent
             className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]"
+              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
             Yes, Mellow integrates with Slack, Microsoft Teams, and other

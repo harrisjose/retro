@@ -10,7 +10,7 @@ export const bindProxyToKVRef = <
   R extends TypedKV<any>,
 >(
   proxy: any,
-  ref: T
+  ref: T,
 ) => {
   const yKV = new YKeyValue(ref) as R;
   const serialized = toSerialized(yKV);
@@ -28,7 +28,7 @@ export const bindProxyToKVRef = <
 
 export const bindProxyToRef = <T extends Y.AbstractType<any>>(
   proxy: any,
-  ref: T
+  ref: T,
 ) => {
   const properties = toSerialized(ref);
   updateProxyState(proxy, properties);
@@ -49,7 +49,7 @@ export const observeKeysInMapRef = <
   ref: T,
   current: Record<string, any>,
   onAdd: (key: string, value: U) => void,
-  onRemove: (key: string) => void
+  onRemove: (key: string) => void,
 ) => {
   ref.observeDeep((events) => {
     events.forEach((event) => {
@@ -59,7 +59,7 @@ export const observeKeysInMapRef = <
 
       removedKeys.forEach((key) => onRemove(key));
       newKeys.forEach((key) =>
-        onAdd(key, (event.currentTarget as T).get(key) as U)
+        onAdd(key, (event.currentTarget as T).get(key) as U),
       );
     });
   });

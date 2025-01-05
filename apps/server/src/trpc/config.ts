@@ -11,7 +11,7 @@ export type HonoTrpcContext = {
 };
 
 export const createHonoTrpcContext = async (
-  c: FetchCreateContextFnOptions
+  c: FetchCreateContextFnOptions,
 ): Promise<HonoTrpcContext> => {
   try {
     const session = await auth.api.getSession({

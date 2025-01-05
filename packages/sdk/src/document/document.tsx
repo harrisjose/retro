@@ -81,7 +81,7 @@ const usePresenceSync = (state: DocumentState) => {
           .map((s) => s.user)
           .filter((u) => !isNil(u));
         state.presence.collaborators = uniqBy(collaborators, "id");
-      }
+      },
     );
   }, []);
 };
@@ -105,7 +105,7 @@ const useYDocSync = (state: DocumentState) => {
       },
       (key) => {
         delete state.sections[key];
-      }
+      },
     );
     //
     const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
@@ -123,7 +123,7 @@ const useYDocSync = (state: DocumentState) => {
       },
       (key) => {
         delete state.blocks[key];
-      }
+      },
     );
     //
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
@@ -141,7 +141,7 @@ const useYDocSync = (state: DocumentState) => {
       },
       (key) => {
         delete state.properties[key];
-      }
+      },
     );
 
     state.isReady = true;
@@ -178,13 +178,13 @@ export const DocProvider = ({
           name: docId,
           url: config.collabUrl,
           document: initialData.yDoc,
-        })
+        }),
       ),
       presence: {
         collaborators: [],
       },
       isReady: false,
-    })
+    }),
   ).current;
 
   useDocumentSync(state);

@@ -88,12 +88,12 @@ export const collabHandler = async (c: Context, next: Next) => {
 
 export function withCollab<T extends Server | Http2Server | Http2SecureServer>(
   server: T,
-  config: { app: Hono<{ Bindings: HttpBindings }>; baseUrl: string }
+  config: { app: Hono<{ Bindings: HttpBindings }>; baseUrl: string },
 ): T {
   server.on("upgrade", async (request, socket, head) => {
     const url = new URL(
       request.url ?? "/",
-      config.baseUrl ?? "http://localhost"
+      config.baseUrl ?? "http://localhost",
     );
     const headers = new Headers();
     for (const key in request.headers) {
@@ -106,7 +106,7 @@ export function withCollab<T extends Server | Http2Server | Http2SecureServer>(
     await config.app.request(
       url,
       { headers: headers },
-      { incoming: request, outgoing: undefined }
+      { incoming: request, outgoing: undefined },
     );
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit("connection", ws, request);

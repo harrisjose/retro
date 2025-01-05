@@ -63,7 +63,7 @@ export type InferSerialized<YType> = YType extends
     : YType;
 
 function fromSerializedMap<YType extends TypedMap<any>>(
-  value: InferSerialized<YType>
+  value: InferSerialized<YType>,
 ): YType {
   const map = new Y.Map() as YType;
   if (value == null) return map;
@@ -74,7 +74,7 @@ function fromSerializedMap<YType extends TypedMap<any>>(
 }
 
 function fromSerializedArray<YType extends Y.Array<any>>(
-  value: InferSerialized<YType>
+  value: InferSerialized<YType>,
 ): YType {
   const array = new Y.Array() as YType;
   const first = value[0];
@@ -145,7 +145,7 @@ export function toSerialized<T>(value: T): InferSerialized<T> {
     return value.toJSON() as InferSerialized<T>;
   } else if (value instanceof YKeyValue) {
     return Object.fromEntries(
-      value.yarray.toArray().map(({ key, val }) => [key, val])
+      value.yarray.toArray().map(({ key, val }) => [key, val]),
     ) as InferSerialized<T>;
   } else {
     // For non-Yjs types, simply return the value
@@ -167,7 +167,7 @@ export function toCloned<T>(value: T): T {
         acc[key] = toCloned(value[key]);
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
   } else {
     return value as T;

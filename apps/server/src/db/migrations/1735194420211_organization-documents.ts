@@ -5,7 +5,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .alterTable("document")
     .dropColumn("workspaceId")
     .addColumn("organizationId", "text", (col) =>
-      col.notNull().references("organization.id")
+      col.notNull().references("organization.id"),
     )
     .execute();
 

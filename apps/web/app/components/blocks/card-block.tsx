@@ -39,7 +39,7 @@ export default function CardBlock({ id }: { id: string }) {
         className={cn(
           "overflow-y-scroll overflow-x-clip py-4 px-2 ",
           // take full height at min height so click anywhere to focus
-          "w-full h-full grow flex flex-col"
+          "w-full h-full grow flex flex-col",
         )}
         style={{ overflowAnchor: "none" }}
       >

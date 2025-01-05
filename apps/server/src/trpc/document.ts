@@ -9,7 +9,7 @@ const documentRouter = router({
       z.object({
         organizationId: z.string(),
         filter: z.nativeEnum(DocumentListFilter),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -32,10 +32,10 @@ const documentRouter = router({
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .$if(input.filter === DocumentListFilter.ACTIVE, (b) =>
-            b.where("endDate", ">=", now)
+            b.where("endDate", ">=", now),
           )
           .$if(input.filter === DocumentListFilter.PAST, (b) =>
-            b.where("endDate", "<", now)
+            b.where("endDate", "<", now),
           )
           .orderBy("createdAt", "desc")
           .limit(20)
@@ -51,7 +51,7 @@ const documentRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -78,7 +78,7 @@ const documentRouter = router({
         organizationId: z.string(),
         startDate: z.string(),
         endDate: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
