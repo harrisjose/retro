@@ -1,13 +1,14 @@
 import { useDocumentTimer } from "@retro/sdk";
 import { useEffect, useMemo, useState } from "react";
-import useSound from "use-sound";
+
 import timerCompleteSfx from "../../../assets/timer-complete.mp3";
 
 export const CountdownTimer = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
 
   const { endTime, pausedAt, status, resetTimer } = useDocumentTimer();
-  const [playTimerCompleteSound] = useSound(timerCompleteSfx);
+
+  const timerCompleteAudio = new Audio(timerCompleteSfx);
 
   useEffect(() => {
     if (status === "inactive") {
@@ -32,7 +33,8 @@ export const CountdownTimer = () => {
           clearInterval(interval);
           setTimeout(() => {
             resetTimer();
-            playTimerCompleteSound();
+            timerCompleteAudio.play();
+            // TODO - stop music when timer ends
           }, 1000);
           return 0;
         }

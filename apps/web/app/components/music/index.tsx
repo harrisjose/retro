@@ -1,5 +1,4 @@
 import { DEFAULT_MUSIC_ID, MusicStatus, useDocumentMusic } from "@retro/sdk";
-import useSound from "use-sound";
 import MusicSvg from "../svg/music.svg?react";
 import PauseSvg from "../svg/pause.svg?react";
 import PlaySvg from "../svg/play.svg?react";
@@ -11,27 +10,28 @@ export const DocumentMusic = () => {
   const { status, startMusic, stopMusic } = useDocumentMusic();
   const [isMusicLoaded, setIsMusicLoaded] = useState(false);
 
-  const [play, { stop }] = useSound(acousticGuitarSfx, {
-    volume: 0.2,
-    loop: true,
-    interrupt: true,
-
-    onload: () => {
-      setIsMusicLoaded(true);
-    },
-  });
+  const audio = new Audio(acousticGuitarSfx);
 
   useEffect(() => {
+    audio.addEventListener("canplaythrough", () => {
+      setIsMusicLoaded(true);
+    });
+
     if (isMusicLoaded) {
       if (status === MusicStatus.Active) {
-        console.log("music is active");
-        play();
+        audio.loop = true;
+        audio.play();
       } else {
-        console.log("music is not active");
-        stop();
+        audio.pause();
       }
     }
-  }, [status, play, stop, isMusicLoaded]);
+
+    return () => {
+      audio.removeEventListener("canplaythrough", () => {
+        setIsMusicLoaded(true);
+      });
+    };
+  }, [status, isMusicLoaded]);
 
   return (
     <div className="flex items-center justify-center gap-[2px] pr-1">
