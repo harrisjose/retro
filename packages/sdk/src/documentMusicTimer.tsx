@@ -9,27 +9,43 @@ export type Timer = {
   pausedAt: string | null;
 };
 
-export type TimerState = {
-  documentId: string | null;
-  timer: Timer;
+export enum MusicStatus {
+  Active = "active",
+  Inactive = "inactive",
+}
+
+export type Music = {
+  musicId: string | null;
+  status: MusicStatus;
 };
 
-export const TimerContext = createContext<TimerState>({} as any);
+export type MusicTimerState = {
+  documentId: string | null;
+  timer: Timer;
+  music: Music;
+};
 
-const resetTimer = (state: TimerState) => {
+export const MusicTimerContext = createContext<MusicTimerState>({} as any);
+
+const resetTimer = (state: MusicTimerState) => {
   state.timer.startTime = null;
   state.timer.endTime = null;
   state.timer.pausedAt = null;
 };
 
-const setTimer = (state: TimerState, timer: Timer | null | undefined) => {
+const setTimer = (state: MusicTimerState, timer: Timer | null | undefined) => {
   // Timer could be null/undefined if the timer was stopped
   state.timer.startTime = timer?.startTime ?? null;
   state.timer.endTime = timer?.endTime ?? null;
   state.timer.pausedAt = timer?.pausedAt ?? null;
 };
 
-const fetchDocumentTimer = async (state: TimerState) => {
+const setMusic = (state: MusicTimerState, music: Music | null | undefined) => {
+  state.music.musicId = music?.musicId ?? null;
+  state.music.status = (music?.status as MusicStatus) ?? MusicStatus.Inactive;
+};
+
+const fetchDocumentTimer = async (state: MusicTimerState) => {
   const timer = await apiClient.documentTimer.get.query({
     documentId: state.documentId!,
   });
@@ -37,7 +53,15 @@ const fetchDocumentTimer = async (state: TimerState) => {
   setTimer(state, timer);
 };
 
-const subscribeToTimer = (state: TimerState) => {
+const fetchDocumentMusic = async (state: MusicTimerState) => {
+  const music = await apiClient.documentMusic.get.query({
+    documentId: state.documentId!,
+  });
+
+  setMusic(state, music);
+};
+
+const subscribeToTimer = (state: MusicTimerState) => {
   const subscription = apiClient.documentTimer.onTimerChange.subscribe(
     { documentId: state.documentId! },
     {
@@ -45,12 +69,25 @@ const subscribeToTimer = (state: TimerState) => {
         const timer = ((data as any) ?? {}) as Timer;
         setTimer(state, timer);
       },
-    },
+    }
   );
   return () => subscription.unsubscribe();
 };
 
-const useDocumentTimerSync = (state: TimerState) => {
+const subscribeToMusic = (state: MusicTimerState) => {
+  const subscription = apiClient.documentMusic.onMusicChange.subscribe(
+    { documentId: state.documentId! },
+    {
+      onData: (data) => {
+        const music = ((data as any) ?? {}) as Music;
+        setMusic(state, music);
+      },
+    }
+  );
+  return () => subscription.unsubscribe();
+};
+
+const useDocumentTimerSync = (state: MusicTimerState) => {
   useEffect(() => {
     fetchDocumentTimer(state);
     const unsubscribe = subscribeToTimer(state);
@@ -58,7 +95,15 @@ const useDocumentTimerSync = (state: TimerState) => {
   }, []);
 };
 
-export const TimerProvider = ({
+const useDocumentMusicSync = (state: MusicTimerState) => {
+  useEffect(() => {
+    fetchDocumentMusic(state);
+    const unsubscribe = subscribeToMusic(state);
+    return () => unsubscribe();
+  }, []);
+};
+
+export const MusicTimerProvider = ({
   documentId,
   children,
 }: React.PropsWithChildren<{ documentId: string }>) => {
@@ -70,25 +115,31 @@ export const TimerProvider = ({
         endTime: null,
         pausedAt: null,
       },
-    }),
+      music: {
+        musicId: null,
+        status: MusicStatus.Inactive,
+      },
+    })
   ).current;
 
   useDocumentTimerSync(state);
-
+  useDocumentMusicSync(state);
   return (
-    <TimerContext.Provider value={state}>{children}</TimerContext.Provider>
+    <MusicTimerContext.Provider value={state}>
+      {children}
+    </MusicTimerContext.Provider>
   );
 };
 
 export const useDocumentTimer = () => {
-  const state = useContext(TimerContext);
+  const state = useContext(MusicTimerContext);
   const snap = useSnapshot(state);
   const timer = snap.timer;
   const documentId = snap.documentId;
 
   if (!documentId) {
     throw new Error(
-      "Document ID is required. Please wrap your component in a TimerProvider.",
+      "Document ID is required. Please wrap your component in a TimerProvider."
     );
   }
 
@@ -153,5 +204,32 @@ export const useDocumentTimer = () => {
     decrementTimer,
     resetTimer: () => resetTimer(state),
     status,
+  };
+};
+
+export const useDocumentMusic = () => {
+  const state = useContext(MusicTimerContext);
+  const snap = useSnapshot(state);
+  const music = snap.music;
+  const documentId = snap.documentId!;
+
+  const startMusic = async (musicId: string) => {
+    await apiClient.documentMusic.start.mutate({
+      documentId,
+      musicId,
+    });
+  };
+
+  const stopMusic = async () => {
+    await apiClient.documentMusic.stop.mutate({
+      documentId,
+    });
+  };
+
+  return {
+    musicId: music.musicId,
+    status: music.status,
+    startMusic,
+    stopMusic,
   };
 };

@@ -27,7 +27,6 @@ import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
 import {
-  MusicStatus,
   type Awareness,
   type Collaborator,
   type Document,

@@ -1,7 +1,7 @@
 import { router } from "./config.js";
+import documentMusicRouter from "./document-music.js";
 import documentTimerRouter from "./document-timer.js";
 import documentRouter from "./document.js";
-import documentMusicRouter from "./documentMusic.js";
 
 export const appRouter = router({
   documents: documentRouter,
