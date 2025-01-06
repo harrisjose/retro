@@ -10,11 +10,11 @@ export async function up(db: Kysely<any>): Promise<void> {
         .references("document.id")
         .onUpdate("cascade")
         .onDelete("cascade")
-        .notNull()
+        .notNull(),
     )
     .addColumn("musicId", "text", (col) => col.notNull())
     .addColumn("status", "text", (col) =>
-      col.notNull().check(sql`status IN ('active', 'inactive')`)
+      col.notNull().check(sql`status IN ('active', 'inactive')`),
     )
     .execute();
 }

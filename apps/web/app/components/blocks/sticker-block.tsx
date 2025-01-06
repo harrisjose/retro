@@ -1,9 +1,9 @@
 import {
   StickerJsonMap,
+  type StickerProperties,
   StickerType,
   useBlock,
   useBlockProperties,
-  type StickerProperties,
 } from "@retro/sdk";
 import StickerRenderer from "../canvas/sticker-renderer";
 

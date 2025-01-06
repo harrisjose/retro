@@ -1,10 +1,10 @@
 import {
+  type Command,
   chainCommands,
   exitCode,
   selectParentNode,
   toggleMark,
   undoInputRule,
-  type Command,
 } from "@retro/pm";
 import type { CardSchemaType } from "./schema.js";
 

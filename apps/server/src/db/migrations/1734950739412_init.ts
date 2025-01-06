@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 // For more info, see: https://kysely.dev/docs/migrations
 

@@ -9,7 +9,7 @@ const documentMusicRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -36,7 +36,7 @@ const documentMusicRouter = router({
       z.object({
         documentId: z.string(),
         musicId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -55,7 +55,7 @@ const documentMusicRouter = router({
             oc.column("documentId").doUpdateSet({
               musicId: input.musicId,
               status: "active",
-            })
+            }),
           )
           .returningAll()
           .executeTakeFirstOrThrow();
@@ -77,7 +77,7 @@ const documentMusicRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
