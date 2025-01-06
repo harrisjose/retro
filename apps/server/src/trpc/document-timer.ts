@@ -1,32 +1,15 @@
-import EventEmitter, { on } from "events";
+import { TimerEvent } from "@retro/common";
 import { z } from "zod";
 import { db, dbUtil } from "../db/index.js";
-import type { DocumentTimer } from "../db/types.js";
 import { publicProcedure, router } from "./config.js";
-
-enum TimerEvent {
-  Start = "start",
-  Pause = "pause",
-  Resume = "resume",
-  Stop = "stop",
-  Increment = "increment",
-  Decrement = "decrement",
-}
-
-// Overrides the default EventEmitter to support the "*" wildcard
-const ee = new (class TimerEventEmitter extends EventEmitter {
-  emit(type: TimerEvent, ...args: any[]) {
-    super.emit("*", ...args);
-    return super.emit(type, ...args) || super.emit("", ...args);
-  }
-})();
+import { emitDocumentEvent } from "./document-events.js";
 
 const documentTimerRouter = router({
   get: publicProcedure
     .input(
       z.object({
         documentId: z.string(),
-      }),
+      })
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -51,27 +34,12 @@ const documentTimerRouter = router({
       }
     }),
 
-  onTimerChange: publicProcedure
-    .input(
-      z.object({
-        documentId: z.string(),
-      }),
-    )
-    .subscription(async function* ({ input, ctx, signal }) {
-      // Passing the AbortSignal from the request automatically
-      // cancels the event emitter when the request is aborted
-      const iterable = on(ee, "*", { signal });
-      for await (const [data] of iterable) {
-        yield data as DocumentTimer | null;
-      }
-    }),
-
   start: publicProcedure
     .input(
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number().positive(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -81,7 +49,7 @@ const documentTimerRouter = router({
 
         const startTime = new Date();
         const endTime = new Date(
-          startTime.getTime() + input.numberOfSeconds * 1000,
+          startTime.getTime() + input.numberOfSeconds * 1000
         );
         const timer = await db
           .insertInto("documentTimer")
@@ -95,12 +63,16 @@ const documentTimerRouter = router({
             oc
               .column("documentId")
               .where("pausedAt", "is", null)
-              .doUpdateSet({ startTime, endTime, pausedAt: null }),
+              .doUpdateSet({ startTime, endTime, pausedAt: null })
           )
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Start, timer);
+        emitDocumentEvent(TimerEvent.Start, {
+          documentId: input.documentId,
+          event: TimerEvent.Start,
+          data: timer,
+        });
 
         return timer;
       } catch (error) {
@@ -112,7 +84,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -147,7 +119,12 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Pause, timer);
+        emitDocumentEvent(TimerEvent.Pause, {
+          documentId: input.documentId,
+          event: TimerEvent.Pause,
+          data: timer,
+        });
+
         return timer;
       } catch (error) {
         console.error(error);
@@ -158,7 +135,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -200,7 +177,11 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Resume, timer);
+        emitDocumentEvent(TimerEvent.Resume, {
+          documentId: input.documentId,
+          event: TimerEvent.Resume,
+          data: timer,
+        });
 
         return timer;
       } catch (error) {
@@ -212,7 +193,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -226,7 +207,11 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Stop, null);
+        emitDocumentEvent(TimerEvent.Stop, {
+          documentId: input.documentId,
+          event: TimerEvent.Stop,
+          data: null,
+        });
 
         return timer;
       } catch (error) {
@@ -239,7 +224,7 @@ const documentTimerRouter = router({
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -263,7 +248,7 @@ const documentTimerRouter = router({
         }
 
         const newEndTime = new Date(
-          existingTimer.endTime.getTime() + input.numberOfSeconds * 1000,
+          existingTimer.endTime.getTime() + input.numberOfSeconds * 1000
         );
 
         const timer = await db
@@ -275,7 +260,11 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Increment, timer);
+        emitDocumentEvent(TimerEvent.Increment, {
+          documentId: input.documentId,
+          event: TimerEvent.Increment,
+          data: timer,
+        });
 
         return timer;
       } catch (error) {
@@ -288,7 +277,7 @@ const documentTimerRouter = router({
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -312,7 +301,7 @@ const documentTimerRouter = router({
         }
 
         const newEndTime = new Date(
-          existingTimer.endTime.getTime() - input.numberOfSeconds * 1000,
+          existingTimer.endTime.getTime() - input.numberOfSeconds * 1000
         );
 
         if (newEndTime <= now) {
@@ -328,7 +317,11 @@ const documentTimerRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
-        ee.emit(TimerEvent.Decrement, timer);
+        emitDocumentEvent(TimerEvent.Decrement, {
+          documentId: input.documentId,
+          event: TimerEvent.Decrement,
+          data: timer,
+        });
 
         return timer;
       } catch (error) {

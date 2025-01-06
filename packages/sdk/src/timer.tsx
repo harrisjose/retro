@@ -1,3 +1,4 @@
+import { MusicEvent, TimerEvent } from "@retro/common";
 import { isNull } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
@@ -61,45 +62,34 @@ const fetchDocumentMusic = async (state: TimerState) => {
   setMusic(state, music as Music);
 };
 
-const subscribeToTimer = (state: TimerState) => {
-  const subscription = apiClient.documentTimer.onTimerChange.subscribe(
+const subscribeToTimerAndMusic = (state: TimerState) => {
+  // TODO @harris: Move this into an event emitter on the client that the root
+  // document provider pushes events into (since we can only have 1 subscription per page)
+  const subscription = apiClient.documentEvents.onDocumentEvent.subscribe(
     { documentId: state.documentId! },
     {
-      onData: (data) => {
-        const timer = ((data as any) ?? {}) as Timer;
-        setTimer(state, timer);
+      onData: (eventData) => {
+        if (Object.values(TimerEvent).includes(eventData.event as TimerEvent)) {
+          const timer = ((eventData.data as any) ?? {}) as Timer;
+          setTimer(state, timer);
+        } else if (
+          Object.values(MusicEvent).includes(eventData.event as MusicEvent)
+        ) {
+          const music = ((eventData.data as any) ?? {}) as Music;
+          setMusic(state, music);
+        }
       },
     }
   );
   return () => subscription.unsubscribe();
 };
 
-const subscribeToMusic = (state: TimerState) => {
-  const subscription = apiClient.documentMusic.onMusicChange.subscribe(
-    { documentId: state.documentId! },
-    {
-      onData: (data) => {
-        const music = data as Music;
-        console.log("music changed", music);
-        setMusic(state, music);
-      },
-    }
-  );
-  return () => subscription.unsubscribe();
-};
-
-const useDocumentTimerSync = (state: TimerState) => {
+const useSync = (state: TimerState) => {
   useEffect(() => {
     fetchDocumentTimer(state);
-    const unsubscribe = subscribeToTimer(state);
-    return () => unsubscribe();
-  }, []);
-};
-
-const useDocumentMusicSync = (state: TimerState) => {
-  useEffect(() => {
     fetchDocumentMusic(state);
-    const unsubscribe = subscribeToMusic(state);
+
+    const unsubscribe = subscribeToTimerAndMusic(state);
     return () => unsubscribe();
   }, []);
 };
@@ -123,13 +113,10 @@ export const TimerProvider = ({
     })
   ).current;
 
-  useDocumentTimerSync(state);
-  useDocumentMusicSync(state);
+  useSync(state);
 
   return (
-    <TimerContext.Provider value={state}>
-      {children}
-    </TimerContext.Provider>
+    <TimerContext.Provider value={state}>{children}</TimerContext.Provider>
   );
 };
 
