@@ -7,7 +7,7 @@ export { config };
 export * from "./blocks/index.js";
 export * from "./canvas/index.js";
 export * from "./document/index.js";
-export * from "./documentMusicTimer.js";
 export * from "./profile.js";
 export * from "./sections/index.js";
 export * from "./settings/index.js";
+export * from "./timer.js";

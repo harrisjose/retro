@@ -88,10 +88,12 @@ const documentMusicRouter = router({
           .returningAll()
           .executeTakeFirstOrThrow();
 
+        ee.emit(MusicEvent.Start, music);
+
         return music;
       } catch (error) {
         console.error(error);
-        throw new Error("Failed to create document music");
+        throw new Error("Failed to start document music");
       }
     }),
 
@@ -127,6 +129,8 @@ const documentMusicRouter = router({
           .where("status", "=", "active")
           .returningAll()
           .executeTakeFirstOrThrow();
+
+        ee.emit(MusicEvent.Stop, music);
 
         return music;
       } catch (error) {

@@ -3,33 +3,33 @@ import MusicSvg from "../svg/music.svg?react";
 import PauseSvg from "../svg/pause.svg?react";
 import PlaySvg from "../svg/play.svg?react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import acousticGuitarSfx from "../../../assets/acoustic_guitar.mp3";
 
 export const DocumentMusic = () => {
   const { status, startMusic, stopMusic } = useDocumentMusic();
   const [isMusicLoaded, setIsMusicLoaded] = useState(false);
 
-  const audio = new Audio(acousticGuitarSfx);
+  const audioRef = useRef<HTMLAudioElement>(new Audio(acousticGuitarSfx));
 
   useEffect(() => {
-    audio.addEventListener("canplaythrough", () => {
+    const onMusicLoaded = () => {
       setIsMusicLoaded(true);
-    });
+    };
+
+    audioRef.current.addEventListener("canplaythrough", onMusicLoaded);
 
     if (isMusicLoaded) {
       if (status === MusicStatus.Active) {
-        audio.loop = true;
-        audio.play();
+        audioRef.current.loop = true;
+        audioRef.current.play();
       } else {
-        audio.pause();
+        audioRef.current.pause();
       }
     }
 
     return () => {
-      audio.removeEventListener("canplaythrough", () => {
-        setIsMusicLoaded(true);
-      });
+      audioRef.current.removeEventListener("canplaythrough", onMusicLoaded);
     };
   }, [status, isMusicLoaded]);
 
