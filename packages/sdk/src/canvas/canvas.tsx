@@ -1,12 +1,12 @@
 import { updateProxyState } from "@retro/common";
 import { omit } from "lodash-es";
 import {
+  type PropsWithChildren,
   createContext,
   useContext,
   useEffect,
   useLayoutEffect,
   useRef,
-  type PropsWithChildren,
 } from "react";
 import { useReadyStatus } from "src/document/document.js";
 import { useSectionMap } from "src/sections/sections.js";

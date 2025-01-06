@@ -1,10 +1,10 @@
 import { cn } from "@retro/common";
 import {
   CardColor,
+  type CardProperties,
   useBlock,
   useBlockProperties,
   useRawBlockProperty,
-  type CardProperties,
 } from "@retro/sdk";
 import * as Y from "yjs";
 import { ProsemirrorEditor } from "../editor";

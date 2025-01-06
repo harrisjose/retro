@@ -9,7 +9,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -39,7 +39,7 @@ const documentTimerRouter = router({
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number().positive(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -49,7 +49,7 @@ const documentTimerRouter = router({
 
         const startTime = new Date();
         const endTime = new Date(
-          startTime.getTime() + input.numberOfSeconds * 1000
+          startTime.getTime() + input.numberOfSeconds * 1000,
         );
         const timer = await db
           .insertInto("documentTimer")
@@ -63,7 +63,7 @@ const documentTimerRouter = router({
             oc
               .column("documentId")
               .where("pausedAt", "is", null)
-              .doUpdateSet({ startTime, endTime, pausedAt: null })
+              .doUpdateSet({ startTime, endTime, pausedAt: null }),
           )
           .returningAll()
           .executeTakeFirstOrThrow();
@@ -84,7 +84,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -135,7 +135,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -193,7 +193,7 @@ const documentTimerRouter = router({
     .input(
       z.object({
         documentId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -224,7 +224,7 @@ const documentTimerRouter = router({
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -248,7 +248,7 @@ const documentTimerRouter = router({
         }
 
         const newEndTime = new Date(
-          existingTimer.endTime.getTime() + input.numberOfSeconds * 1000
+          existingTimer.endTime.getTime() + input.numberOfSeconds * 1000,
         );
 
         const timer = await db
@@ -277,7 +277,7 @@ const documentTimerRouter = router({
       z.object({
         documentId: z.string(),
         numberOfSeconds: z.number(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -301,7 +301,7 @@ const documentTimerRouter = router({
         }
 
         const newEndTime = new Date(
-          existingTimer.endTime.getTime() - input.numberOfSeconds * 1000
+          existingTimer.endTime.getTime() - input.numberOfSeconds * 1000,
         );
 
         if (newEndTime <= now) {

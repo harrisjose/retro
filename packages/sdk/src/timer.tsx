@@ -79,7 +79,7 @@ const subscribeToTimerAndMusic = (state: TimerState) => {
           setMusic(state, music);
         }
       },
-    }
+    },
   );
   return () => subscription.unsubscribe();
 };
@@ -110,7 +110,7 @@ export const TimerProvider = ({
         musicId: null,
         status: MusicStatus.Inactive,
       },
-    })
+    }),
   ).current;
 
   useSync(state);
@@ -128,7 +128,7 @@ export const useDocumentTimer = () => {
 
   if (!documentId) {
     throw new Error(
-      "Document ID is required. Please wrap your component in a TimerProvider."
+      "Document ID is required. Please wrap your component in a TimerProvider.",
     );
   }
 
@@ -204,7 +204,7 @@ export const useDocumentMusic = () => {
 
   if (!documentId) {
     throw new Error(
-      "Document ID is required. Please wrap your component in a TimerProvider."
+      "Document ID is required. Please wrap your component in a TimerProvider.",
     );
   }
 

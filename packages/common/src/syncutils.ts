@@ -3,7 +3,7 @@ import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
 import type { TypedArray, TypedMap } from "yjs-types";
 import { updateProxyState } from "./proxyutils.js";
-import { toSerialized, type TypedKV } from "./yutils.js";
+import { type TypedKV, toSerialized } from "./yutils.js";
 
 export const bindProxyToKVRef = <
   T extends TypedArray<any>,

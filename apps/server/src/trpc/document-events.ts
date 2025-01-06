@@ -1,5 +1,5 @@
-import type { DocumentEvent, DocumentEventData } from "@retro/common";
 import EventEmitter, { on } from "node:events";
+import type { DocumentEvent, DocumentEventData } from "@retro/common";
 import { z } from "zod";
 import { publicProcedure, router } from "./config.js";
 

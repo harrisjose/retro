@@ -1,4 +1,4 @@
-import { createListSpec, Schema, type MarkSpec } from "@retro/pm";
+import { type MarkSpec, Schema, createListSpec } from "@retro/pm";
 
 export const cardSchema = new Schema({
   nodes: {

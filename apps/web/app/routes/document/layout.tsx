@@ -1,4 +1,4 @@
-import { apiClient, config, DocProvider } from "@retro/sdk";
+import { DocProvider, apiClient, config } from "@retro/sdk";
 import { Outlet, useLoaderData, useParams } from "react-router";
 import * as Y from "yjs";
 import type { Route } from "./+types";
