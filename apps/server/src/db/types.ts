@@ -41,6 +41,12 @@ export interface Document {
   yDocUpdatedAt: Timestamp | null;
 }
 
+export interface DocumentMusic {
+  documentId: string;
+  musicId: string;
+  status: string;
+}
+
 export interface DocumentTimer {
   documentId: string;
   endTime: Timestamp;
@@ -109,6 +115,7 @@ export interface Verification {
 export interface DB {
   account: Account;
   document: Document;
+  documentMusic: DocumentMusic;
   documentTimer: DocumentTimer;
   invitation: Invitation;
   member: Member;

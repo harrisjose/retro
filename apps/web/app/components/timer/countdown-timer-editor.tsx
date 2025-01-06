@@ -64,7 +64,6 @@ const CountdownTimerEditor = () => {
     resumeTimer,
     stopTimer,
     pauseTimer,
-    resetTimer,
   } = useDocumentTimer();
 
   const minutesRef = useRef<HTMLInputElement>(null);
@@ -107,7 +106,6 @@ const CountdownTimerEditor = () => {
       if (totalSeconds <= 0) {
         clearInterval(interval);
         updateTimerDisplay(0);
-        setTimeout(() => resetTimer(), 2000);
         return;
       }
 
@@ -115,7 +113,7 @@ const CountdownTimerEditor = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [endTime, pausedAt, status, resetTimer]);
+  }, [endTime, pausedAt, status]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,

@@ -1,3 +1,4 @@
+import { MusicEvent, TimerEvent } from "@retro/common";
 import { isNull } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
@@ -9,9 +10,20 @@ export type Timer = {
   pausedAt: string | null;
 };
 
+export enum MusicStatus {
+  Active = "active",
+  Inactive = "inactive",
+}
+
+export type Music = {
+  musicId: string | null;
+  status: MusicStatus;
+};
+
 export type TimerState = {
   documentId: string | null;
   timer: Timer;
+  music: Music;
 };
 
 export const TimerContext = createContext<TimerState>({} as any);
@@ -29,6 +41,11 @@ const setTimer = (state: TimerState, timer: Timer | null | undefined) => {
   state.timer.pausedAt = timer?.pausedAt ?? null;
 };
 
+const setMusic = (state: TimerState, music: Music | null | undefined) => {
+  state.music.musicId = music?.musicId ?? null;
+  state.music.status = (music?.status as MusicStatus) ?? MusicStatus.Inactive;
+};
+
 const fetchDocumentTimer = async (state: TimerState) => {
   const timer = await apiClient.documentTimer.get.query({
     documentId: state.documentId!,
@@ -37,23 +54,42 @@ const fetchDocumentTimer = async (state: TimerState) => {
   setTimer(state, timer);
 };
 
-const subscribeToTimer = (state: TimerState) => {
-  const subscription = apiClient.documentTimer.onTimerChange.subscribe(
+const fetchDocumentMusic = async (state: TimerState) => {
+  const music = await apiClient.documentMusic.get.query({
+    documentId: state.documentId!,
+  });
+
+  setMusic(state, music as Music);
+};
+
+const subscribeToTimerAndMusic = (state: TimerState) => {
+  // TODO @harris: Move this into an event emitter on the client that the root
+  // document provider pushes events into (since we can only have 1 subscription per page)
+  const subscription = apiClient.documentEvents.onDocumentEvent.subscribe(
     { documentId: state.documentId! },
     {
-      onData: (data) => {
-        const timer = ((data as any) ?? {}) as Timer;
-        setTimer(state, timer);
+      onData: (eventData) => {
+        if (Object.values(TimerEvent).includes(eventData.event as TimerEvent)) {
+          const timer = ((eventData.data as any) ?? {}) as Timer;
+          setTimer(state, timer);
+        } else if (
+          Object.values(MusicEvent).includes(eventData.event as MusicEvent)
+        ) {
+          const music = ((eventData.data as any) ?? {}) as Music;
+          setMusic(state, music);
+        }
       },
-    },
+    }
   );
   return () => subscription.unsubscribe();
 };
 
-const useDocumentTimerSync = (state: TimerState) => {
+const useSync = (state: TimerState) => {
   useEffect(() => {
     fetchDocumentTimer(state);
-    const unsubscribe = subscribeToTimer(state);
+    fetchDocumentMusic(state);
+
+    const unsubscribe = subscribeToTimerAndMusic(state);
     return () => unsubscribe();
   }, []);
 };
@@ -70,10 +106,14 @@ export const TimerProvider = ({
         endTime: null,
         pausedAt: null,
       },
-    }),
+      music: {
+        musicId: null,
+        status: MusicStatus.Inactive,
+      },
+    })
   ).current;
 
-  useDocumentTimerSync(state);
+  useSync(state);
 
   return (
     <TimerContext.Provider value={state}>{children}</TimerContext.Provider>
@@ -88,7 +128,7 @@ export const useDocumentTimer = () => {
 
   if (!documentId) {
     throw new Error(
-      "Document ID is required. Please wrap your component in a TimerProvider.",
+      "Document ID is required. Please wrap your component in a TimerProvider."
     );
   }
 
@@ -153,5 +193,38 @@ export const useDocumentTimer = () => {
     decrementTimer,
     resetTimer: () => resetTimer(state),
     status,
+  };
+};
+
+export const useDocumentMusic = () => {
+  const state = useContext(TimerContext);
+  const snap = useSnapshot(state);
+  const music = snap.music;
+  const documentId = snap.documentId;
+
+  if (!documentId) {
+    throw new Error(
+      "Document ID is required. Please wrap your component in a TimerProvider."
+    );
+  }
+
+  const startMusic = async (musicId: string) => {
+    await apiClient.documentMusic.start.mutate({
+      documentId,
+      musicId,
+    });
+  };
+
+  const stopMusic = async () => {
+    await apiClient.documentMusic.stop.mutate({
+      documentId,
+    });
+  };
+
+  return {
+    musicId: music.musicId,
+    status: music.status,
+    startMusic,
+    stopMusic,
   };
 };

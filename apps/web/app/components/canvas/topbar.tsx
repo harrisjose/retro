@@ -5,6 +5,7 @@ import {
   useSectionMap,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
+import { DocumentMusic } from "../music";
 import { DocumentTimerWrapper } from "../timer";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
 
@@ -15,9 +16,11 @@ export default function Topbar() {
 
   return (
     <div className="mt-4 h-[28px] relative z-20">
-      <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] p-[6px] rounded-2xl bg-white absolute left-[24px] top-[-2px]">
+      <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] p-[6px] rounded-2xl bg-white absolute left-[24px] top-[-2px] flex h-full gap-2">
         <TimerProvider documentId={documentId}>
           <DocumentTimerWrapper />
+          <div className="h-full w-[2px] bg-[#000000]/20"></div>
+          <DocumentMusic />
         </TimerProvider>
       </div>
 
