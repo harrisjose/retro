@@ -1,4 +1,5 @@
 import { updateProxyState } from "@retro/common";
+import { useReadyStatus, useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
 import {
   type PropsWithChildren,
@@ -8,8 +9,6 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
-import { useReadyStatus } from "src/document/document.js";
-import { useSectionMap } from "src/sections/sections.js";
 import { proxy, useSnapshot } from "valtio";
 import type { BlockToInsert, CanvasState } from "./types.js";
 import { computeInitialPosition, computeInitialZoom } from "./utils.js";
@@ -97,7 +96,7 @@ export const useScale = () => {
   return snap.scale;
 };
 
-export const useCanvasInsertion = () => {
+export const useInsertState = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state);
 

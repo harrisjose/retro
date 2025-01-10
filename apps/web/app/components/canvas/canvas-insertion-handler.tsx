@@ -1,4 +1,4 @@
-import { BlockType, useCamera, useCanvasInsertion } from "@retro/sdk";
+import { BlockType } from "@retro/sdk";
 import * as Y from "yjs";
 
 import { raw } from "@retro/common";
@@ -7,13 +7,14 @@ import * as random from "lib0/random";
 import { useEffect } from "react";
 import CardCursor from "./card-cursor";
 import StickerCursor from "./sticker-cursor";
+import { useCamera, useInsertState } from "./store";
 
 export const CanvasInsertionHandler = () => {
   const { zoom: scale } = useCamera();
 
   const createBlock = useCreateBlock();
   const { blockToInsert, setBlockToInsert, setLastInsertedBlockId } =
-    useCanvasInsertion();
+    useInsertState();
 
   // TODO - Should we setup a global key listener somewhere else
   useEffect(() => {

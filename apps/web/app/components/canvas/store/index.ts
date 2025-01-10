@@ -1,3 +1,3 @@
-export * from "./canvas.js";
+export * from "./hooks.js";
 export * from "./types.js";
 export * from "./utils.js";

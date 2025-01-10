@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
-import { computeZoomBounds, useCamera, useSectionMap } from "@retro/sdk";
+import { useSectionMap } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { useRef, useState } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasInsertionHandler } from "./canvas-insertion-handler";
 import IntroSection from "./intro";
 import SectionRenderer from "./section";
+import { computeZoomBounds, useCamera } from "./store";
 import SummarySection from "./summary";
 import Zoom from "./zoom";
 

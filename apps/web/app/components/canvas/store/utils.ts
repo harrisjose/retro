@@ -1,5 +1,5 @@
 import { CanvasConstants } from "@retro/common";
-import type { SectionMap } from "src/sections/types.js";
+import type { SectionMap } from "@retro/sdk";
 
 export const computeInitialZoom = () => {
   // Get the viewport dimensions

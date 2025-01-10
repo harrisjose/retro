@@ -11,7 +11,6 @@
     "@retro/common": "workspace:*",
     "@trpc/client": "11.0.0-rc.682",
     "better-auth": "^1.1.2",
-    "derive-valtio": "^0.2.0",
     "lib0": "^0.2.99",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

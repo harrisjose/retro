@@ -1,4 +1,4 @@
-import type { BlockType, Properties } from "src/index.js";
+import type { BlockType, Properties } from "@retro/sdk";
 
 export type CanvasCameraState = {
   scale: number;
