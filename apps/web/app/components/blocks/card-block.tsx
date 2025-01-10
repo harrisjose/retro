@@ -7,6 +7,7 @@ import {
   useRawBlockProperty,
 } from "@retro/sdk";
 import * as Y from "yjs";
+import { useSelection } from "../canvas/store/hooks";
 import { ProsemirrorEditor } from "../editor";
 
 const colors = {
@@ -17,15 +18,22 @@ const colors = {
 } as const;
 
 export default function CardBlock({ id }: { id: string }) {
-  const block = useBlock(id);
+  const { block } = useBlock(id);
+
   const properties = useBlockProperties(id) as CardProperties;
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
+
+  const { selection } = useSelection();
+  const isSelected = selection.includes(id);
 
   // TODO: later add a layoutEffect to update the child height
   // back to yDoc
   return (
     <div
-      className="w-full h-full rounded-lg flex flex-col"
+      className={cn(
+        "w-full h-full rounded-lg flex flex-col border-2 border-transparent",
+        isSelected && "border-[#6200FF99]",
+      )}
       style={{
         height: block.height,
         backgroundColor: colors[properties.color],

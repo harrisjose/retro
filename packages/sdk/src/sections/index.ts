@@ -1,2 +1,2 @@
-export * from "./sections.js";
+export * from "./hooks.js";
 export * from "./types.js";

@@ -1,15 +1,44 @@
+import { cn } from "@retro/common";
 import { useBlock } from "@retro/sdk";
-import type { PropsWithChildren } from "react";
+import { useDrag } from "@use-gesture/react";
+import { type PropsWithChildren, useRef } from "react";
+import { useCamera, useSelection } from "../canvas/store/hooks";
 
 export default function Frame({
   id,
   isAutoHeight = false,
   children,
 }: PropsWithChildren<{ id: string; isAutoHeight?: boolean }>) {
-  const block = useBlock(id);
+  const { block, setPosition } = useBlock(id);
+  const { setSelection } = useSelection();
+  const {
+    camera: { z },
+  } = useCamera();
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useDrag(
+    ({ movement: [x, y], memo, event }) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      memo = memo ?? { x: block.x, y: block.y };
+
+      setSelection([id]);
+      setPosition(memo.x + x / z, memo.y + y / z);
+      return memo;
+    },
+    {
+      from: () => [block.x, block.y],
+      eventOptions: { capture: true, passive: false },
+      target: ref,
+    },
+  );
+
   return (
     <div
-      className="absolute"
+      ref={ref}
+      className={cn(`absolute touch-none `)}
       style={{
         left: block.x,
         top: block.y,

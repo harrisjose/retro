@@ -6,13 +6,14 @@ import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./canvas-cursor";
 import IntroSection from "./intro";
 import SectionRenderer from "./section";
-import { useCamera } from "./store";
+import { useCamera, useSelection } from "./store";
 import SummarySection from "./summary";
 import Zoom from "./zoom";
 
 export default function Canvas() {
   const sections = useSectionMap();
   const { camera, zoomBy, moveBy } = useCamera();
+  const { clearSelection } = useSelection();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
@@ -20,10 +21,8 @@ export default function Canvas() {
   useEffect(() => {
     function handleWheel(event: WheelEvent) {
       event.preventDefault();
-      event.stopPropagation();
 
       const { clientX, clientY, deltaX, deltaY, ctrlKey } = event;
-      console.log({ clientX, clientY, deltaX, deltaY, ctrlKey });
 
       if (ctrlKey) {
         zoomBy(deltaY / 100, { x: clientX, y: clientY });

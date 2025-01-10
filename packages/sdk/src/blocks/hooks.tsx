@@ -10,6 +10,7 @@ import type {
   YProperties,
   YPropertiesMap,
 } from "src/sections/types.js";
+import { useDebounceCallback } from "usehooks-ts";
 import { useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
@@ -57,7 +58,19 @@ export const useBlockMap = () => {
 export const useBlock = (blockId: string) => {
   const { blocks } = useContext(DocContext);
   const snapshot = useSnapshot(blocks);
-  return snapshot[blockId] as Block;
+  const yDoc = useYDoc();
+
+  const setPosition = useDebounceCallback((x: number, y: number) => {
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
+    const yBlock = new YKeyValue(yBlockBase);
+    yDoc.transact(() => {
+      yBlock.set("x", x);
+      yBlock.set("y", y);
+    });
+  }, 100);
+
+  return { block: snapshot[blockId] as Block, setPosition };
 };
 
 export const useBlockProperties = (blockId: string) => {
