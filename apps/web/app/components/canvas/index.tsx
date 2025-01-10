@@ -1,111 +1,65 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
-import { useGesture } from "@use-gesture/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import BlocksRenderer from "./blocks";
-import { CanvasInsertionHandler } from "./canvas-insertion-handler";
+import { CanvasCursor } from "./canvas-cursor";
 import IntroSection from "./intro";
 import SectionRenderer from "./section";
-import { computeZoomBounds, useCamera } from "./store";
+import { useCamera } from "./store";
 import SummarySection from "./summary";
 import Zoom from "./zoom";
 
 export default function Canvas() {
   const sections = useSectionMap();
-  const { zoom, zoomTo, position, moveTo } = useCamera();
-  const [zoomBounds, setZoomBounds] = useState({ min: 0.1, max: 1 });
+  const { camera, zoomBy, moveBy } = useCamera();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
 
-  useGesture(
-    {
-      onPinch: (state) => {
-        state.event.preventDefault();
-        const pinchOriginX = state.origin[0];
-        const pinchOriginY = state.origin[1];
-        const newScale = state.offset[0];
+  useEffect(() => {
+    function handleWheel(event: WheelEvent) {
+      event.preventDefault();
+      event.stopPropagation();
 
-        // Initialize memo with initial conditions
-        const memo = state.memo ?? {
-          bounds: sectionRootRef.current!.getBoundingClientRect(),
-          initial: {
-            x: position.x,
-            y: position.y,
-            scale: zoom,
-          },
-        };
+      const { clientX, clientY, deltaX, deltaY, ctrlKey } = event;
+      console.log({ clientX, clientY, deltaX, deltaY, ctrlKey });
 
-        // Calculate the transform origin (center of the element)
-        const transformOriginX = memo.bounds.x + memo.bounds.width / 2;
-        const transformOriginY = memo.bounds.y + memo.bounds.height / 2;
+      if (ctrlKey) {
+        zoomBy(deltaY / 100, { x: clientX, y: clientY });
+      } else {
+        moveBy(deltaX, deltaY);
+      }
+    }
 
-        // Calculate displacement from transform origin to pinch point
-        const displacementX =
-          (transformOriginX - pinchOriginX) / memo.initial.scale;
-        const displacementY =
-          (transformOriginY - pinchOriginY) / memo.initial.scale;
+    const rootEl = canvasRootRef.current;
+    if (!rootEl) {
+      throw new Error("Canvas root element not found");
+    }
 
-        // Calculate the scale change
-        const scaleDelta = newScale - memo.initial.scale;
-
-        // Update position based on displacement and scale change
-        const newPosition = {
-          x: memo.initial.x - displacementX * scaleDelta,
-          y: memo.initial.y - displacementY * scaleDelta,
-        };
-
-        zoomTo(newScale);
-        moveTo(newPosition);
-
-        return memo;
-      },
-      onWheel: (state) => {
-        state.event.preventDefault();
-
-        moveTo({
-          x: state.offset[0],
-          y: state.offset[1],
-        });
-      },
-    },
-    {
-      eventOptions: { passive: false },
-      target: canvasRootRef,
-      pinch: {
-        from: () => [zoom, 0],
-        scaleBounds: () => {
-          const bounds = computeZoomBounds(sections);
-          setZoomBounds(bounds);
-          return bounds;
-        },
-      },
-      wheel: {
-        from: () => [position.x, position.y],
-      },
-    },
-  );
+    rootEl.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      if (rootEl) rootEl.removeEventListener("wheel", handleWheel);
+    };
+  }, [canvasRootRef, zoomBy, moveBy]);
 
   return (
     <>
       <div
         ref={canvasRootRef}
         id="canvas-root"
-        className="absolute top-0 left-0 w-full h-full z-0 touch-none flex items-center justify-start bg-[#F5F5F5]"
+        className="absolute top-0 left-0 w-screen h-screen z-0 touch-none bg-[#F5F5F5]"
       >
         <div
           id="canvas-scale-wrapper"
           ref={sectionRootRef}
+          className={cn("absolute flex w-fit overflow-visible")}
           style={{
-            transform: `scale(${zoom})`,
-            left: -position.x,
-            top: -position.y,
-            transformOrigin: "center center",
+            transform: `scale(${camera.z}) translate(${camera.x}px, ${camera.y}px)`,
+            transformOrigin: "0 0",
             gap: CanvasConstants.PaddingBetween,
             padding: CanvasConstants.PaddingAround,
           }}
-          className={cn("flex w-fit overflow-visible absolute")}
         >
           <IntroSection />
           {Object.keys(sections).map((sectionId) => (
@@ -114,9 +68,9 @@ export default function Canvas() {
           <BlocksRenderer />
           <SummarySection />
         </div>
+        <CanvasCursor />
       </div>
-      <CanvasInsertionHandler />
-      <Zoom value={zoom} bounds={zoomBounds} onChange={zoomTo} />
+      <Zoom current={camera.z} onChange={zoomBy} />
     </>
   );
 }

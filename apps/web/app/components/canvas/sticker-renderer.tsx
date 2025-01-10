@@ -1,12 +1,12 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { useEffect, useState } from "react";
-import { useInsertState } from "./store";
+import { useInsertion } from "./store";
 
 const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
-  const { lastInsertedBlockId } = useInsertState();
+  const { lastInsertedBlockId } = useInsertion();
 
   const dotLottieRefCallback = (dotLottie: DotLottie) => {
     setDotLottie(dotLottie);

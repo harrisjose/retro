@@ -3,4 +3,5 @@ export const CanvasConstants = {
   SectionHeight: 1024,
   PaddingAround: 100,
   PaddingBetween: 100,
+  IntroSectionWidth: 822,
 };

@@ -1,72 +1,11 @@
 import { updateProxyState } from "@retro/common";
-import { useReadyStatus, useSectionMap } from "@retro/sdk";
+import { useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
-import {
-  type PropsWithChildren,
-  createContext,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
-import { proxy, useSnapshot } from "valtio";
-import type { BlockToInsert, CanvasState } from "./types.js";
-import { computeInitialPosition, computeInitialZoom } from "./utils.js";
-
-const CanvasContext = createContext<CanvasState>({} as any);
-
-export const CanvasProvider = ({
-  id,
-  children,
-}: PropsWithChildren<{ id: string }>) => {
-  const state = useRef(
-    proxy<CanvasState>({
-      id: id,
-      camera: {
-        scale: computeInitialZoom(),
-        position: {
-          x: 0,
-          y: 0,
-        },
-      },
-      blockToInsert: null,
-      lastInsertedBlockId: null,
-      // TODO: Use this for all calculations
-      viewport: {
-        width: window.innerWidth,
-        height: window.innerHeight,
-      },
-    }),
-  ).current;
-
-  const isReady = useReadyStatus();
-  const sections = useSectionMap();
-
-  useEffect(() => {
-    console.log("camera init");
-    updateProxyState(
-      state.camera.position,
-      computeInitialPosition(state.camera.scale, sections),
-    );
-  }, [isReady]);
-
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      updateProxyState(state.viewport, {
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  });
-
-  return (
-    <CanvasContext.Provider value={state}>{children}</CanvasContext.Provider>
-  );
-};
+import { useContext, useMemo } from "react";
+import { useSnapshot } from "valtio";
+import { CanvasContext } from "./provider.js";
+import type { BlockToInsert, Point } from "./types.js";
+import { computeZoomBounds, panCamera, zoomCamera } from "./utils.js";
 
 export const useCanvas = () => {
   const state = useContext(CanvasContext);
@@ -75,17 +14,22 @@ export const useCanvas = () => {
 };
 
 export const useCamera = () => {
+  const sections = useSectionMap();
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
 
+  const zBounds = useMemo(() => computeZoomBounds(sections), [sections]);
+
   return {
-    zoom: snap.scale,
-    position: snap.position,
-    zoomTo: (scale: number) => {
-      state.camera.scale = scale;
+    camera: snap,
+    zoomBy: (dz: number, origin: Point) => {
+      updateProxyState(
+        state.camera,
+        zoomCamera(state.camera, origin, dz, zBounds),
+      );
     },
-    moveTo: (position: { x?: number; y?: number }) => {
-      updateProxyState(state.camera.position, position);
+    moveBy: (dx: number = 0, dy: number = 0) => {
+      updateProxyState(state.camera, panCamera(state.camera, dx, dy));
     },
   };
 };
@@ -93,24 +37,24 @@ export const useCamera = () => {
 export const useScale = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
-  return snap.scale;
+  return snap.z;
 };
 
-export const useInsertState = () => {
+export const useInsertion = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state);
 
   const setBlockToInsert = (block: BlockToInsert | null) => {
-    state.blockToInsert = block;
+    state.insertion.selectedBlock = block;
   };
 
   const setLastInsertedBlockId = (blockId: string) => {
-    state.lastInsertedBlockId = blockId;
+    state.insertion.lastInsertedId = blockId;
   };
 
   return {
-    blockToInsert: snap.blockToInsert,
-    lastInsertedBlockId: snap.lastInsertedBlockId,
+    blockToInsert: snap.insertion.selectedBlock,
+    lastInsertedBlockId: snap.insertion.lastInsertedId,
     setBlockToInsert,
     setLastInsertedBlockId,
   };

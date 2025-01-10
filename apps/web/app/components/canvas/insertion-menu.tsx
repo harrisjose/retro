@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/popover";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { raw } from "@retro/common";
-import { CardColor, StickerJsonMap, StickerType } from "@retro/sdk";
+import { BlockType, CardColor, StickerJsonMap, StickerType } from "@retro/sdk";
 import { useState } from "react";
 import * as Y from "yjs";
-import { useInsertState } from "./store";
+import { useInsertion } from "./store";
 
 const getRandomCardColor = () => {
   return Object.values(CardColor)[
@@ -21,11 +21,11 @@ const getRandomCardColor = () => {
 const StickerMenu = () => {
   const [open, setOpen] = useState(false);
 
-  const { setBlockToInsert } = useInsertState();
+  const { setBlockToInsert } = useInsertion();
 
   const handleClick = (stickType: StickerType) => {
     setBlockToInsert({
-      type: "sticker",
+      type: BlockType.Sticker,
       properties: {
         stickerType: stickType,
       },
@@ -75,10 +75,10 @@ const StickerMenu = () => {
 };
 
 export const InsertionMenu = () => {
-  const { setBlockToInsert } = useInsertState();
+  const { setBlockToInsert } = useInsertion();
   const insertCard = () => {
     setBlockToInsert({
-      type: "card",
+      type: BlockType.Card,
       properties: {
         color: getRandomCardColor(),
         content: raw(new Y.XmlFragment()),

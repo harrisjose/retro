@@ -19,7 +19,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
 
 export default function DocumentPage({ params }: Route.ComponentProps) {
   return (
-    <div className="w-full h-full min-h-screen flex flex-col relative">
+    <div className="w-full h-full min-h-screen relative">
       <CanvasProvider id={params.id}>
         <Canvas />
         <Topbar />

@@ -10,7 +10,7 @@ export default function SummarySection() {
       ref={sectionRef}
       className="shrink-0 rounded-2xl border border-dashed border-[#00000029]"
       style={{
-        width: 822,
+        width: CanvasConstants.IntroSectionWidth,
         height: CanvasConstants.SectionHeight,
       }}
     ></div>
