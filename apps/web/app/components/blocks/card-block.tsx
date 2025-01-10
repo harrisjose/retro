@@ -21,24 +21,19 @@ export default function CardBlock({ id }: { id: string }) {
   const properties = useBlockProperties(id) as CardProperties;
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
 
+  // TODO: later add a layoutEffect to update the child height
+  // back to yDoc
   return (
     <div
-      className="absolute rounded-lg flex flex-col"
+      className="w-full h-full rounded-lg flex flex-col"
       style={{
-        left: block.x,
-        top: block.y,
-        width: block.width,
-        // TODO: later add a layoutEffect to update the child height
-        // back to yDoc
-        minHeight: block.height,
-        height: "auto",
+        height: block.height,
         backgroundColor: colors[properties.color],
       }}
     >
       <div
         className={cn(
           "overflow-y-scroll overflow-x-clip py-4 px-2 ",
-          // take full height at min height so click anywhere to focus
           "w-full h-full grow flex flex-col",
         )}
         style={{ overflowAnchor: "none" }}
