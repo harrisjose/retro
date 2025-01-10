@@ -1,4 +1,4 @@
-import RetroEmptySvg from "@/components/ui/retroEmpty";
+import RetroEmptySvg from "@/components/dashboard/retro-empty-icon";
 
 const RetroEmpty = () => {
   return (

@@ -1,12 +1,12 @@
 import { DocumentListFilter } from "@retro/common";
-import { useDocumentList } from "@retro/sdk/src/document";
+import { useDocumentList } from "@retro/sdk";
 import { useMemo } from "react";
+import FilterPanel from "../../components/dashboard/filter-panel";
+import FooterPanel from "../../components/dashboard/footer-panel";
+import RetroList from "../../components/dashboard/retro-list";
+import UserGreetings from "../../components/dashboard/user-greeting";
+import WorkspacePanel from "../../components/dashboard/workspace-panel";
 import type { Route } from "./+types";
-import FilterPanel from "./FilterPanel";
-import FooterPanel from "./FooterPanel";
-import WorkspacePanel from "./Header";
-import RetroList from "./RetroList";
-import UserGreetings from "./UserGreetings";
 
 export const meta: Route.MetaFunction = () => {
   return [

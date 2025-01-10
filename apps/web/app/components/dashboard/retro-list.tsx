@@ -1,10 +1,10 @@
 import DueDate from "@/components/svg/duedate";
 import RetroSvg from "@/components/svg/retro.svg?react";
 import { getRelativeTime, getRemainingTime } from "@retro/common";
-import { useDocumentList } from "@retro/sdk/src/document";
+import { useDocumentList } from "@retro/sdk";
 import { useMemo } from "react";
 import { Link } from "react-router";
-import RetroEmpty from "./RetroEmpty";
+import RetroEmpty from "./retro-empty";
 
 const RetroList = () => {
   const { documents, isLoading } = useDocumentList();

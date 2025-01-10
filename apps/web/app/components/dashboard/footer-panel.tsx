@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import DatePicker from "@/components/ui/datePicker";
+import DatePicker from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -7,8 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getFormattedEndDate, getFormattedStartDate } from "@retro/common";
-import { authClient } from "@retro/sdk/lib/auth-client";
-import { useCreateDocument } from "@retro/sdk/src/document";
+import { authClient, useCreateDocument } from "@retro/sdk";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 
