@@ -27,6 +27,7 @@ export default function Canvas() {
       const { deltaX, deltaY } = event;
       moveBy(deltaX, deltaY);
     },
+    onClick: () => clearSelection(),
   });
 
   return (

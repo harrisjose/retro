@@ -39,9 +39,11 @@ export const useCanvasGestures = (
   {
     onPinch,
     onWheel,
+    onClick,
   }: {
     onPinch: (event: WheelEvent) => void;
     onWheel: (event: WheelEvent) => void;
+    onClick: (event: MouseEvent) => void;
   },
 ) => {
   // Ideally this would have been using hooks from useGesture, but it seems to be causing issues
@@ -58,6 +60,14 @@ export const useCanvasGestures = (
     }
   }
 
+  function handleClick(event: MouseEvent) {
+    if (event?.defaultPrevented) {
+      return;
+    }
+
+    onClick(event);
+  }
+
   useEffect(() => {
     const rootEl = ref.current;
     if (!rootEl) {
@@ -65,8 +75,10 @@ export const useCanvasGestures = (
     }
 
     rootEl.addEventListener("wheel", handleWheel, { passive: false });
+    rootEl.addEventListener("click", handleClick);
     return () => {
       if (rootEl) rootEl.removeEventListener("wheel", handleWheel);
+      if (rootEl) rootEl.removeEventListener("click", handleClick);
     };
   }, [ref, onPinch, onWheel]);
 };
