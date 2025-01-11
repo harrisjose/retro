@@ -36,11 +36,13 @@ export default function Canvas() {
         ref={canvasRootRef}
         id="canvas-root"
         className="absolute top-0 left-0 w-screen h-screen z-0 touch-none bg-[#F5F5F5]"
+        data-clear-selection
       >
         <div
           id="canvas-scale-wrapper"
           ref={sectionRootRef}
           className={cn("absolute flex w-fit overflow-visible")}
+          data-clear-selection
           style={{
             transform: `scale(${camera.z}) translate(${camera.x}px, ${camera.y}px)`,
             transformOrigin: "0 0",

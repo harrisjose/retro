@@ -6,6 +6,7 @@ import {
   useRef,
 } from "react";
 import { proxy } from "valtio";
+import { devtools } from "valtio/utils";
 import { CanvasMode, type CanvasState } from "./types.js";
 import { computeDefaultCamera, getViewport } from "./utils.js";
 
@@ -55,6 +56,12 @@ export const CanvasProvider = ({
       window.removeEventListener("resize", handleResize);
     };
   });
+
+  // Set-up devtools
+  useEffect(() => {
+    const unsub = devtools(state, { name: "canvas", enabled: true });
+    return () => unsub?.();
+  }, []);
 
   return (
     <CanvasContext.Provider value={state}>{children}</CanvasContext.Provider>

@@ -61,11 +61,14 @@ export const useCanvasGestures = (
   }
 
   function handleClick(event: MouseEvent) {
-    if (event?.defaultPrevented) {
-      return;
+    const target = event.target as HTMLElement;
+    console.log(target);
+    if (
+      target.getAttribute("data-clear-selection") &&
+      !event?.defaultPrevented
+    ) {
+      onClick(event);
     }
-
-    onClick(event);
   }
 
   useEffect(() => {

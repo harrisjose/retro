@@ -32,7 +32,9 @@ export default function CardBlock({ id }: { id: string }) {
     <div
       className={cn(
         "w-full h-full rounded-lg flex flex-col border-2 border-transparent",
-        isSelected && "border-[#6200FF99]",
+        isSelected
+          ? "border-[#6200FF99] pointer-events-auto"
+          : "pointer-events-none",
       )}
       style={{
         height: block.height,

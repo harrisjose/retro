@@ -21,9 +21,17 @@ export default function Frame({
 
   useGesture(
     {
-      onDrag: ({ movement: [x, y], memo, event }) => {
-        event.preventDefault();
-        event.stopPropagation();
+      onDrag: ({ movement: [x, y], memo, event, tap }) => {
+        const target = event.target as HTMLElement;
+        if (tap) {
+          return;
+        }
+        if (
+          target.isContentEditable ||
+          target.closest("[contenteditable=true]")
+        ) {
+          return;
+        }
 
         memo = memo ?? { x: block.x, y: block.y };
 
@@ -33,12 +41,15 @@ export default function Frame({
         return memo;
       },
       onClick: ({ event }) => {
-        event.preventDefault();
+        console.log(event.target);
+        if (event.target === ref.current) {
+          // PreventDefault if the click is on the frame
+          event.preventDefault();
+        }
         setSelection([id]);
       },
     },
     {
-      eventOptions: { capture: true, passive: false },
       target: ref,
       drag: {
         from: () => [block.x, block.y],
