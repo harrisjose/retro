@@ -2,6 +2,7 @@ import { cn } from "@retro/common";
 import { useBlock } from "@retro/sdk";
 import { useDrag } from "@use-gesture/react";
 import { type PropsWithChildren, useRef } from "react";
+import { useDebounceCallback } from "usehooks-ts";
 import { useCamera, useSelection } from "../canvas/store/hooks";
 
 export default function Frame({
@@ -16,6 +17,7 @@ export default function Frame({
   } = useCamera();
 
   const ref = useRef<HTMLDivElement>(null);
+  const debouncedSetPosition = useDebounceCallback(setPosition, 50);
 
   useDrag(
     ({ movement: [x, y], memo, event }) => {
@@ -25,7 +27,8 @@ export default function Frame({
       memo = memo ?? { x: block.x, y: block.y };
 
       setSelection([id]);
-      setPosition(memo.x + x / z, memo.y + y / z);
+      debouncedSetPosition(memo.x + x / z, memo.y + y / z);
+
       return memo;
     },
     {
