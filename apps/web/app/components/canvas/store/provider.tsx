@@ -2,7 +2,7 @@ import { updateProxyState } from "@retro/common";
 import {
   type PropsWithChildren,
   createContext,
-  useLayoutEffect,
+  useEffect,
   useRef,
 } from "react";
 import { proxy } from "valtio";
@@ -36,7 +36,7 @@ export const CanvasProvider = ({
     }),
   ).current;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       updateProxyState(
         state.viewport,

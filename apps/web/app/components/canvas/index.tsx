@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./canvas-cursor";
 import IntroSection from "./intro";
 import SectionRenderer from "./section";
-import { useCamera, useSelection } from "./store";
+import { useCamera, useCanvasGestures, useSelection } from "./store";
 import SummarySection from "./summary";
 import Zoom from "./zoom";
 
@@ -18,29 +18,16 @@ export default function Canvas() {
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleWheel(event: WheelEvent) {
-      event.preventDefault();
-
-      const { clientX, clientY, deltaX, deltaY, ctrlKey } = event;
-
-      if (ctrlKey) {
-        zoomBy(deltaY / 100, { x: clientX, y: clientY });
-      } else {
-        moveBy(deltaX, deltaY);
-      }
-    }
-
-    const rootEl = canvasRootRef.current;
-    if (!rootEl) {
-      throw new Error("Canvas root element not found");
-    }
-
-    rootEl.addEventListener("wheel", handleWheel, { passive: false });
-    return () => {
-      if (rootEl) rootEl.removeEventListener("wheel", handleWheel);
-    };
-  }, [canvasRootRef, zoomBy, moveBy]);
+  useCanvasGestures(canvasRootRef, {
+    onPinch: (event) => {
+      const { clientX, clientY, deltaY } = event;
+      zoomBy(deltaY / 100, { x: clientX, y: clientY });
+    },
+    onWheel: (event) => {
+      const { deltaX, deltaY } = event;
+      moveBy(deltaX, deltaY);
+    },
+  });
 
   return (
     <>

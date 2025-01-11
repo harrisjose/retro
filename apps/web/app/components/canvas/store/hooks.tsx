@@ -1,7 +1,7 @@
 import { updateProxyState } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
-import { useContext, useMemo } from "react";
+import { type RefObject, useContext, useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import { CanvasContext } from "./provider.js";
 import { type BlockToInsert, CanvasMode, type Point } from "./types.js";
@@ -32,6 +32,43 @@ export const useCamera = () => {
       updateProxyState(state.camera, panCamera(state.camera, dx, dy));
     },
   };
+};
+
+export const useCanvasGestures = (
+  ref: RefObject<HTMLElement | null>,
+  {
+    onPinch,
+    onWheel,
+  }: {
+    onPinch: (event: WheelEvent) => void;
+    onWheel: (event: WheelEvent) => void;
+  },
+) => {
+  // Ideally this would have been using hooks from useGesture, but it seems to be causing issues
+  // with the pinch origin not being correct. UseGesture probably is doing some translation of the
+  // event coordinates.
+  // TODO @harris: Investigate later since useGesture has debouncing and other nice-ities built in.
+  function handleWheel(event: WheelEvent) {
+    event.preventDefault();
+
+    if (event.ctrlKey) {
+      onPinch(event);
+    } else {
+      onWheel(event);
+    }
+  }
+
+  useEffect(() => {
+    const rootEl = ref.current;
+    if (!rootEl) {
+      throw new Error("Target element not found");
+    }
+
+    rootEl.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      if (rootEl) rootEl.removeEventListener("wheel", handleWheel);
+    };
+  }, [ref, onPinch, onWheel]);
 };
 
 export const useScale = () => {
