@@ -9,9 +9,9 @@ import * as random from "lib0/random";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import * as Y from "yjs";
-import CardCursor from "./card-cursor";
+import CardCursor from "../card-cursor";
+import { screenToCanvas, useCamera, useInsertion } from "../store";
 import StickerCursor from "./sticker-cursor";
-import { screenToCanvas, useCamera, useInsertion } from "./store";
 
 export const CanvasCursor = () => {
   const { camera } = useCamera();

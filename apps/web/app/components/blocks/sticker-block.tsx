@@ -4,7 +4,7 @@ import {
   StickerType,
   useBlockProperties,
 } from "@retro/sdk";
-import StickerRenderer from "../canvas/sticker-renderer";
+import StickerRenderer from "./sticker-renderer";
 
 export default function StickerBlock({ id }: { id: string }) {
   const properties = useBlockProperties(id) as StickerProperties;

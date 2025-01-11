@@ -3,12 +3,12 @@ import { CanvasConstants } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
-import { CanvasCursor } from "./canvas-cursor";
-import IntroSection from "./intro";
-import SectionRenderer from "./section";
+import { CanvasCursor } from "./cursors/canvas-cursor";
+import IntroSection from "./sections/intro";
+import SectionRenderer from "./sections/section";
+import SummarySection from "./sections/summary";
 import { useCamera, useCanvasGestures, useSelection } from "./store";
-import SummarySection from "./summary";
-import Zoom from "./zoom";
+import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const sections = useSectionMap();

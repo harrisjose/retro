@@ -1,7 +1,7 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { useEffect, useState } from "react";
-import { useInsertion } from "./store";
+import { useInsertion } from "../canvas/store";
 
 const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);

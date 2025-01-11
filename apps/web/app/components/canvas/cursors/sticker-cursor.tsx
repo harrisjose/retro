@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-import { Cursor } from "../ui/cursor";
+import { Cursor } from "../../ui/cursor";
 
 export default function StickerCursor() {
   return (
