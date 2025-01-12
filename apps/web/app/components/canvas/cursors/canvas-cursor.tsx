@@ -7,7 +7,6 @@ import {
 } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import * as random from "lib0/random";
-import { useEffect } from "react";
 import { match } from "ts-pattern";
 import * as Y from "yjs";
 import {
@@ -91,18 +90,6 @@ export const CanvasCursor = () => {
       }
     }
   };
-  const handleEscape = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      controllerRef.send({
-        type: CanvasEventType.InsertCancel,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (isInsertionActive) window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [isInsertionActive]);
 
   if (!isInsertionActive || !blockToInsert) return null;
 

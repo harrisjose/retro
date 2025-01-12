@@ -1,5 +1,6 @@
 import { createActorContext } from "@xstate/react";
-import { type ActorRefFrom, assertEvent, assign, setup } from "xstate";
+import { type ActorRefFrom, assertEvent, assign, raise, setup } from "xstate";
+import { keyEventListenerLogic } from "./actors";
 import {
   BlockEventType,
   type BlockToInsert,
@@ -41,6 +42,10 @@ type Events =
   | {
       type: BlockEventType.BlockDragEnd;
       blockId: string;
+    }
+  | {
+      type: "keydown";
+      key: string;
     };
 
 type CanvasContext = {
@@ -70,6 +75,9 @@ const canvasController = setup({
     clearSelection: assign(() => {
       return { selection: [] };
     }),
+  },
+  actors: {
+    keyEventListener: keyEventListenerLogic,
   },
 }).createMachine({
   id: "canvas-controller",
@@ -210,6 +218,10 @@ const canvasController = setup({
     },
     [CanvasMode.Inserting]: {
       id: CanvasMode.Inserting,
+      invoke: {
+        src: "keyEventListener",
+        input: { capture: true },
+      },
       on: {
         [CanvasEventType.InsertDone]: {
           actions: [
@@ -230,6 +242,10 @@ const canvasController = setup({
             }),
           ],
           target: CanvasMode.None,
+        },
+        keydown: {
+          guard: ({ event }) => event.key === "Escape",
+          actions: [raise({ type: CanvasEventType.InsertCancel })],
         },
       },
     },
