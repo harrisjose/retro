@@ -56,7 +56,7 @@ type CanvasContext = {
   };
 };
 
-const canvasController = setup({
+export const canvasController = setup({
   types: {
     context: {} as CanvasContext,
     events: {} as Events,
@@ -75,6 +75,9 @@ const canvasController = setup({
     clearSelection: assign(() => {
       return { selection: [] };
     }),
+    deleteBlock: (_, params: { selected: string[] }) => {
+      console.log("Default delete block action", params);
+    },
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
@@ -122,13 +125,17 @@ const canvasController = setup({
       // Make sure that selection is set before entering the state
       id: CanvasMode.Selected,
       initial: SelectionMode.Idle,
+      invoke: {
+        src: "keyEventListener",
+        input: { capture: true },
+      },
       states: {
         [SelectionMode.Idle]: {
           on: {
             [BlockEventType.BlockClick]: [
               {
                 guard: "isDifferentBlock",
-                target: SelectionMode.Exiting,
+                target: SelectionMode.Switching,
               },
               {
                 target: SelectionMode.Editing,
@@ -137,7 +144,7 @@ const canvasController = setup({
             [BlockEventType.BlockDrag]: [
               {
                 guard: "isDifferentBlock",
-                target: SelectionMode.Exiting,
+                target: SelectionMode.Switching,
               },
               {
                 target: SelectionMode.Dragging,
@@ -146,9 +153,28 @@ const canvasController = setup({
             [CanvasEventType.CanvasClick]: {
               target: `#${CanvasMode.None}`,
             },
+            keydown: [
+              {
+                guard: ({ event }) => event.key === "Escape",
+                target: `#${CanvasMode.None}`,
+              },
+              {
+                guard: ({ event }) => event.key === "Backspace",
+                actions: [
+                  {
+                    type: "deleteBlock",
+                    params: ({ context }: { context: CanvasContext }) => ({
+                      selected: context.selection,
+                    }),
+                  },
+                  "clearSelection",
+                ],
+                target: `#${CanvasMode.None}`,
+              },
+            ],
           },
         },
-        [SelectionMode.Exiting]: {
+        [SelectionMode.Switching]: {
           // Self transitions from idle to idle does not seem to work
           // Possible a bug in xstate so we work around it by using after.
           entry: ["setSelection"],
@@ -162,18 +188,22 @@ const canvasController = setup({
           on: {
             [BlockEventType.BlockClick]: {
               guard: "isDifferentBlock",
-              target: SelectionMode.Exiting,
+              target: SelectionMode.Switching,
             },
             [BlockEventType.BlockDrag]: [
               {
                 guard: "isDifferentBlock",
-                target: SelectionMode.Exiting,
+                target: SelectionMode.Switching,
               },
               {
                 target: SelectionMode.Dragging,
               },
             ],
             [CanvasEventType.CanvasClick]: {
+              target: SelectionMode.Idle,
+            },
+            keydown: {
+              guard: ({ event }) => event.key === "Escape",
               target: SelectionMode.Idle,
             },
           },
@@ -183,7 +213,7 @@ const canvasController = setup({
             [BlockEventType.BlockClick]: [
               {
                 guard: "isDifferentBlock",
-                target: SelectionMode.Exiting,
+                target: SelectionMode.Switching,
               },
               {
                 target: SelectionMode.Idle,
@@ -192,7 +222,7 @@ const canvasController = setup({
             [BlockEventType.BlockDrag]: [
               {
                 guard: "isDifferentBlock",
-                target: SelectionMode.Exiting,
+                target: SelectionMode.Switching,
               },
               {
                 target: SelectionMode.Dragging,

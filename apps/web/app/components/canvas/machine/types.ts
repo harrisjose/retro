@@ -11,7 +11,7 @@ export enum SelectionMode {
   Idle = "IDLE",
   Dragging = "DRAGGING",
   Editing = "EDITING",
-  Exiting = "EXITING",
+  Switching = "SWITCHING",
 }
 
 export enum CanvasEventType {

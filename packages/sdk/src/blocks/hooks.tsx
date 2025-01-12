@@ -72,6 +72,30 @@ export const useBlock = (blockId: string) => {
   return { block: snapshot[blockId] as Block, setPosition };
 };
 
+export const useMultiBlockActions = () => {
+  const yDoc = useYDoc();
+
+  const deleteBlocks = (blockIds: string[]) => {
+    console.debug("Deleting blocks", blockIds);
+
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    yDoc.transact(() => {
+      blockIds.forEach((blockId) => {
+        yBlockMap.delete(blockId);
+        yPropertiesMap.delete(blockId);
+      });
+    });
+  };
+
+  const moveBlocks = (blockIds: string[], dx: number, dy: number) => {
+    console.debug("Moving blocks", blockIds, dx, dy);
+    console.log("Not implemented");
+  };
+
+  return { deleteBlocks, moveBlocks };
+};
+
 export const useBlockProperties = (blockId: string) => {
   const { properties } = useContext(DocContext);
   const snapshot = useSnapshot(properties);
