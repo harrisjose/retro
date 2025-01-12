@@ -58,8 +58,8 @@ const FooterPanel = () => {
       startDate: getFormattedStartDate(startDate!),
       endDate: getFormattedEndDate(endDate!),
     });
-    setOpen(false);
     console.log(`Created document with id: ${documentId}`);
+    setOpen(false);
   };
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {

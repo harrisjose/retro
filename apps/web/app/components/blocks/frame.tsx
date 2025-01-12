@@ -3,7 +3,8 @@ import { useBlock } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { type PropsWithChildren, useRef } from "react";
 import { useDebounceCallback } from "usehooks-ts";
-import { useCamera, useSelection } from "../canvas/store/hooks";
+import { BlockEventType, CanvasControllerContext } from "../canvas/machine";
+import { useCamera } from "../canvas/store/hooks";
 
 export default function Frame({
   id,
@@ -11,19 +12,24 @@ export default function Frame({
   children,
 }: PropsWithChildren<{ id: string; isAutoHeight?: boolean }>) {
   const { block, setPosition } = useBlock(id);
-  const { setSelection } = useSelection();
+  const debouncedSetPosition = useDebounceCallback(setPosition, 5);
+
   const {
     camera: { z },
   } = useCamera();
 
+  const controllerRef = CanvasControllerContext.useActorRef();
   const ref = useRef<HTMLDivElement>(null);
-  const debouncedSetPosition = useDebounceCallback(setPosition, 50);
 
   useGesture(
     {
       onDrag: ({ movement: [x, y], memo, event, tap }) => {
         const target = event.target as HTMLElement;
         if (tap) {
+          controllerRef.send({
+            type: BlockEventType.BlockClick,
+            blockId: id,
+          });
           return;
         }
         if (
@@ -35,24 +41,21 @@ export default function Frame({
 
         memo = memo ?? { x: block.x, y: block.y };
 
-        setSelection([id]);
+        controllerRef.send({ type: BlockEventType.BlockDrag, blockId: id });
+
         debouncedSetPosition(memo.x + x / z, memo.y + y / z);
 
         return memo;
       },
-      onClick: ({ event }) => {
-        console.log(event.target);
-        if (event.target === ref.current) {
-          // PreventDefault if the click is on the frame
-          event.preventDefault();
-        }
-        setSelection([id]);
+      onDragEnd: () => {
+        controllerRef.send({ type: BlockEventType.BlockDragEnd, blockId: id });
       },
     },
     {
       target: ref,
       drag: {
         from: () => [block.x, block.y],
+        filterTaps: true,
       },
     },
   );

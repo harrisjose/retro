@@ -25,13 +25,6 @@ export type Bounds = {
   max: number;
 };
 
-export enum CanvasMode {
-  None,
-  Inserting,
-  Selecting,
-  Selected,
-}
-
 export type BlockToInsert = {
   type: BlockType;
   properties: Properties;
@@ -39,10 +32,8 @@ export type BlockToInsert = {
 
 export type CanvasState = {
   id: string;
-  mode: CanvasMode;
   camera: Camera;
   viewport: Box;
-  selection: string[];
   insertion: {
     selectedBlock: BlockToInsert | null;
     lastInsertedId: string | null;

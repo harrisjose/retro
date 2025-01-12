@@ -7,7 +7,7 @@ import {
   useRawBlockProperty,
 } from "@retro/sdk";
 import * as Y from "yjs";
-import { useSelection } from "../canvas/store/hooks";
+import { CanvasControllerContext } from "../canvas/machine";
 import { ProsemirrorEditor } from "../editor";
 
 const colors = {
@@ -23,8 +23,9 @@ export default function CardBlock({ id }: { id: string }) {
   const properties = useBlockProperties(id) as CardProperties;
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
 
-  const { selection } = useSelection();
-  const isSelected = selection.includes(id);
+  const isSelected = CanvasControllerContext.useSelector((snapshot) => {
+    return snapshot?.context.selection.includes(block.id);
+  });
 
   // TODO: later add a layoutEffect to update the child height
   // back to yDoc

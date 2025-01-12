@@ -4,7 +4,7 @@ import { omit } from "lodash-es";
 import { type RefObject, useContext, useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import { CanvasContext } from "./provider.js";
-import { type BlockToInsert, CanvasMode, type Point } from "./types.js";
+import { type BlockToInsert, type Point } from "./types.js";
 import { computeZoomBounds, panCamera, zoomCamera } from "./utils.js";
 
 export const useCanvas = () => {
@@ -62,7 +62,6 @@ export const useCanvasGestures = (
 
   function handleClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    console.log(target);
     if (
       target.getAttribute("data-clear-selection") &&
       !event?.defaultPrevented
@@ -110,27 +109,4 @@ export const useInsertion = () => {
     setBlockToInsert,
     setLastInsertedBlockId,
   };
-};
-
-export const useSelection = () => {
-  const state = useContext(CanvasContext);
-  const snap = useSnapshot(state);
-
-  const setSelection = (selection: string[]) => {
-    state.mode = CanvasMode.Selected;
-    state.selection = selection;
-  };
-
-  const clearSelection = () => {
-    state.mode = CanvasMode.None;
-    state.selection = [];
-  };
-
-  return { selection: snap.selection, setSelection, clearSelection };
-};
-
-export const useCanvasMode = () => {
-  const state = useContext(CanvasContext);
-  const snap = useSnapshot(state);
-  return snap.mode;
 };

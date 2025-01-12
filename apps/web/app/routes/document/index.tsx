@@ -1,5 +1,6 @@
 import Canvas from "@/components/canvas";
 import { InsertionMenu } from "@/components/canvas/insertion-menu";
+import { CanvasControllerContext } from "@/components/canvas/machine/canvas-controller";
 import { CanvasProvider } from "@/components/canvas/store";
 import Topbar from "@/components/canvas/topbar";
 import type { Route } from "./+types";
@@ -20,11 +21,13 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function DocumentPage({ params }: Route.ComponentProps) {
   return (
     <div className="w-full h-full min-h-screen relative">
-      <CanvasProvider id={params.id}>
-        <Canvas />
-        <Topbar />
-        <InsertionMenu />
-      </CanvasProvider>
+      <CanvasControllerContext.Provider>
+        <CanvasProvider id={params.id}>
+          <Canvas />
+          <Topbar />
+          <InsertionMenu />
+        </CanvasProvider>
+      </CanvasControllerContext.Provider>
     </div>
   );
 }

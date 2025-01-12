@@ -4,19 +4,20 @@ import { useSectionMap } from "@retro/sdk";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
+import { CanvasControllerContext, CanvasEventType } from "./machine";
 import IntroSection from "./sections/intro";
 import SectionRenderer from "./sections/section";
 import SummarySection from "./sections/summary";
-import { useCamera, useCanvasGestures, useSelection } from "./store";
+import { useCamera, useCanvasGestures } from "./store";
 import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const sections = useSectionMap();
   const { camera, zoomBy, moveBy } = useCamera();
-  const { clearSelection } = useSelection();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
+  const controller = CanvasControllerContext.useActorRef();
 
   useCanvasGestures(canvasRootRef, {
     onPinch: (event) => {
@@ -27,8 +28,19 @@ export default function Canvas() {
       const { deltaX, deltaY } = event;
       moveBy(deltaX, deltaY);
     },
-    onClick: () => clearSelection(),
+    onClick: () => {
+      controller.send({ type: CanvasEventType.CanvasClick });
+    },
   });
+
+  const [machineState, context] = CanvasControllerContext.useSelector(
+    (state) => [state.value, state.context],
+  );
+
+  console.debug(
+    JSON.stringify(machineState, null, 2),
+    JSON.stringify(Array.from(context.selection.values()), null, 2),
+  );
 
   return (
     <>

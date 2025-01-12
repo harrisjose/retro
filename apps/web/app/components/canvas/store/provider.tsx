@@ -7,7 +7,7 @@ import {
 } from "react";
 import { proxy } from "valtio";
 import { devtools } from "valtio/utils";
-import { CanvasMode, type CanvasState } from "./types.js";
+import { type CanvasState } from "./types.js";
 import { computeDefaultCamera, getViewport } from "./utils.js";
 
 export const CanvasContext = createContext<CanvasState>({} as any);
@@ -19,7 +19,6 @@ export const CanvasProvider = ({
   const state = useRef(
     proxy<CanvasState>({
       id: id,
-      mode: CanvasMode.None,
       camera: computeDefaultCamera(),
       viewport: getViewport(computeDefaultCamera(), {
         minX: 0,
@@ -29,7 +28,6 @@ export const CanvasProvider = ({
         width: window.innerWidth,
         height: window.innerHeight,
       }),
-      selection: [],
       insertion: {
         selectedBlock: null,
         lastInsertedId: null,
