@@ -4,7 +4,7 @@ import { omit } from "lodash-es";
 import { type RefObject, useContext, useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import { CanvasContext } from "./provider.js";
-import { type BlockToInsert, type Point } from "./types.js";
+import { type Point } from "./types.js";
 import { computeZoomBounds, panCamera, zoomCamera } from "./utils.js";
 
 export const useCanvas = () => {
@@ -89,24 +89,4 @@ export const useScale = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
   return snap.z;
-};
-
-export const useInsertion = () => {
-  const state = useContext(CanvasContext);
-  const snap = useSnapshot(state);
-
-  const setBlockToInsert = (block: BlockToInsert | null) => {
-    state.insertion.selectedBlock = block;
-  };
-
-  const setLastInsertedBlockId = (blockId: string) => {
-    state.insertion.lastInsertedId = blockId;
-  };
-
-  return {
-    blockToInsert: snap.insertion.selectedBlock,
-    lastInsertedBlockId: snap.insertion.lastInsertedId,
-    setBlockToInsert,
-    setLastInsertedBlockId,
-  };
 };

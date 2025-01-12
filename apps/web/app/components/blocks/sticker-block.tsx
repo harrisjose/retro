@@ -6,13 +6,19 @@ import {
   StickerType,
   useBlockProperties,
 } from "@retro/sdk";
+import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
-import { useInsertion } from "../canvas/store";
+import { CanvasControllerContext } from "../canvas/machine";
 
 const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
-  const { lastInsertedBlockId } = useInsertion();
+  const [lastInsertedBlockId] = CanvasControllerContext.useSelector(
+    (snapshot) => {
+      return [snapshot?.context.insertion.lastInsertedId];
+    },
+    shallowEqual,
+  );
 
   const dotLottieRefCallback = (dotLottie: DotLottie) => {
     setDotLottie(dotLottie);

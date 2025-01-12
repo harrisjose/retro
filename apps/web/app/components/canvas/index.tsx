@@ -39,7 +39,7 @@ export default function Canvas() {
 
   console.debug(
     JSON.stringify(machineState, null, 2),
-    JSON.stringify(Array.from(context.selection.values()), null, 2),
+    JSON.stringify(context, null, 2),
   );
 
   return (

@@ -5,11 +5,17 @@ import {
   type StickerProperties,
   useCreateBlock,
 } from "@retro/sdk";
+import { shallowEqual } from "@xstate/react";
 import * as random from "lib0/random";
 import { useEffect } from "react";
 import { match } from "ts-pattern";
 import * as Y from "yjs";
-import { screenToCanvas, useCamera, useInsertion } from "../store";
+import {
+  CanvasControllerContext,
+  CanvasEventType,
+  CanvasMode,
+} from "../machine";
+import { screenToCanvas, useCamera } from "../store";
 import CardCursor from "./card-cursor";
 import StickerCursor from "./sticker-cursor";
 
@@ -17,8 +23,14 @@ export const CanvasCursor = () => {
   const { camera } = useCamera();
 
   const createBlock = useCreateBlock();
-  const { blockToInsert, setBlockToInsert, setLastInsertedBlockId } =
-    useInsertion();
+  const controllerRef = CanvasControllerContext.useActorRef();
+  const [isInsertionActive, blockToInsert] =
+    CanvasControllerContext.useSelector((snapshot) => {
+      return [
+        snapshot.matches(CanvasMode.Inserting),
+        snapshot?.context.insertion.selectedBlock,
+      ];
+    }, shallowEqual);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (blockToInsert === null) return;
@@ -32,7 +44,7 @@ export const CanvasCursor = () => {
       case BlockType.Sticker: {
         const properties = blockToInsert.properties as StickerProperties;
         const stickerId = random.uuidv4();
-        setLastInsertedBlockId(stickerId);
+
         createBlock(
           {
             id: stickerId,
@@ -46,13 +58,16 @@ export const CanvasCursor = () => {
             stickerType: properties.stickerType,
           },
         );
+        controllerRef.send({
+          type: CanvasEventType.InsertDone,
+          blockId: stickerId,
+        });
         break;
       }
       case BlockType.Card: {
         const properties = blockToInsert.properties as CardProperties;
         const cardId = random.uuidv4();
 
-        setLastInsertedBlockId(cardId);
         createBlock(
           {
             id: cardId,
@@ -67,25 +82,30 @@ export const CanvasCursor = () => {
             content: raw(new Y.XmlFragment()),
           },
         );
+
+        controllerRef.send({
+          type: CanvasEventType.InsertDone,
+          blockId: cardId,
+        });
         break;
       }
     }
-
-    setBlockToInsert(null);
+  };
+  const handleEscape = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      controllerRef.send({
+        type: CanvasEventType.InsertCancel,
+      });
+    }
   };
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && blockToInsert) {
-        setBlockToInsert(null);
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
+    if (isInsertionActive) window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
-  }, [blockToInsert, setBlockToInsert]);
+  }, [isInsertionActive]);
 
-  if (!blockToInsert) return null;
+  if (!isInsertionActive || !blockToInsert) return null;
+
   return (
     <div
       onClick={handleClick}

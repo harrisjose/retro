@@ -1,5 +1,3 @@
-import type { BlockType, Properties } from "@retro/sdk";
-
 export type Point = {
   x: number;
   y: number;
@@ -25,17 +23,8 @@ export type Bounds = {
   max: number;
 };
 
-export type BlockToInsert = {
-  type: BlockType;
-  properties: Properties;
-};
-
 export type CanvasState = {
   id: string;
   camera: Camera;
   viewport: Box;
-  insertion: {
-    selectedBlock: BlockToInsert | null;
-    lastInsertedId: string | null;
-  };
 };

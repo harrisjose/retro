@@ -1,3 +1,5 @@
+import type { BlockType, Properties } from "@retro/sdk";
+
 export enum CanvasMode {
   None = "NONE",
   Selecting = "SELECTING",
@@ -15,8 +17,9 @@ export enum SelectionMode {
 export enum CanvasEventType {
   CanvasClick = "CANVAS_CLICK",
   CanvasDrag = "CANVAS_DRAG",
-  InsertStart = "START_INSERTING",
-  InsertDone = "STOP_INSERTING",
+  InsertStart = "START_INSERTION",
+  InsertDone = "COMPLETE_INSERTION",
+  InsertCancel = "CANCEL_INSERTION",
 }
 
 export enum BlockEventType {
@@ -25,3 +28,8 @@ export enum BlockEventType {
   BlockDragStart = "BLOCK_DRAG_START",
   BlockDragEnd = "BLOCK_DRAG_END",
 }
+
+export type BlockToInsert = {
+  type: BlockType;
+  properties: Properties;
+};

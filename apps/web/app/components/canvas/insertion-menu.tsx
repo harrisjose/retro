@@ -10,7 +10,7 @@ import { raw } from "@retro/common";
 import { BlockType, CardColor, StickerJsonMap, StickerType } from "@retro/sdk";
 import { useState } from "react";
 import * as Y from "yjs";
-import { useInsertion } from "./store";
+import { CanvasControllerContext, CanvasEventType } from "./machine";
 
 const getRandomCardColor = () => {
   return Object.values(CardColor)[
@@ -21,13 +21,16 @@ const getRandomCardColor = () => {
 const StickerMenu = () => {
   const [open, setOpen] = useState(false);
 
-  const { setBlockToInsert } = useInsertion();
+  const controllerRef = CanvasControllerContext.useActorRef();
 
   const handleClick = (stickType: StickerType) => {
-    setBlockToInsert({
-      type: BlockType.Sticker,
-      properties: {
-        stickerType: stickType,
+    controllerRef.send({
+      type: CanvasEventType.InsertStart,
+      blockToInsert: {
+        type: BlockType.Sticker,
+        properties: {
+          stickerType: stickType,
+        },
       },
     });
     setOpen(false);
@@ -75,13 +78,17 @@ const StickerMenu = () => {
 };
 
 export const InsertionMenu = () => {
-  const { setBlockToInsert } = useInsertion();
+  const controllerRef = CanvasControllerContext.useActorRef();
+
   const insertCard = () => {
-    setBlockToInsert({
-      type: BlockType.Card,
-      properties: {
-        color: getRandomCardColor(),
-        content: raw(new Y.XmlFragment()),
+    controllerRef.send({
+      type: CanvasEventType.InsertStart,
+      blockToInsert: {
+        type: BlockType.Card,
+        properties: {
+          color: getRandomCardColor(),
+          content: raw(new Y.XmlFragment()),
+        },
       },
     });
   };

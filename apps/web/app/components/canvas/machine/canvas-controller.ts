@@ -2,6 +2,7 @@ import { createActorContext } from "@xstate/react";
 import { type ActorRefFrom, assertEvent, assign, setup } from "xstate";
 import {
   BlockEventType,
+  type BlockToInsert,
   CanvasEventType,
   CanvasMode,
   SelectionMode,
@@ -16,9 +17,14 @@ type Events =
     }
   | {
       type: CanvasEventType.InsertStart;
+      blockToInsert: BlockToInsert;
     }
   | {
       type: CanvasEventType.InsertDone;
+      blockId: string;
+    }
+  | {
+      type: CanvasEventType.InsertCancel;
     }
   | {
       type: BlockEventType.BlockClick;
@@ -39,6 +45,10 @@ type Events =
 
 type CanvasContext = {
   selection: string[];
+  insertion: {
+    selectedBlock: BlockToInsert | null;
+    lastInsertedId: string | null;
+  };
 };
 
 const canvasController = setup({
@@ -68,6 +78,20 @@ const canvasController = setup({
     insertion: {
       selectedBlock: null,
       lastInsertedId: null,
+    },
+  },
+  on: {
+    [CanvasEventType.InsertStart]: {
+      target: `#${CanvasMode.Inserting}`,
+      actions: [
+        assign(({ event }) => ({
+          insertion: {
+            selectedBlock: event.blockToInsert,
+            lastInsertedId: null,
+          },
+        })),
+        "clearSelection",
+      ],
     },
   },
   initial: CanvasMode.None,
@@ -186,6 +210,28 @@ const canvasController = setup({
     },
     [CanvasMode.Inserting]: {
       id: CanvasMode.Inserting,
+      on: {
+        [CanvasEventType.InsertDone]: {
+          actions: [
+            assign(({ event }) => ({
+              insertion: {
+                selectedBlock: null,
+                lastInsertedId: event.blockId,
+              },
+              selection: [event.blockId],
+            })),
+          ],
+          target: `${CanvasMode.Selected}.${SelectionMode.Editing}`,
+        },
+        [CanvasEventType.InsertCancel]: {
+          actions: [
+            assign({
+              insertion: { selectedBlock: null, lastInsertedId: null },
+            }),
+          ],
+          target: CanvasMode.None,
+        },
+      },
     },
   },
 });

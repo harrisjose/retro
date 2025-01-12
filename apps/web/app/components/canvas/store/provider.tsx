@@ -28,10 +28,6 @@ export const CanvasProvider = ({
         width: window.innerWidth,
         height: window.innerHeight,
       }),
-      insertion: {
-        selectedBlock: null,
-        lastInsertedId: null,
-      },
     }),
   ).current;
 
