@@ -12,9 +12,11 @@ import { ProsemirrorEditor } from "../editor";
 
 const colors = {
   [CardColor.Pink]: "#F3BDFF",
-  [CardColor.Blue]: "#95CEFF",
-  [CardColor.Green]: "#ABFFA7",
-  [CardColor.Yellow]: "#FFE49E",
+  [CardColor.Blue]: "#ABF7FF",
+  [CardColor.Green]: "#BCFFD7",
+  [CardColor.Yellow]: "#FFE893",
+  [CardColor.Red]: "#FFA9A9",
+  [CardColor.Purple]: "#CBBFFF",
 } as const;
 
 export default function CardBlock({ id }: { id: string }) {
@@ -32,9 +34,9 @@ export default function CardBlock({ id }: { id: string }) {
   return (
     <div
       className={cn(
-        "w-full h-full rounded-lg flex flex-col border-2 border-transparent",
+        "w-full h-full rounded-xl flex flex-col border-2 border-transparent",
         isSelected
-          ? "border-[#6200FF99] pointer-events-auto"
+          ? "border-opacity-20 border-black border-2 pointer-events-auto"
           : "pointer-events-none",
       )}
       style={{
@@ -44,8 +46,8 @@ export default function CardBlock({ id }: { id: string }) {
     >
       <div
         className={cn(
-          "overflow-y-scroll overflow-x-clip py-4 px-2 ",
-          "w-full h-full grow flex flex-col",
+          "overflow-y-scroll overflow-x-clip p-4 ",
+          "w-full h-full grow flex flex-col font-normal text-sm leading-5 selection:bg-[#00000020]",
         )}
         style={{ overflowAnchor: "none" }}
       >

@@ -68,6 +68,8 @@ export enum CardColor {
   Blue = "blue",
   Green = "green",
   Yellow = "yellow",
+  Red = "red",
+  Purple = "purple",
 }
 
 export type CardProperties = {
