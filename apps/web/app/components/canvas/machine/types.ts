@@ -33,3 +33,19 @@ export type BlockToInsert = {
   type: BlockType;
   properties: Properties;
 };
+
+export enum EditorEventType {
+  Focus = "editor.focus",
+  Blur = "editor.blur",
+}
+
+export type EditorEvent =
+  | {
+      type: EditorEventType.Focus;
+      blockId: string;
+      cursor: "start" | "end" | number;
+    }
+  | {
+      type: EditorEventType.Blur;
+      blockId: string;
+    };

@@ -1,11 +1,20 @@
 import { createActorContext } from "@xstate/react";
-import { type ActorRefFrom, assertEvent, assign, raise, setup } from "xstate";
+import {
+  type ActorRefFrom,
+  assertEvent,
+  assign,
+  emit,
+  raise,
+  setup,
+} from "xstate";
 import { keyEventListenerLogic } from "./actors";
 import {
   BlockEventType,
   type BlockToInsert,
   CanvasEventType,
   CanvasMode,
+  type EditorEvent,
+  EditorEventType,
   SelectionMode,
 } from "./types";
 
@@ -43,6 +52,7 @@ type Events =
       type: BlockEventType.BlockDragEnd;
       blockId: string;
     }
+  | EditorEvent
   | {
       type: "keydown";
       key: string;
@@ -78,6 +88,21 @@ export const canvasController = setup({
     deleteBlock: (_, params: { selected: string[] }) => {
       console.log("Default delete block action", params);
     },
+    focusEditor: emit(
+      ({ context }) =>
+        ({
+          type: EditorEventType.Focus,
+          blockId: context.selection[0],
+        }) as EditorEvent,
+    ),
+    blurEditor: emit(
+      ({ context }) =>
+        ({
+          type: EditorEventType.Blur,
+          blockId: context.selection[0],
+          cursor: context.selection[0],
+        }) as EditorEvent,
+    ),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
@@ -185,6 +210,8 @@ export const canvasController = setup({
           },
         },
         [SelectionMode.Editing]: {
+          entry: ["focusEditor"],
+          exit: ["blurEditor"],
           on: {
             [BlockEventType.BlockClick]: {
               guard: "isDifferentBlock",

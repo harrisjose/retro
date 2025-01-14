@@ -8,7 +8,7 @@ import {
 } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
-import { CanvasControllerContext } from "../canvas/machine";
+import { CanvasControllerContext } from "../../canvas/machine";
 
 const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);

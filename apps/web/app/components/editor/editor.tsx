@@ -1,10 +1,49 @@
+import "@retro/pm/flat-list-css";
+
 import { cn } from "@retro/common";
-import { ProseMirror } from "@retro/pm";
+import { ProseMirror, Selection } from "@retro/pm";
 import { memo, useState } from "react";
 import * as Y from "yjs";
+import { EditorEventType } from "../canvas/machine/types.js";
 import { useEditorState } from "./editor-state.js";
+import { useEditorEvent } from "./event-hooks.js";
 
-import "@retro/pm/flat-list-css";
+const EditorEventHandlers = () => {
+  // TODO @harris: Sync focus state back to canvas machine since focus can be
+  // restored to an instance of the editor. We want the machine to also transition
+  // to editing state when that happens.
+  useEditorEvent((view, event) => {
+    switch (event.type) {
+      case EditorEventType.Focus:
+        {
+          if (view.hasFocus()) return;
+
+          const selection =
+            event.cursor === "start"
+              ? Selection.atStart(view.state.doc)
+              : Selection.atEnd(view.state.doc);
+          view.dispatch(view.state.tr.setSelection(selection));
+          // From tiptap focus command
+          requestAnimationFrame(() => {
+            if (!view.isDestroyed) view.focus();
+          });
+        }
+        break;
+      case EditorEventType.Blur:
+        {
+          view.dom.blur();
+          const tr = view.state.tr;
+          const selection = Selection.atEnd(tr.doc);
+          tr.setSelection(selection!);
+          view.dispatch(tr);
+          // From tiptap blur command
+          window?.getSelection()?.removeAllRanges();
+        }
+        break;
+    }
+  });
+  return <></>;
+};
 
 export function MemoProsemirrorEditor({
   fragment,
@@ -20,14 +59,14 @@ export function MemoProsemirrorEditor({
       dispatchTransaction={dispatch}
       mount={mount}
     >
+      <EditorEventHandlers />
       <div
         ref={setMount}
         autoCorrect="off"
         spellCheck="false"
         className={cn(
           // full height fix, weird
-          "grow",
-          "outline-none w-full h-full",
+          "outline-none w-full h-fit",
           // styles
           "prose prose-sm whitespace-pre-wrap",
           "prose-code:text-xs prose-code:!tracking-tight",

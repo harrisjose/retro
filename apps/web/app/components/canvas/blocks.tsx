@@ -1,8 +1,8 @@
 import { BlockType, useBlockMap } from "@retro/sdk";
 import { match } from "ts-pattern";
-import CardBlock from "../blocks/card-block";
 import Frame from "../blocks/frame";
-import StickerBlock from "../blocks/sticker-block";
+import CardBlock from "../blocks/renderers/card-block";
+import StickerBlock from "../blocks/renderers/sticker-block";
 
 export default function BlocksRenderer() {
   const blocks = useBlockMap();

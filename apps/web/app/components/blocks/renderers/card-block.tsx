@@ -1,3 +1,4 @@
+import { EditorContextProvider } from "@/components/editor/event-hooks";
 import { cn } from "@retro/common";
 import {
   CardColor,
@@ -7,8 +8,8 @@ import {
   useRawBlockProperty,
 } from "@retro/sdk";
 import * as Y from "yjs";
-import { CanvasControllerContext } from "../canvas/machine";
-import { ProsemirrorEditor } from "../editor";
+import { CanvasControllerContext } from "../../canvas/machine";
+import { ProsemirrorEditor } from "../../editor";
 
 const colors = {
   [CardColor.Pink]: "#F3BDFF",
@@ -51,7 +52,11 @@ export default function CardBlock({ id }: { id: string }) {
         )}
         style={{ overflowAnchor: "none" }}
       >
-        {content && <ProsemirrorEditor fragment={content} />}
+        {content && (
+          <EditorContextProvider id={id}>
+            <ProsemirrorEditor fragment={content} />
+          </EditorContextProvider>
+        )}
       </div>
     </div>
   );
