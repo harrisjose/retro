@@ -10,7 +10,6 @@
     "@hocuspocus/provider": "^2.15.0",
     "@retro/common": "workspace:*",
     "@trpc/client": "11.0.0-rc.682",
-    "better-auth": "^1.1.2",
     "lib0": "^0.2.99",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -1,10 +1,11 @@
 {
   "scripts": {
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "cleanup": "pnpm -r exec rm -rf node_modules && rm -rf node_modules"
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.12",
-    "better-auth": "^1.1.2",
+    "better-auth": "^1.1.11",
     "lib0": "^0.2.99",
     "lodash-es": "^4.17.21",
     "y-utility": "^0.1.4",
@@ -12,6 +13,7 @@
     "yjs-types": "^0.0.1"
   },
   "devDependencies": {
+    "@better-auth/cli": "^1.1.11",
     "@biomejs/biome": "1.9.4",
     "lefthook": "^1.10.3",
     "typescript": "^5.7.2"

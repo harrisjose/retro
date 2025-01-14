@@ -12,8 +12,8 @@ importers:
         specifier: ^4.17.12
         version: 4.17.12
       better-auth:
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.11
+        version: 1.1.11
       lib0:
         specifier: ^0.2.99
         version: 0.2.99
@@ -30,6 +30,9 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1(yjs@13.6.21)
     devDependencies:
+      '@better-auth/cli':
+        specifier: ^1.1.11
+        version: 1.1.11(@babel/core@7.26.0)(@types/pg@8.11.10)(@types/react@19.0.2)(kysely@0.27.5)(pg@8.13.1)(react@19.0.0)
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
@@ -154,9 +157,6 @@ importers:
       '@trpc/server':
         specifier: 11.0.0-rc.682
         version: 11.0.0-rc.682(typescript@5.7.2)
-      better-auth:
-        specifier: ^1.1.2
-        version: 1.1.2
       hono:
         specifier: ^4.6.14
         version: 4.6.14
@@ -173,9 +173,6 @@ importers:
         specifier: ^3.24.1
         version: 3.24.1
     devDependencies:
-      '@better-auth/cli':
-        specifier: ^1.1.2
-        version: 1.1.2(@babel/core@7.26.0)(@types/pg@8.11.10)(@types/react@19.0.2)(kysely@0.27.5)(pg@8.13.1)(react@19.0.0)
       '@types/node':
         specifier: ^20.11.17
         version: 20.17.10
@@ -389,9 +386,6 @@ importers:
       '@trpc/client':
         specifier: 11.0.0-rc.682
         version: 11.0.0-rc.682(@trpc/server@11.0.0-rc.682(typescript@5.7.2))(typescript@5.7.2)
-      better-auth:
-        specifier: ^1.1.2
-        version: 1.1.2
       lib0:
         specifier: ^0.2.99
         version: 0.2.99
@@ -604,12 +598,12 @@ packages:
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
     engines: {node: '>=6.9.0'}
 
-  '@better-auth/cli@1.1.2':
-    resolution: {integrity: sha512-hJoAHMvSA5g7JeiEzhHVvtPA9jvR04W5PlyHg1lof2WY0eiYrh81ZKCgUrg1jXSvdRNR6f5hPjitZS6kkjjFdg==}
+  '@better-auth/cli@1.1.11':
+    resolution: {integrity: sha512-IKXollAE2vF7JI9Gnlql85hJyt4fhV5CaZuesfTLhhiPSSSe/7l2Qv1BRyJspUaKuv/lQGmn4Hvinz2YN7ULIQ==}
     hasBin: true
 
-  '@better-auth/utils@0.2.1':
-    resolution: {integrity: sha512-1PgLrNJY3FZfwz8g6puKrAS/WJW3LWuNlLSFFKrzDLrn69SPBCuCXUF3tY6c1gURLX6nHARH6yx3dVy9f298cg==}
+  '@better-auth/utils@0.2.3':
+    resolution: {integrity: sha512-Ap1GaSmo6JYhJhxJOpUB0HobkKPTNzfta+bLV89HfpyCAHN7p8ntCrmNFHNAVD0F6v0mywFVEUg1FUhNCc81Rw==}
 
   '@better-fetch/fetch@1.1.12':
     resolution: {integrity: sha512-B3bfloI/2UBQWIATRN6qmlORrvx3Mp0kkNjmXLv0b+DtbtR+pP4/I5kQA/rDUv+OReLywCCldf6co4LdDmh8JA==}
@@ -1775,15 +1769,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@simplewebauthn/browser@10.0.0':
-    resolution: {integrity: sha512-hG0JMZD+LiLUbpQcAjS4d+t4gbprE/dLYop/CkE01ugU/9sKXflxV5s0DRjdz3uNMFecatRfb4ZLG3XvF8m5zg==}
+  '@simplewebauthn/browser@13.1.0':
+    resolution: {integrity: sha512-WuHZ/PYvyPJ9nxSzgHtOEjogBhwJfC8xzYkPC+rR/+8chl/ft4ngjiK8kSU5HtRJfczupyOh33b25TjYbvwAcg==}
 
-  '@simplewebauthn/server@10.0.1':
-    resolution: {integrity: sha512-djNWcRn+H+6zvihBFJSpG3fzb0NQS9c/Mw5dYOtZ9H+oDw8qn9Htqxt4cpqRvSOAfwqP7rOvE9rwqVaoGGc3hg==}
+  '@simplewebauthn/server@13.1.0':
+    resolution: {integrity: sha512-vGz9sgzoN0c0IySnpdG0TG0B71GM75basrlTpXHDAw8tQ/JUH5O73x6s3UXzDWHlv7d2E4Hy4aX5ugoHkW4udg==}
     engines: {node: '>=20.0.0'}
-
-  '@simplewebauthn/types@10.0.0':
-    resolution: {integrity: sha512-SFXke7xkgPRowY2E+8djKbdEznTVnD5R6GO7GPTthpHrokLvNKw8C3lFZypTxLI7KkCfGPfhtqB3d7OVGGa9jQ==}
 
   '@svgr/babel-plugin-add-jsx-attribute@8.0.0':
     resolution: {integrity: sha512-b9MIk7yhdS1pMCZM8VeNfUlSKVRhsHZNMl5O9SfaX0l0t5wjdgu4IDzGB8bpnGBBOjGST3rRFVsaaEtI4W6f7g==}
@@ -2124,11 +2115,11 @@ packages:
     resolution: {integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==}
     engines: {node: '>= 0.8'}
 
-  better-auth@1.1.2:
-    resolution: {integrity: sha512-rkGRRUXyfKYWiNW7QM79fDjMtv+WDq3vO3R6wBitHndK2aPA4lWqZ34aUvD7GKhMnyyBlApdb+2yqYTZl//pLg==}
+  better-auth@1.1.11:
+    resolution: {integrity: sha512-F6a+LquF4UnfG9q501KwtypJQG0YvCPuZ8TfOxeM/RHAFQORlAe+1mvmlINc5hID+mVJst1UZ+xrw2zRhZY0pA==}
 
-  better-call@0.3.3-beta.4:
-    resolution: {integrity: sha512-txigUTFsjOlE4dfkfhDhu6Gk0I1Xo3S4Nye+nfMKJXknb+WsymcWtqoRUSUGdhOMumM3LT9R3QttTUxwny9lWQ==}
+  better-call@0.3.3:
+    resolution: {integrity: sha512-N4lDVm0NGmFfDJ0XMQ4O83Zm/3dPlvIQdxvwvgSLSkjFX5PM4GUYSVAuxNzXN27QZMHDkrJTWUqxBrm4tPC3eA==}
 
   better-sqlite3@11.7.0:
     resolution: {integrity: sha512-mXpa5jnIKKHeoGzBrUJrc65cXFKcILGZpU3FXR0pradUEm9MA7UZz02qfEejaMcm9iXrSOCenwwYMJ/tZ1y5Ig==}
@@ -2350,9 +2341,6 @@ packages:
     resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
     engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
     hasBin: true
-
-  cross-fetch@4.1.0:
-    resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -3398,10 +3386,6 @@ packages:
     resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-
-  nanostores@0.11.3:
-    resolution: {integrity: sha512-TUes3xKIX33re4QzdxwZ6tdbodjmn3tWXCEc1uokiEmo14sI1EaGYNs2k3bU2pyyGNmBqFGAVl6jAGWd06AVIg==}
-    engines: {node: ^18.0.0 || >=20.0.0}
 
   napi-build-utils@1.0.2:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
@@ -4869,7 +4853,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@better-auth/cli@1.1.2(@babel/core@7.26.0)(@types/pg@8.11.10)(@types/react@19.0.2)(kysely@0.27.5)(pg@8.13.1)(react@19.0.0)':
+  '@better-auth/cli@1.1.11(@babel/core@7.26.0)(@types/pg@8.11.10)(@types/react@19.0.2)(kysely@0.27.5)(pg@8.13.1)(react@19.0.0)':
     dependencies:
       '@babel/preset-react': 7.26.3(@babel/core@7.26.0)
       '@babel/preset-typescript': 7.26.0(@babel/core@7.26.0)
@@ -4877,7 +4861,7 @@ snapshots:
       '@prisma/client': 5.22.0(prisma@5.22.0)
       '@types/better-sqlite3': 7.6.12
       '@types/prompts': 2.4.9
-      better-auth: 1.1.2
+      better-auth: 1.1.11
       better-sqlite3: 11.7.0
       c12: 2.0.1
       chalk: 5.4.1
@@ -4907,7 +4891,6 @@ snapshots:
       - '@vercel/postgres'
       - '@xata.io/client'
       - bun-types
-      - encoding
       - expo-sqlite
       - knex
       - kysely
@@ -4920,7 +4903,7 @@ snapshots:
       - sqlite3
       - supports-color
 
-  '@better-auth/utils@0.2.1':
+  '@better-auth/utils@0.2.3':
     dependencies:
       uncrypto: 0.1.3
 
@@ -6024,11 +6007,9 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.29.1':
     optional: true
 
-  '@simplewebauthn/browser@10.0.0':
-    dependencies:
-      '@simplewebauthn/types': 10.0.0
+  '@simplewebauthn/browser@13.1.0': {}
 
-  '@simplewebauthn/server@10.0.1':
+  '@simplewebauthn/server@13.1.0':
     dependencies:
       '@hexagon/base64': 1.1.28
       '@levischuck/tiny-cbor': 0.2.2
@@ -6037,12 +6018,6 @@ snapshots:
       '@peculiar/asn1-rsa': 2.3.13
       '@peculiar/asn1-schema': 2.3.13
       '@peculiar/asn1-x509': 2.3.13
-      '@simplewebauthn/types': 10.0.0
-      cross-fetch: 4.1.0
-    transitivePeerDependencies:
-      - encoding
-
-  '@simplewebauthn/types@10.0.0': {}
 
   '@svgr/babel-plugin-add-jsx-attribute@8.0.0(@babel/core@7.26.0)':
     dependencies:
@@ -6443,29 +6418,25 @@ snapshots:
     dependencies:
       safe-buffer: 5.1.2
 
-  better-auth@1.1.2:
+  better-auth@1.1.11:
     dependencies:
-      '@better-auth/utils': 0.2.1
+      '@better-auth/utils': 0.2.3
       '@better-fetch/fetch': 1.1.12
       '@noble/ciphers': 0.6.0
       '@noble/hashes': 1.6.1
-      '@simplewebauthn/browser': 10.0.0
-      '@simplewebauthn/server': 10.0.1
-      better-call: 0.3.3-beta.4
+      '@simplewebauthn/browser': 13.1.0
+      '@simplewebauthn/server': 13.1.0
+      better-call: 0.3.3
       defu: 6.1.4
       jose: 5.9.6
       kysely: 0.27.5
-      nanostores: 0.11.3
       uncrypto: 0.1.3
       zod: 3.24.1
-    transitivePeerDependencies:
-      - encoding
 
-  better-call@0.3.3-beta.4:
+  better-call@0.3.3:
     dependencies:
       '@better-fetch/fetch': 1.1.12
       rou3: 0.5.1
-      set-cookie-parser: 2.7.1
       uncrypto: 0.1.3
       zod: 3.24.1
 
@@ -6703,12 +6674,6 @@ snapshots:
   cross-env@7.0.3:
     dependencies:
       cross-spawn: 7.0.6
-
-  cross-fetch@4.1.0:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
 
   cross-spawn@7.0.6:
     dependencies:
@@ -7585,8 +7550,6 @@ snapshots:
       thenify-all: 1.6.0
 
   nanoid@3.3.8: {}
-
-  nanostores@0.11.3: {}
 
   napi-build-utils@1.0.2: {}
 

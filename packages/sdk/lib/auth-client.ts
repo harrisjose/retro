@@ -5,8 +5,8 @@ import {
   admin,
   member,
   owner,
-} from "../../../apps/server/src/lib/permission";
-import config from "./config";
+} from "../../../apps/server/src/lib/permission.js";
+import config from "./config.js";
 
 export const authClient = createAuthClient({
   baseURL: config.apiUrl,
