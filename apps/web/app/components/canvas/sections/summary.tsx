@@ -6,9 +6,9 @@ export default function SummarySection() {
 
   return (
     <div
-      key={`intro-section`}
+      key={`summary-section`}
       ref={sectionRef}
-      className="shrink-0 rounded-2xl border border-dashed border-[#00000029]"
+      className="shrink-0 bg-white rounded-2xl border border-dashed border-[#0000000F]"
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,

@@ -25,18 +25,18 @@ export default function Topbar() {
       </div>
 
       <div className="flex gap-2 justify-center items-center">
-        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl">
+        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]">
           Intro
         </div>
         {Object.entries(sectionMap).map(([id, section]) => (
           <div
             key={id}
-            className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl"
+            className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]"
           >
             {section.name}
           </div>
         ))}
-        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl">
+        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]">
           Summary
         </div>
         <CollaboratorAvatars
