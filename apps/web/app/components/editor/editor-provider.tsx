@@ -1,26 +1,32 @@
-import { EditorView, useEditorEffect } from "@retro/pm";
+import { EditorState, EditorView, useEditorEffect } from "@retro/pm";
 import { type PropsWithChildren, createContext, useContext } from "react";
+import * as Y from "yjs";
 import { CanvasControllerContext, type EditorEvent } from "../canvas/machine";
 
-const BlockEditorContext = createContext<{
+export const EditorContext = createContext<{
   id: string;
-}>({ id: "" });
+  createEditorState: (fragment: Y.XmlFragment) => EditorState;
+}>({ id: "", createEditorState: () => EditorState.create({}) });
 
 export const EditorContextProvider = ({
   id,
+  createEditorState,
   children,
-}: PropsWithChildren<{ id: string }>) => {
+}: PropsWithChildren<{
+  id: string;
+  createEditorState: (fragment: Y.XmlFragment) => EditorState;
+}>) => {
   return (
-    <BlockEditorContext.Provider value={{ id }}>
+    <EditorContext.Provider value={{ id, createEditorState }}>
       {children}
-    </BlockEditorContext.Provider>
+    </EditorContext.Provider>
   );
 };
 
-export const useEditorEvent = (
+export const useEditorEventCallback = (
   cb: (view: EditorView, event: EditorEvent) => void,
 ) => {
-  const { id } = useContext(BlockEditorContext);
+  const { id } = useContext(EditorContext);
   const canvasControllerRef = CanvasControllerContext.useActorRef();
 
   useEditorEffect((view: EditorView) => {

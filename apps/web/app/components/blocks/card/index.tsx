@@ -1,5 +1,17 @@
-import { EditorContextProvider } from "@/components/editor/event-hooks";
+import { EditorContextProvider, ProsemirrorEditor } from "@/components/editor";
 import { cn } from "@retro/common";
+import {
+  EditorState,
+  baseKeymap,
+  createDedentListCommand,
+  createIndentListCommand,
+  createListPlugins,
+  inputRules,
+  keymap,
+  listInputRules,
+  listKeymap,
+  ySyncPlugin,
+} from "@retro/pm";
 import {
   CardColor,
   type CardProperties,
@@ -9,7 +21,8 @@ import {
 } from "@retro/sdk";
 import * as Y from "yjs";
 import { CanvasControllerContext } from "../../canvas/machine";
-import { ProsemirrorEditor } from "../../editor";
+import { buildKeymap } from "./keymap";
+import { cardSchema } from "./schema";
 
 const colors = {
   [CardColor.Pink]: "#F3BDFF",
@@ -19,6 +32,28 @@ const colors = {
   [CardColor.Red]: "#FFA9A9",
   [CardColor.Purple]: "#CBBFFF",
 } as const;
+
+function createEditorState(fragment: Y.XmlFragment) {
+  const state = EditorState.create({
+    plugins: [
+      ...createListPlugins({ schema: cardSchema }),
+      inputRules({ rules: listInputRules }),
+      keymap({
+        ...listKeymap,
+        "Mod-[": () => false,
+        "Mod-]": () => false,
+        Tab: createIndentListCommand(),
+        "Shift-Tab": createDedentListCommand(),
+      }),
+      keymap(buildKeymap(cardSchema)),
+      keymap(baseKeymap),
+      ySyncPlugin(fragment),
+    ],
+    schema: cardSchema,
+  });
+
+  return state;
+}
 
 export default function CardBlock({ id }: { id: string }) {
   const { block } = useBlock(id);
@@ -53,7 +88,7 @@ export default function CardBlock({ id }: { id: string }) {
         style={{ overflowAnchor: "none" }}
       >
         {content && (
-          <EditorContextProvider id={id}>
+          <EditorContextProvider id={id} createEditorState={createEditorState}>
             <ProsemirrorEditor fragment={content} />
           </EditorContextProvider>
         )}
