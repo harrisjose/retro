@@ -1,20 +1,20 @@
 import {
   type Command,
+  Schema,
   chainCommands,
   exitCode,
   selectParentNode,
   toggleMark,
   undoInputRule,
 } from "@retro/pm";
-import type { CardSchemaType } from "./schema.js";
 
 const mac =
   typeof navigator != "undefined"
     ? /Mac|iP(hone|[oa]d)/.test(navigator.platform)
     : false;
 
-export function buildKeymap(
-  schema: CardSchemaType,
+export function buildDefaultKeymap(
+  schema: Schema,
   mapKeys?: { [key: string]: false | string },
 ) {
   let keys: { [key: string]: Command } = {},

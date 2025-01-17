@@ -1,6 +1,7 @@
 import { EditorContextProvider, ProsemirrorEditor } from "@/components/editor";
 import { cn } from "@retro/common";
 import {
+  EditorSchema,
   EditorState,
   baseKeymap,
   createDedentListCommand,
@@ -21,8 +22,7 @@ import {
 } from "@retro/sdk";
 import * as Y from "yjs";
 import { CanvasControllerContext } from "../../canvas/machine";
-import { buildKeymap } from "./keymap";
-import { cardSchema } from "./schema";
+import { buildDefaultKeymap } from "../../editor/keymap";
 
 const colors = {
   [CardColor.Pink]: "#F3BDFF",
@@ -36,7 +36,7 @@ const colors = {
 function createEditorState(fragment: Y.XmlFragment) {
   const state = EditorState.create({
     plugins: [
-      ...createListPlugins({ schema: cardSchema }),
+      ...createListPlugins({ schema: EditorSchema.CardSchema }),
       inputRules({ rules: listInputRules }),
       keymap({
         ...listKeymap,
@@ -45,11 +45,11 @@ function createEditorState(fragment: Y.XmlFragment) {
         Tab: createIndentListCommand(),
         "Shift-Tab": createDedentListCommand(),
       }),
-      keymap(buildKeymap(cardSchema)),
+      keymap(buildDefaultKeymap(EditorSchema.CardSchema)),
       keymap(baseKeymap),
       ySyncPlugin(fragment),
     ],
-    schema: cardSchema,
+    schema: EditorSchema.CardSchema,
   });
 
   return state;

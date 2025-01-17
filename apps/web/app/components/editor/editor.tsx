@@ -48,8 +48,10 @@ const EditorEventHandlers = () => {
 
 export function MemoProsemirrorEditor({
   fragment,
+  className,
 }: {
   fragment: Y.XmlFragment;
+  className?: string;
 }) {
   const [mount, setMount] = useState<HTMLDivElement | null>(null);
   const { editorState, dispatch } = useEditorState(fragment);
@@ -69,11 +71,11 @@ export function MemoProsemirrorEditor({
           // full height fix, weird
           "outline-none w-full h-fit",
           // styles
-          "prose prose-sm whitespace-pre-wrap",
-          "prose-code:text-xs prose-code:!tracking-tight",
+          "whitespace-pre-wrap",
           // list fixes
           "[&>.prosemirror-flat-list]:!ml-4",
           "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
+          className,
         )}
       />
     </ProseMirror>

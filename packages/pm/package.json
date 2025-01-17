@@ -13,7 +13,8 @@
     "@nytimes/react-prosemirror": "^1.0.0",
     "@tiptap/pm": "^2.10.4",
     "prosemirror-flat-list": "^0.5.4",
-    "y-prosemirror": "^1.2.15"
+    "y-prosemirror": "^1.2.15",
+    "zeed-dom": "^0.15.1"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",
