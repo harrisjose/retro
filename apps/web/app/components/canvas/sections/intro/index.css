@@ -1,0 +1,10 @@
+.intro-pm {
+  h2 {
+    @apply font-sans text-[32px] font-bold leading-[36px] tracking-[-0.02em] text-left underline-offset-[from-font];
+    @apply mb-[25px];
+  }
+  p {
+    @apply font-sans text-[14.09px] font-normal leading-[18.11px] text-left underline-offset-[from-font];
+    @apply mb-4;
+  }
+}
