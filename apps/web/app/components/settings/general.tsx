@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@retro/sdk";
 import { useOrganization } from "@retro/sdk/src/settings/organization";
 import { useCallback, useState } from "react";
+import { useDebounceValue } from "usehooks-ts";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -9,16 +10,21 @@ import { Label } from "../ui/label";
 const General = () => {
   const organization = useOrganization();
   const [name, setName] = useState(organization!.name);
+  const [isLoading, setIsLoading] = useDebounceValue(false, 2000);
 
   const updateOrgName = useCallback(async () => {
     if (!name) return;
+    setIsLoading(true);
     await authClient.organization.update({
       organizationId: organization!.id,
       data: {
         name,
       },
     });
+    setIsLoading(false);
   }, [name, organization]);
+
+  const isDisabled = name.length === 0 || name === organization!.name;
 
   return (
     <div className="flex flex-col h-full">
@@ -47,11 +53,8 @@ const General = () => {
         </div>
       </div>
       <div className="mt-auto flex justify-end">
-        <Button
-          onClick={updateOrgName}
-          disabled={name.length === 0 || name === organization!.name}
-        >
-          Save changes
+        <Button onClick={updateOrgName} disabled={isDisabled || isLoading}>
+          {isLoading ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </div>

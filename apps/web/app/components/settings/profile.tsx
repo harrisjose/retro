@@ -14,7 +14,11 @@ const Profile = () => {
       </div>
       <div className="mt-6 flex flex-col gap-[6px]">
         <div className="w-12 h-12 rounded-full overflow-clip">
-          <img src={profile.image!} className="w-full h-full object-cover" />
+          <img
+            src={profile.image!}
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Label

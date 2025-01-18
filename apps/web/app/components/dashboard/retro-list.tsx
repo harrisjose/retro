@@ -2,6 +2,7 @@ import DueDate from "@/components/svg/duedate";
 import RetroSvg from "@/components/svg/retro.svg?react";
 import { getRelativeTime, getRemainingTime } from "@retro/common";
 import { useDocumentList } from "@retro/sdk";
+import { orderBy } from "lodash-es";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import RetroEmpty from "./retro-empty";
@@ -9,7 +10,13 @@ import RetroEmpty from "./retro-empty";
 const RetroList = () => {
   const { documents, isLoading } = useDocumentList();
 
-  const documentList = useMemo(() => Object.values(documents), [documents]);
+  const documentList = useMemo(() => {
+    return orderBy(
+      Object.values(documents),
+      (document) => new Date(document.createdAt),
+      "desc",
+    );
+  }, [documents]);
 
   // TODO: @aki change later
   if (isLoading) return <>Loading...</>;
