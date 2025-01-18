@@ -20,7 +20,7 @@ const FilterPanel = ({
   onFilterChange,
 }: React.PropsWithChildren<FilterPanelProps>) => {
   return (
-    <div className="w-full flex-1 overflow-hidden flex gap-4 justify-center">
+    <div className="w-full flex-1 overflow-hidden flex gap-4 justify-center mt-[50px]">
       <Tabs
         defaultValue="account"
         className="w-[680px] relative"
