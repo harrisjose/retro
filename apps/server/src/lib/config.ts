@@ -17,6 +17,12 @@ const config = {
         ? ["http://localhost:5175"]
         : (process.env.ALLOWED_ORIGINS?.split(",") ?? []),
   },
+  app: {
+    url:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5175"
+        : process.env.APP_URL!,
+  },
 };
 
 export default config;

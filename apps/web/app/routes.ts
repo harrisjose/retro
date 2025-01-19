@@ -11,6 +11,8 @@ export default [
     //
     route("/loginCallback", "routes/login/callback.tsx"),
     //
+    route("/accept-invitation/:id", "routes/accept-invitation/index.tsx"),
+    //
     layout("routes/dashboard/layout.tsx", [
       route("/dashboard", "routes/dashboard/index.tsx"),
     ]),

@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
+import { Role } from "@retro/common";
+import { authClient, useOrganization } from "@retro/sdk";
+import { useState } from "react";
+import isEmail from "validator/lib/isEmail";
 import DotMenu from "../svg/dot-menu.svg?react";
 import { Button } from "../ui/button";
-
-import { Role } from "@retro/common";
-import { useOrganization } from "@retro/sdk";
-import { useState } from "react";
 import { Input } from "../ui/input";
 import {
   Select,
@@ -13,9 +13,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+
 const People = () => {
-  const [role, setRole] = useState<Role>(Role.ADMIN);
   const organization = useOrganization();
+
+  const [role, setRole] = useState<Role>(Role.MEMBER);
+  const [email, setEmail] = useState<string>("");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  const onInvite = async () => {
+    setIsSaving(true);
+    try {
+      if (!isEmail(email)) {
+        throw new Error("Invalid email");
+      }
+      await authClient.organization.inviteMember({
+        email,
+        role,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -28,6 +49,9 @@ const People = () => {
           <div className="flex-1 relative">
             <Input
               placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
               className="px-[10px] py-2 text-[14px] md:text-[14px] h-8"
             />
             <Select
@@ -52,18 +76,50 @@ const People = () => {
               </SelectContent>
             </Select>
           </div>
-          <Button className="w-[108px] py-2 h-8">Invite</Button>
+          <Button className="w-[108px] py-2 h-8" onClick={onInvite}>
+            {isSaving ? "Inviting..." : "Invite"}
+          </Button>
         </div>
         <div className="flex flex-col">
           <div className="flex">
             <div className="basis-8/12 opacity-50 font-medium text-[12px]">
-              Email (20 members)
+              Invitations
+            </div>
+            <div className="basis-2/12 opacity-50 font-medium text-[12px]">
+              Status
+            </div>
+            <div className="basis-2/12 opacity-50 font-medium text-[12px] text-right">
+              Actions
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          {organization?.invitations.map((invite) => {
+            return (
+              <div key={invite.id} className="flex">
+                <div className="basis-8/12 font-normal text-[14px]">
+                  {invite.email}
+                </div>
+                <div className="basis-2/12 font-normal text-[14px] capitalize">
+                  {invite.status}
+                </div>
+                <div className="flex justify-end basis-2/12 cursor-pointer">
+                  <DotMenu />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex flex-col">
+          <div className="flex">
+            <div className="basis-8/12 opacity-50 font-medium text-[12px]">
+              Email
             </div>
             <div className="basis-2/12 opacity-50 font-medium text-[12px]">
               Role
             </div>
             <div className="basis-2/12 opacity-50 font-medium text-[12px] text-right">
-              Action
+              Actions
             </div>
           </div>
         </div>
@@ -83,24 +139,6 @@ const People = () => {
               </div>
             );
           })}
-          {/* <div className="flex">
-            <div className="basis-8/12 font-normal text-[14px]">
-              pradeep@mellow.team
-            </div>
-            <div className="basis-2/12 font-normal text-[14px]">Admin</div>
-            <div className="flex justify-end basis-2/12">
-              <DotMenu />
-            </div>
-          </div>
-          <div className="flex">
-            <div className="basis-8/12 font-normal text-[14px]">
-              pradeep@mellow.team
-            </div>
-            <div className="basis-2/12 font-normal text-[14px]">Admin</div>
-            <div className="flex justify-end basis-2/12">
-              <DotMenu />
-            </div>
-          </div> */}
         </div>
       </div>
     </div>

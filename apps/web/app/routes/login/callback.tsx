@@ -7,21 +7,35 @@ import { Await, Navigate, useNavigate } from "react-router";
 import { match } from "ts-pattern";
 import type { Route } from "./+types/callback";
 
-type LoaderResponse = {
-  status: "setup" | "error" | "continue";
-  errorCode?: string;
+export const meta: Route.MetaFunction = () => {
+  return [
+    {
+      title: "Login | Mellow",
+    },
+  ];
 };
+
+type LoaderResponse =
+  | {
+      status: "setup-org";
+    }
+  | {
+      status: "continue";
+      redirect?: string;
+    }
+  | {
+      status: "error";
+      errorCode?: string;
+    };
 
 export async function clientLoader() {
   return new Promise<LoaderResponse>(async (resolve) => {
     try {
+      debugger;
       const { data: activeOrganization } =
         await authClient.organization.getFullOrganization();
-      if (activeOrganization) {
-        resolve({
-          status: "continue",
-        });
-      } else {
+
+      if (!activeOrganization) {
         const { data: organizations, error } =
           await authClient.organization.list();
         if (error) {
@@ -30,15 +44,17 @@ export async function clientLoader() {
           await authClient.organization.setActive({
             organizationId: organizations[0].id,
           });
-          resolve({
-            status: "continue",
-          });
         } else {
-          resolve({
-            status: "setup",
+          return resolve({
+            status: "setup-org",
           });
         }
       }
+      const redirect = new URLSearchParams(location.search).get("redirect");
+      return resolve({
+        status: "continue",
+        redirect: redirect ? decodeURIComponent(redirect) : undefined,
+      });
     } catch (error) {
       console.error(error);
       resolve({
@@ -77,7 +93,7 @@ export default function LoginCallback({ loaderData }: Route.ComponentProps) {
         <Await resolve={loaderData}>
           {(value) => {
             return match(value.status)
-              .with("setup", () => (
+              .with("setup-org", () => (
                 <div className="flex w-full max-w-sm flex-col gap-6">
                   <div className="flex items-center justify-center gap-2 self-center font-medium">
                     <div className="text-primary-foreground">
@@ -99,7 +115,12 @@ export default function LoginCallback({ loaderData }: Route.ComponentProps) {
                   </p>
                 </div>
               ))
-              .with("continue", () => <Navigate to="/dashboard" />)
+              .with("continue", () => {
+                if ("redirect" in value) {
+                  return <Navigate to={value.redirect!} />;
+                }
+                return <Navigate to="/dashboard" />;
+              })
               .exhaustive();
           }}
         </Await>

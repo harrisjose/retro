@@ -1,9 +1,15 @@
-import { DocProvider, apiClient, config } from "@retro/sdk";
-import { Outlet, useLoaderData, useParams } from "react-router";
+import { DocProvider, apiClient, authClient, config } from "@retro/sdk";
+import { Outlet, redirect, useLoaderData, useParams } from "react-router";
 import * as Y from "yjs";
 import type { Route } from "./+types";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  // TODO @harris: Refactor this to a common handler
+  const { data, error } = await authClient.getSession();
+  if (!data?.user || error) {
+    return redirect(`/?redirect=${encodeURIComponent(location.pathname)}`);
+  }
+  //
   const { id } = params;
   if (!id) {
     throw new Error("Document ID is required");

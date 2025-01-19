@@ -30,7 +30,7 @@ const Profile = () => {
           <Input
             id="userName"
             className={cn(
-              `w-[280px] h-8 rounded-md px-[10px] py-2 text-black text-[14px] font-normal`,
+              `w-[280px] h-8 rounded-md px-[10px] py-2 text-black text-[14px] font-normal outline-none`,
               `disabled:opacity-100 disabled:cursor-not-allowed`,
             )}
             value={profile.name}

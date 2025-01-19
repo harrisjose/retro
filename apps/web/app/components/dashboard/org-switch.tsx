@@ -27,7 +27,7 @@ function OrgSwitch() {
         <ChevronDown className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-        {organizations.map((org) => {
+        {organizations.map((org: { id: string; name: string }) => {
           return (
             <DropdownMenuItem
               key={org.id}
@@ -35,7 +35,7 @@ function OrgSwitch() {
               onClick={() => onValueChange(org.id)}
             >
               {org.name}
-              <Check className="size-4" />
+              {activeOrganization.id === org.id && <Check className="size-4" />}
             </DropdownMenuItem>
           );
         })}

@@ -7,10 +7,10 @@ import type { Route } from "./+types";
 export default function LoginPage() {
   const onLoginStart = async (provider: "google" | null = null) => {
     if (!provider) return;
-
+    const redirect = new URLSearchParams(location.search).get("redirect");
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: config.authCallbackUrl,
+      callbackURL: `${config.authCallbackUrl}?redirect=${redirect}`,
     });
     if (error) {
       console.error(error);
@@ -22,7 +22,7 @@ export default function LoginPage() {
   if (data?.session) return <Navigate to="/dashboard" />;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-t to-[#D6CCC2] from-[#FDFDFC] p-6 md:p-10">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <div className="flex items-center justify-center gap-2 self-center font-medium">
           <div className="text-primary-foreground">
