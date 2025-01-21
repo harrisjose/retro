@@ -45,9 +45,12 @@ export const CanvasProvider = ({
         }),
       );
     };
-    window.addEventListener("resize", handleResize);
+    const controller = new AbortController();
+    window.addEventListener("resize", handleResize, {
+      signal: controller.signal,
+    });
     return () => {
-      window.removeEventListener("resize", handleResize);
+      controller.abort();
     };
   });
 

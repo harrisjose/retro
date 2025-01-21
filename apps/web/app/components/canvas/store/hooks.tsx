@@ -75,12 +75,17 @@ export const useCanvasGestures = (
     if (!rootEl) {
       throw new Error("Target element not found");
     }
+    const controller = new AbortController();
 
-    rootEl.addEventListener("wheel", handleWheel, { passive: false });
-    rootEl.addEventListener("click", handleClick);
+    rootEl.addEventListener("wheel", handleWheel, {
+      passive: false,
+      signal: controller.signal,
+    });
+    rootEl.addEventListener("click", handleClick, {
+      signal: controller.signal,
+    });
     return () => {
-      if (rootEl) rootEl.removeEventListener("wheel", handleWheel);
-      if (rootEl) rootEl.removeEventListener("click", handleClick);
+      controller.abort();
     };
   }, [ref, onPinch, onWheel]);
 };

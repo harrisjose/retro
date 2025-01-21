@@ -13,7 +13,6 @@ const keyEventListenerLogic = fromCallback<
   const { key, capture = false } = input ?? {};
 
   const keypressHandler = (event: KeyboardEvent) => {
-    console.log("Received event in keyEventListenerLogic", event);
     if (isEmpty(key)) {
       sendBack(event);
     } else if (event.key === key) {
@@ -21,18 +20,14 @@ const keyEventListenerLogic = fromCallback<
     }
   };
 
-  console.log("keyEventListenerLogic", key, capture);
-  window.addEventListener(capture ? "keydown" : "keypress", keypressHandler);
+  const controller = new AbortController();
 
-  const removeListener = () => {
-    window.removeEventListener(
-      capture ? "keydown" : "keypress",
-      keypressHandler,
-    );
-  };
+  window.addEventListener(capture ? "keydown" : "keypress", keypressHandler, {
+    signal: controller.signal,
+  });
 
   return () => {
-    removeListener();
+    controller.abort();
   };
 });
 

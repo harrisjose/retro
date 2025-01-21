@@ -54,10 +54,14 @@ export function Cursor({
       onPositionChange?.(e.clientX, e.clientY);
     };
 
-    document.addEventListener("mousemove", updatePosition);
+    const controller = new AbortController();
+
+    document.addEventListener("mousemove", updatePosition, {
+      signal: controller.signal,
+    });
 
     return () => {
-      document.removeEventListener("mousemove", updatePosition);
+      controller.abort();
     };
   }, [cursorX, cursorY, onPositionChange]);
 
