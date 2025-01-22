@@ -1,3 +1,5 @@
+import "./index.css";
+
 import { ProsemirrorEditor } from "@/components/editor/editor";
 import { EditorContextProvider } from "@/components/editor/editor-provider";
 import { Button } from "@/components/ui/button";
@@ -15,12 +17,12 @@ import {
   listKeymap,
   ySyncPlugin,
 } from "@retro/pm";
-import { useRawIntroContent } from "@retro/sdk";
+import { useRawIntroContent, useSectionMap } from "@retro/sdk";
+import { find } from "lodash-es";
 import { useRef } from "react";
 import * as Y from "yjs";
 import { buildDefaultKeymap } from "../../../editor/keymap";
-
-import "./index.css";
+import { useSectionNavigation } from "../../store/hooks";
 
 function createEditorState(fragment: Y.XmlFragment) {
   const state = EditorState.create({
@@ -48,6 +50,18 @@ export default function IntroSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const content = useRawIntroContent();
 
+  const { moveToSection } = useSectionNavigation();
+  const sectionMap = useSectionMap();
+
+  const onClick = () => {
+    const firstSection = find(
+      Object.entries(sectionMap),
+      ([_, section]) => section.index === "0",
+    );
+    const [sectionId] = firstSection!;
+    moveToSection(sectionId);
+  };
+
   return (
     <div
       key={`intro-section`}
@@ -70,7 +84,7 @@ export default function IntroSection() {
         )}
       </div>
       <div className="pt-[25px] w-full flex justify-start">
-        <Button>Start</Button>
+        <Button onClick={onClick}>Start</Button>
       </div>
     </div>
   );

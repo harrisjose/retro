@@ -1,3 +1,4 @@
+import { cn } from "@retro/common";
 import {
   TimerProvider,
   useCollaborators,
@@ -8,11 +9,39 @@ import { isNil } from "lodash-es";
 import { DocumentMusic } from "../music";
 import { DocumentTimerWrapper } from "../timer";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
+import { useSectionNavigation } from "./store/hooks";
+
+const SectionButton = ({
+  id,
+  name,
+  active,
+  onClick,
+}: {
+  id: string;
+  name: string;
+  active: boolean;
+  onClick: () => void;
+}) => {
+  return (
+    <a
+      key={id}
+      className={cn(
+        "py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D] cursor-pointer",
+        active && "bg-white",
+      )}
+      onClick={onClick}
+    >
+      {name}
+    </a>
+  );
+};
 
 export default function Topbar() {
   const { id: documentId } = useDocument();
   const collaborators = useCollaborators();
   const sectionMap = useSectionMap();
+
+  const { activeSection, moveToSection } = useSectionNavigation();
 
   return (
     <div className="top-4 left-0 w-screen h-[28px] relative z-20">
@@ -25,20 +54,27 @@ export default function Topbar() {
       </div>
 
       <div className="flex gap-2 justify-center items-center">
-        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]">
-          Intro
-        </div>
+        <SectionButton
+          id="intro"
+          name="Intro"
+          active={activeSection === "intro"}
+          onClick={() => moveToSection("intro")}
+        />
         {Object.entries(sectionMap).map(([id, section]) => (
-          <div
+          <SectionButton
             key={id}
-            className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]"
-          >
-            {section.name}
-          </div>
+            id={id}
+            name={section.name}
+            active={activeSection === id}
+            onClick={() => moveToSection(id)}
+          />
         ))}
-        <div className="py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D]">
-          Summary
-        </div>
+        <SectionButton
+          id="summary"
+          name="Summary"
+          active={activeSection === "summary"}
+          onClick={() => moveToSection("summary")}
+        />
         <CollaboratorAvatars
           className="-space-x-1 bg-white shadow-[0px_0px_1px_0px_#00000057] h-[28px] rounded-2xl flex items-center justify-center p-1.5"
           avatarUrls={collaborators

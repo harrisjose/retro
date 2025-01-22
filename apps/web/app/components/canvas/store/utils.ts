@@ -68,9 +68,12 @@ export function zoomCamera(
   };
 }
 
-export const computeDefaultCamera = (): Camera => {
+export const computeDefaultCamera = (viewport?: {
+  width: number;
+  height: number;
+}): Camera => {
   // Get the viewport dimensions
-  const viewport = {
+  viewport = viewport ?? {
     width: window.innerWidth,
     height: window.innerHeight,
   };
@@ -108,4 +111,97 @@ export const computeZoomBounds = (sections: SectionMap): Bounds => {
   const max = 1;
 
   return { min, max };
+};
+
+export const computeSectionCenters = (
+  sections: SectionMap,
+  targetZoom?: number,
+): Record<string, Camera> => {
+  // Get the viewport dimensions
+  const viewport = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
+  // Helper function to compute individual section position
+  const computeSectionPosition = (x: number, width: number): Camera => {
+    const centerPoint = {
+      x: x + width / 2,
+      y:
+        (CanvasConstants.SectionHeight + CanvasConstants.PaddingAround * 2) / 2,
+    };
+
+    const screenCenter = {
+      x: viewport.width / 2,
+      y: viewport.height / 2,
+    };
+
+    const screenCenterInCanvas = screenToCanvas(screenCenter, tempCamera);
+
+    return {
+      x: screenCenterInCanvas.x - centerPoint.x,
+      y: screenCenterInCanvas.y - centerPoint.y,
+      z,
+    };
+  };
+
+  // Use provided zoom or compute default
+  const z = targetZoom ?? computeDefaultCamera().z;
+  const tempCamera = { x: 0, y: 0, z };
+
+  // Initialize result map with intro position
+  const positions: Record<string, Camera> = {
+    intro: computeSectionPosition(
+      CanvasConstants.PaddingAround,
+      CanvasConstants.IntroSectionWidth,
+    ),
+  };
+
+  // Track cumulative x position as we go
+  let xPosition =
+    CanvasConstants.PaddingAround +
+    CanvasConstants.IntroSectionWidth +
+    CanvasConstants.PaddingBetween;
+
+  // Compute positions for all regular sections
+  Object.entries(sections).forEach(([sectionId, section]) => {
+    positions[sectionId] = computeSectionPosition(xPosition, section.width);
+    xPosition += section.width + CanvasConstants.PaddingBetween;
+  });
+
+  // Add summary position
+  positions.summary = computeSectionPosition(
+    xPosition,
+    CanvasConstants.IntroSectionWidth,
+  );
+
+  return positions;
+};
+
+export const getActiveSectionOnScreen = (
+  camera: Camera,
+  sectionPosMap: Record<string, Camera>,
+): string => {
+  // Find the section with the closest center point
+  let closestSection = "intro"; // Default to first section
+  let minDistance = Infinity;
+
+  // Calculate current viewport center in canvas coordinates
+  const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const currentCenter = screenToCanvas(screenCenter, camera);
+
+  Object.entries(sectionPosMap).forEach(([sectionId, position]) => {
+    // Calculate section's center in canvas coordinates
+    const sectionCenter = screenToCanvas(screenCenter, position);
+
+    // Calculate distance between centers
+    const distance = Math.abs(sectionCenter.x - currentCenter.x);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestSection = sectionId;
+    }
+  });
+
+  return closestSection;
 };

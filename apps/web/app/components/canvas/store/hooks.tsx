@@ -1,11 +1,26 @@
 import { updateProxyState } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
-import { type RefObject, useContext, useEffect, useMemo } from "react";
+import { animate } from "motion";
+import {
+  type RefObject,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useWindowSize } from "usehooks-ts";
 import { useSnapshot } from "valtio";
 import { CanvasContext } from "./provider.js";
 import { type Point } from "./types.js";
-import { computeZoomBounds, panCamera, zoomCamera } from "./utils.js";
+import {
+  computeDefaultCamera,
+  computeSectionCenters,
+  computeZoomBounds,
+  getActiveSectionOnScreen,
+  panCamera,
+  zoomCamera,
+} from "./utils.js";
 
 export const useCanvas = () => {
   const state = useContext(CanvasContext);
@@ -28,9 +43,52 @@ export const useCamera = () => {
         zoomCamera(state.camera, origin, dz, zBounds),
       );
     },
+    zoomTo: (z: number) => {
+      updateProxyState(state.camera, { ...state.camera, z });
+    },
     moveBy: (dx: number = 0, dy: number = 0) => {
       updateProxyState(state.camera, panCamera(state.camera, dx, dy));
     },
+    moveTo: (x: number, y: number) => {
+      updateProxyState(state.camera, { ...state.camera, x, y });
+    },
+  };
+};
+
+export const useSectionNavigation = () => {
+  const sections = useSectionMap();
+  const state = useContext(CanvasContext);
+  const viewport = useWindowSize();
+  const { z: defaultZoom } = computeDefaultCamera(viewport);
+
+  const sectionPosMap = computeSectionCenters(sections, defaultZoom);
+
+  const moveToSection = (sectionId: string | "intro" | "summary") => {
+    const target = sectionPosMap[sectionId];
+    const current = state.camera;
+    animate(current, target, {
+      duration: 0.5,
+    });
+  };
+
+  const [activeSection, setActiveSection] = useState("intro");
+  const currentCamera = useSnapshot(state.camera);
+
+  useEffect(() => {
+    const rafId = requestAnimationFrame(() => {
+      const newActiveSection = getActiveSectionOnScreen(
+        currentCamera,
+        sectionPosMap,
+      );
+      setActiveSection(newActiveSection!);
+    });
+
+    return () => cancelAnimationFrame(rafId);
+  }, [currentCamera, sectionPosMap]);
+
+  return {
+    activeSection,
+    moveToSection,
   };
 };
 
