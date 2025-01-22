@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Role } from "@retro/common";
 import { authClient, useOrganization } from "@retro/sdk";
+import { isEmpty } from "lodash-es";
 import { useState } from "react";
 import isEmail from "validator/lib/isEmail";
 import DotMenu from "../svg/dot-menu.svg?react";
@@ -16,6 +17,10 @@ import {
 
 const People = () => {
   const organization = useOrganization();
+  const invitations = organization?.invitations.filter(
+    (invite) => invite.status === "pending",
+  );
+  const members = organization?.members;
 
   const [role, setRole] = useState<Role>(Role.MEMBER);
   const [email, setEmail] = useState<string>("");
@@ -80,36 +85,40 @@ const People = () => {
             {isSaving ? "Inviting..." : "Invite"}
           </Button>
         </div>
-        <div className="flex flex-col">
-          <div className="flex">
-            <div className="basis-8/12 opacity-50 font-medium text-[12px]">
-              Invitations
-            </div>
-            <div className="basis-2/12 opacity-50 font-medium text-[12px]">
-              Status
-            </div>
-            <div className="basis-2/12 opacity-50 font-medium text-[12px] text-right">
-              Actions
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          {organization?.invitations.map((invite) => {
-            return (
-              <div key={invite.id} className="flex">
-                <div className="basis-8/12 font-normal text-[14px]">
-                  {invite.email}
+        {!isEmpty(invitations) && (
+          <>
+            <div className="flex flex-col">
+              <div className="flex">
+                <div className="basis-8/12 opacity-50 font-medium text-[12px]">
+                  Invitations
                 </div>
-                <div className="basis-2/12 font-normal text-[14px] capitalize">
-                  {invite.status}
+                <div className="basis-2/12 opacity-50 font-medium text-[12px]">
+                  Status
                 </div>
-                <div className="flex justify-end basis-2/12 cursor-pointer">
-                  <DotMenu />
+                <div className="basis-2/12 opacity-50 font-medium text-[12px] text-right">
+                  Actions
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {invitations.map((invite) => {
+                return (
+                  <div key={invite.id} className="flex">
+                    <div className="basis-8/12 font-normal text-[14px]">
+                      {invite.email}
+                    </div>
+                    <div className="basis-2/12 font-normal text-[14px] capitalize">
+                      {invite.status}
+                    </div>
+                    <div className="flex justify-end basis-2/12 cursor-pointer">
+                      <DotMenu />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
         <div className="flex flex-col">
           <div className="flex">
             <div className="basis-8/12 opacity-50 font-medium text-[12px]">
