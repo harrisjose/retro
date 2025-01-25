@@ -1,10 +1,10 @@
+import acousticGuitarSfx from "../../assets/acoustic-guitar.mp3";
+
 import { DEFAULT_MUSIC_ID, MusicStatus, useDocumentMusic } from "@retro/sdk";
+import { useEffect, useRef, useState } from "react";
 import MusicSvg from "../svg/music.svg?react";
 import PauseSvg from "../svg/pause.svg?react";
 import PlaySvg from "../svg/play.svg?react";
-
-import { useEffect, useRef, useState } from "react";
-import acousticGuitarSfx from "../../../assets/acoustic_guitar.mp3";
 
 export const DocumentMusic = () => {
   const { status, startMusic, stopMusic } = useDocumentMusic();

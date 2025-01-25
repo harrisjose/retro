@@ -1,7 +1,7 @@
 import { useDocumentTimer } from "@retro/sdk";
 import { useEffect, useMemo, useState } from "react";
 
-import timerCompleteSfx from "../../../assets/timer-complete.mp3";
+import timerCompleteSfx from "../../assets/timer-complete.mp3";
 
 export const CountdownTimer = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
