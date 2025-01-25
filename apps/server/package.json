@@ -2,18 +2,21 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "predev": "npm run migrate-up --all",
-    "kysely": "doppler run -- kysely",
-    "postmigrate-up": "npm run db:generate",
-    "postmigrate-down": "npm run db:generate",
+    "typecheck": "tsc --noEmit",
     "setup-better-auth": "doppler run -- cli migrate --config ./src/lib/auth.ts",
-    "migrate-new": "npm run kysely migrate make",
-    "migrate-up": "npm run kysely migrate up",
-    "migrate-down": "npm run kysely migrate down",
-    "dev": "doppler run -- tsx watch --inspect src/index.ts",
-    "db:setup": "npm run setup-better-auth && npm run migrate-up --all",
+    "kysely": "doppler run -- kysely",
+    "postmigrate-up": "pnpm run db:generate",
+    "postmigrate-down": "pnpm run db:generate",
+    "migrate-new": "pnpm run kysely migrate make",
+    "migrate-up": "pnpm run kysely migrate up",
+    "migrate-latest": "pnpm run kysely migrate latest",
+    "migrate-down": "pnpm run kysely migrate down",
+    "db:setup": "pnpm run setup-better-auth && pnpm run migrate-latest",
     "db:generate": "doppler run -- tsx src/db/scripts/generate.ts",
-    "typecheck": "tsc"
+    "predev": "pnpm run migrate-latest",
+    "dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "prestart": "pnpm run migrate-latest",
+    "start": "doppler run -- tsx src/index.ts"
   },
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
@@ -27,16 +30,16 @@
     "@trpc/server": "11.0.0-rc.682",
     "hono": "^4.6.14",
     "kysely": "^0.27.5",
+    "kysely-ctl": "^0.10.1",
     "pg": "^8.13.1",
     "ws": "^8.18.0",
+    "tsx": "^4.12.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
-    "kysely-codegen": "^0.17.0",
-    "kysely-ctl": "^0.10.1",
-    "tsx": "^4.12.1"
+    "kysely-codegen": "^0.17.0"
   }
 }

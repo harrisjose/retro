@@ -170,9 +170,15 @@ importers:
       kysely:
         specifier: ^0.27.5
         version: 0.27.5
+      kysely-ctl:
+        specifier: ^0.10.1
+        version: 0.10.1(kysely@0.27.5)
       pg:
         specifier: ^8.13.1
         version: 8.13.1
+      tsx:
+        specifier: ^4.12.1
+        version: 4.19.2
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -192,12 +198,6 @@ importers:
       kysely-codegen:
         specifier: ^0.17.0
         version: 0.17.0(better-sqlite3@11.8.1)(kysely@0.27.5)(pg@8.13.1)
-      kysely-ctl:
-        specifier: ^0.10.1
-        version: 0.10.1(kysely@0.27.5)
-      tsx:
-        specifier: ^4.12.1
-        version: 4.19.2
 
   apps/web:
     dependencies:

@@ -18,12 +18,10 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 # Build in the correct order: shared packages first, then apps
-RUN pnpm run -r --filter="./packages/**" build && \
-    pnpm run -r --filter="./apps/server" --filter="./apps/web" build
+RUN pnpm run -r --filter="./packages/**" build
 
-# Create production deployments for both apps
+# Create production deployments for apps
 RUN pnpm deploy --filter="./apps/server" --prod /prod/server
-RUN pnpm deploy --filter="./apps/web" --prod /prod/web
 
 FROM base AS server
 WORKDIR /app
@@ -34,15 +32,4 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=build --chown=hono:nodejs /prod/server /app
 USER hono
 
-CMD ["doppler", "run", "--", "node", "dist/index.js"]
-
-# FROM base AS web
-# WORKDIR /app
-
-# RUN addgroup --system --gid 1001 nodejs && \
-#     adduser --system --uid 1001 nextjs
-
-# COPY --from=build --chown=nextjs:nodejs /prod/web /app
-# USER nextjs
-
-# CMD ["doppler", "run", "--", "pnpm", "start"]
+CMD ["pnpm", "run", "start"]

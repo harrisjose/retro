@@ -30,7 +30,11 @@ app.get("/api/document/:id/binary", async (c) => {
       .where("id", "=", dbUtil.asUuid(c.req.param("id")))
       .executeTakeFirstOrThrow();
 
-    return c.body(document.yDoc, 200, {
+    if (!document.yDoc) {
+      throw new Error("Document binary not found");
+    }
+
+    return c.body(document.yDoc as unknown as ArrayBuffer, 200, {
       "Content-Type": "application/octet-stream",
     });
   } catch (error) {
