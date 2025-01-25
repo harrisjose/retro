@@ -1,0 +1,80 @@
+name: Build Server Docker Image
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/server/**'
+      - 'packages/**'
+      - '.github/workflows/server-build.yml'
+      - 'Dockerfile'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'apps/server/**'
+      - 'packages/**'
+      - '.github/workflows/server-build.yml'
+      - 'Dockerfile'
+      - 'pnpm-lock.yaml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v41
+      with:
+        files: |
+          apps/server/**
+          packages/**
+    
+    - name: Setup Node.js
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install pnpm
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
+    - name: Install dependencies
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      run: pnpm install
+    
+    - name: Build server
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      run: pnpm build:server
+    
+    - name: Login to GitHub Container Registry
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build and push Docker image
+      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/server:latest
+          ghcr.io/${{ github.repository }}/server:${{ github.sha }}
+        labels: |
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+        provenance: false 
