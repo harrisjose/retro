@@ -8,6 +8,7 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "noEmit": true
+    "noEmit": true,
+    "outDir": "./dist"
   }
 }
