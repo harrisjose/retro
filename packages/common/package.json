@@ -2,6 +2,9 @@
   "name": "@retro/common",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "typecheck": "tsc"
   },
@@ -13,10 +16,5 @@
   "devDependencies": {
     "@types/node": "^20.17.10",
     "typescript": "^5.7.2"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./prosemirror": "./src/prosemirror.ts",
-    "./flat-list-css": "./node_modules/prosemirror-flat-list/dist/style.css"
   }
 }
