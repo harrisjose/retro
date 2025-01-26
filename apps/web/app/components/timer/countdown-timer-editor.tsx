@@ -1,9 +1,9 @@
 import { DEFAULT_TIMER_SECONDS, useDocumentTimer } from "@retro/sdk";
 import { useEffect, useRef } from "react";
-import MinusSVG from "../svg/minus.svg?react";
-import PauseSvg from "../svg/pause.svg?react";
-import PlaySvg from "../svg/play.svg?react";
-import PlusSVG from "../svg/plus.svg?react";
+import Minus from "../svg/minus";
+import Pause from "../svg/pause";
+import Play from "../svg/play";
+import Plus from "../svg/plus";
 import { Button } from "../ui/button";
 
 const formatTimer = (value: string) =>
@@ -32,7 +32,7 @@ const TimerActionButtons = ({
       {status === "paused" && (
         <>
           <Button onClick={() => resumeTimer()} className="bg-muted">
-            <PlaySvg />
+            <Play />
           </Button>
           <Button onClick={() => stopTimer()} className="bg-destructive flex-1">
             Stop
@@ -42,7 +42,7 @@ const TimerActionButtons = ({
       {status === "active" && (
         <>
           <Button onClick={() => pauseTimer()} className="bg-muted">
-            <PauseSvg />
+            <Pause />
           </Button>
           <Button onClick={() => stopTimer()} className="bg-destructive flex-1">
             Stop
@@ -224,7 +224,7 @@ const CountdownTimerEditor = () => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-center gap-[14px]">
         <button onClick={handleDecrement} className="outline-none">
-          <MinusSVG className="fill-primary" />
+          <Minus className="fill-primary" />
         </button>
         <div className="flex items-center gap-1 border-b border-dotted border-gray-300">
           <input
@@ -248,7 +248,7 @@ const CountdownTimerEditor = () => {
           />
         </div>
         <button onClick={handleIncrement} className="outline-none">
-          <PlusSVG className="fill-primary" />
+          <Plus className="fill-primary" />
         </button>
       </div>
       <TimerActionButtons

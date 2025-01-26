@@ -4,8 +4,8 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { useDocumentTimer } from "@retro/sdk";
-import ArrowDown from "../svg/arrow-down.svg?react";
-import TimerSvg from "../svg/timer.svg?react";
+import ArrowDown from "../svg/arrow-down";
+import Timer from "../svg/timer";
 import { CountdownTimer } from "./countdown-timer";
 import CountdownTimerEditor from "./countdown-timer-editor";
 
@@ -16,7 +16,7 @@ export const DocumentTimerWrapper = () => {
     <Popover>
       <PopoverTrigger asChild>
         <div className="flex items-center justify-center gap-1 cursor-pointer">
-          <TimerSvg />
+          <Timer />
 
           {status === "active" || status === "paused" ? (
             <CountdownTimer />

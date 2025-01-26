@@ -2,9 +2,9 @@ import acousticGuitarSfx from "../../assets/acoustic-guitar.mp3";
 
 import { DEFAULT_MUSIC_ID, MusicStatus, useDocumentMusic } from "@retro/sdk";
 import { useEffect, useRef, useState } from "react";
-import MusicSvg from "../svg/music.svg?react";
-import PauseSvg from "../svg/pause.svg?react";
-import PlaySvg from "../svg/play.svg?react";
+import Music from "../svg/music";
+import Pause from "../svg/pause";
+import Play from "../svg/play";
 
 export const DocumentMusic = () => {
   const { status, startMusic, stopMusic } = useDocumentMusic();
@@ -35,12 +35,12 @@ export const DocumentMusic = () => {
 
   return (
     <div className="flex items-center justify-center gap-[2px] pr-1">
-      <MusicSvg />
+      <Music />
       <div className="cursor-pointer">
         {status === MusicStatus.Active ? (
-          <PauseSvg className="w-4 h-4" onClick={stopMusic} />
+          <Pause className="w-4 h-4" onClick={stopMusic} />
         ) : (
-          <PlaySvg
+          <Play
             className="w-4 h-4"
             onClick={() => startMusic(DEFAULT_MUSIC_ID)}
           />

@@ -1,5 +1,5 @@
 import DueDate from "@/components/svg/duedate";
-import RetroSvg from "@/components/svg/retro.svg?react";
+import Retro from "@/components/svg/retro";
 import { getRelativeTime, getRemainingTime } from "@retro/common";
 import { useDocumentList } from "@retro/sdk";
 import { orderBy } from "lodash-es";
@@ -33,7 +33,7 @@ const RetroList = () => {
               key={document.id}
               className="w-[216px] h-[150px] rounded-[10px] bg-white box-shadow-[0px_0px_1px_0px_#0000004D] px-4 py-3 flex flex-col justify-end"
             >
-              <RetroSvg className="w-[54px] h-[54px] mb-auto" />
+              <Retro className="w-[54px] h-[54px] mb-auto" />
               <div className="flex flex-col">
                 <div className="font-bold">{document.name}</div>
                 <div className="inline-flex gap-1 items-center text-[10px] leading-[11.64px] text-gray-500">

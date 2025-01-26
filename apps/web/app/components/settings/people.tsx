@@ -4,7 +4,7 @@ import { authClient, useOrganization } from "@retro/sdk";
 import { isEmpty } from "lodash-es";
 import { useState } from "react";
 import isEmail from "validator/lib/isEmail";
-import DotMenu from "../svg/dot-menu.svg?react";
+import DotMenu from "../svg/dot-menu";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
