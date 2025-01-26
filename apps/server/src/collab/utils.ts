@@ -15,6 +15,15 @@ const introDoc = HtmlUtils.generateDocFromHtml(
   EditorSchema.IntroSchema,
 );
 
+const summaryDoc = HtmlUtils.generateDocFromHtml(
+  `
+  <h2>Summary</h2>
+  <p>We talked about...</p>
+  <h3>Actionable items</h3>
+`.trim(),
+  EditorSchema.SummarySchema,
+);
+
 const defaultSections = [
   {
     name: "What went well?",
@@ -64,6 +73,13 @@ export const getInitialYDoc = () => {
     prosemirrorToYXmlFragment(
       introDoc,
       introSection.get("content") as Y.XmlFragment,
+    );
+
+    const summarySection = yDoc.getMap("summary");
+    summarySection.set("content", new Y.XmlFragment());
+    prosemirrorToYXmlFragment(
+      summaryDoc,
+      summarySection.get("content") as Y.XmlFragment,
     );
 
     return Buffer.from(Y.encodeStateAsUpdate(yDoc));

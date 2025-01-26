@@ -14,10 +14,10 @@ import {
 export const IntroSchema = new Schema({
   nodes: {
     doc: {
-      content: "heading paragraph+",
+      content: "heading block+",
     },
-    heading: createHeadingSpec(),
     paragraph: createParagraphSpec(),
+    heading: createHeadingSpec(),
     list: createListSpec(),
     hard_break: createHardBreakSpec(),
     text: {
@@ -30,11 +30,35 @@ export const IntroSchema = new Schema({
     em: createEmMarkSpec(),
     strong: createStrongMarkSpec(),
     underline: createUnderlineMarkSpec(),
-    code: createCodeMarkSpec(),
   },
 });
 
 export type IntroSchemaType = typeof IntroSchema;
+
+export const SummarySchema = new Schema({
+  nodes: {
+    doc: {
+      content: "heading block+",
+    },
+    paragraph: createParagraphSpec(),
+    heading: createHeadingSpec(),
+    subheading: createHeadingSpec("h3"),
+    list: createListSpec(),
+    hard_break: createHardBreakSpec(),
+    text: {
+      group: "inline",
+    },
+  },
+  marks: {
+    link: createLinkMarkSpec(),
+    strike: createStrikeMarkSpec(),
+    em: createEmMarkSpec(),
+    strong: createStrongMarkSpec(),
+    underline: createUnderlineMarkSpec(),
+  },
+});
+
+export type SummarySchemaType = typeof SummarySchema;
 
 export const CardSchema = new Schema({
   nodes: {

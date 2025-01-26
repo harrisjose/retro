@@ -1,0 +1,73 @@
+import "./index.css";
+
+import { ProsemirrorEditor } from "@/components/editor/editor";
+import { EditorContextProvider } from "@/components/editor/editor-provider";
+import { CanvasConstants } from "@retro/common";
+import {
+  EditorSchema,
+  EditorState,
+  baseKeymap,
+  createDedentListCommand,
+  createIndentListCommand,
+  createListPlugins,
+  inputRules,
+  keymap,
+  listInputRules,
+  listKeymap,
+  ySyncPlugin,
+} from "@retro/pm";
+import { useRawSummaryContent } from "@retro/sdk";
+import { useRef } from "react";
+import * as Y from "yjs";
+import { buildDefaultKeymap } from "../../../editor/keymap";
+
+function createEditorState(fragment: Y.XmlFragment) {
+  const state = EditorState.create({
+    plugins: [
+      ...createListPlugins({ schema: EditorSchema.SummarySchema }),
+      inputRules({ rules: listInputRules }),
+      keymap({
+        ...listKeymap,
+        "Mod-[": () => false,
+        "Mod-]": () => false,
+        Tab: createIndentListCommand(),
+        "Shift-Tab": createDedentListCommand(),
+      }),
+      keymap(buildDefaultKeymap(EditorSchema.SummarySchema)),
+      keymap(baseKeymap),
+      ySyncPlugin(fragment),
+    ],
+    schema: EditorSchema.SummarySchema,
+  });
+
+  return state;
+}
+
+export default function SummarySection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const content = useRawSummaryContent();
+
+  return (
+    <div
+      key={`summary-section`}
+      ref={sectionRef}
+      className="shrink-0 bg-white rounded-2xl border border-dashed border-[#0000000F] p-20 flex flex-col justify-center items-center"
+      data-clear-selection
+      style={{
+        width: CanvasConstants.IntroSectionWidth,
+        height: CanvasConstants.SectionHeight,
+      }}
+    >
+      <div className="overflow-y-scroll w-full">
+        {content && (
+          <EditorContextProvider
+            id={`summary-section`}
+            createEditorState={createEditorState}
+          >
+            <ProsemirrorEditor fragment={content} className="summary-pm" />
+          </EditorContextProvider>
+        )}
+      </div>
+    </div>
+  );
+}
