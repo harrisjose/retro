@@ -1,5 +1,5 @@
 import Canvas from "@/components/canvas";
-import { InsertionMenu } from "@/components/canvas/insertion-menu";
+import { InsertionMenu } from "@/components/canvas/bottom-menu";
 import { CanvasMachineProvider } from "@/components/canvas/machine";
 import { CanvasProvider } from "@/components/canvas/store";
 import Topbar from "@/components/canvas/topbar";

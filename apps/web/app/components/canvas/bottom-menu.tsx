@@ -1,15 +1,24 @@
-import CardSvg from "@/components/svg/card.svg?react";
-import StickerSvg from "@/components/svg/sticker.svg?react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { raw } from "@retro/common";
-import { BlockType, CardColor, StickerJsonMap, StickerType } from "@retro/sdk";
+import { cn, raw } from "@retro/common";
+import {
+  BlockType,
+  CardColor,
+  StickerJsonMap,
+  StickerType,
+  useDocument,
+} from "@retro/sdk";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import * as Y from "yjs";
+import Back from "../svg/back";
+import Card from "../svg/card";
+import Sticker from "../svg/sticker";
+import { Separator } from "../ui/separator";
 import { CanvasControllerContext, CanvasEventType } from "./machine";
 
 const getRandomCardColor = () => {
@@ -39,11 +48,11 @@ const StickerMenu = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className={`cursor-pointer hover:fill-black/[0.04] fill-white outline-none ${
-          open && "fill-black/[0.04]"
+        className={`cursor-pointer hover:bg-black/[0.04] outline-none p-1 rounded-sm ${
+          open && "bg-black/[0.04]"
         }`}
       >
-        <StickerSvg />
+        <Sticker className="w-4 h-4" />
       </PopoverTrigger>
       <PopoverContent
         sideOffset={10}
@@ -77,7 +86,7 @@ const StickerMenu = () => {
   );
 };
 
-export const InsertionMenu = () => {
+const CardMenu = () => {
   const controllerRef = CanvasControllerContext.useActorRef();
 
   const insertCard = () => {
@@ -94,14 +103,44 @@ export const InsertionMenu = () => {
   };
 
   return (
-    <div className="absolute bottom-[16px] left-[50%] translate-x-[-50%] bg-white rounded-[8px] p-[6px] flex gap-[2px] shadow-[0px_8px_20px_0px_#0000001A]">
+    <button
+      className="hover:bg-black/[0.04] rounded-sm p-1"
+      onClick={insertCard}
+    >
+      <Card className="w-4 h-4" />
+    </button>
+  );
+};
+
+export const InsertionMenu = () => {
+  const navigate = useNavigate();
+  const document = useDocument();
+  const onBack = () => {
+    navigate("/");
+  };
+
+  return (
+    <div
+      className={cn(
+        "absolute bottom-[16px] left-[50%] translate-x-[-50%]",
+        "bg-white rounded-[8px] shadow-[0px_8px_20px_0px_#0000001A]",
+        "flex gap-1 p-[6px] items-center justify-center grow h-[36px]",
+      )}
+    >
+      <button onClick={onBack} className="hover:bg-black/[0.04] p-1 rounded-sm">
+        <Back className="w-4 h-4" />
+      </button>
+      <Separator
+        orientation="vertical"
+        className="bg-black opacity-5 rounded-sm"
+      />
+      <div className="text-sm">{document.name}</div>
+      <Separator
+        orientation="vertical"
+        className="bg-black opacity-5 rounded-sm"
+      />
       <StickerMenu />
-      <div
-        className="cursor-pointer hover:fill-black/[0.04] fill-white"
-        onClick={insertCard}
-      >
-        <CardSvg />
-      </div>
+      <CardMenu />
     </div>
   );
 };

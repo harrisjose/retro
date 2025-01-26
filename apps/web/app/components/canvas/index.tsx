@@ -33,14 +33,14 @@ export default function Canvas() {
     },
   });
 
-  const [machineState, context] = CanvasControllerContext.useSelector(
-    (state) => [state.value, state.context],
-  );
+  // const [machineState, context] = CanvasControllerContext.useSelector(
+  //   (state) => [state.value, state.context],
+  // );
 
-  console.debug(
-    JSON.stringify(machineState, null, 2),
-    JSON.stringify(context, null, 2),
-  );
+  // console.debug(
+  //   JSON.stringify(machineState, null, 2),
+  //   JSON.stringify(context, null, 2),
+  // );
 
   return (
     <>
