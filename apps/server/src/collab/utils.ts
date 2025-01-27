@@ -1,9 +1,13 @@
-import { CanvasConstants } from "@retro/common";
+import {
+  CanvasConstants,
+  type YSection,
+  type YSectionBase,
+} from "@retro/common";
 import { EditorSchema, HtmlUtils, prosemirrorToYXmlFragment } from "@retro/pm";
 import * as random from "lib0/random";
+import type { Section } from "node_modules/@retro/common/src/types/document";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
-import type { TypedArray } from "yjs-types";
 
 const introDoc = HtmlUtils.generateDocFromHtml(
   `
@@ -24,6 +28,8 @@ const summaryDoc = HtmlUtils.generateDocFromHtml(
   EditorSchema.SummarySchema,
 );
 
+// TODO @harris: Use fractional indexes for better support for
+// reordering sections when required
 const defaultSections = [
   {
     name: "What went well?",
@@ -55,11 +61,11 @@ export const getInitialYDoc = () => {
 
       sectionsMap.set(id, new Y.Array());
 
-      const backingArray = sectionsMap.get(id) as TypedArray<any>;
-      const sectionKV = new YKeyValue(backingArray);
+      const backingArray = sectionsMap.get(id) as YSectionBase;
+      const sectionKV = new YKeyValue(backingArray) as YSection;
 
       Object.entries(section).forEach(([key, value]) => {
-        sectionKV.set(key, value);
+        sectionKV.set(key as keyof Section, value);
       });
     });
 

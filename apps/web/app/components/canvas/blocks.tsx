@@ -1,4 +1,5 @@
-import { BlockType, useBlockMap } from "@retro/sdk";
+import { BlockType } from "@retro/common";
+import { useBlockMap } from "@retro/sdk";
 import { match } from "ts-pattern";
 import CardBlock from "../blocks/card";
 import Frame from "../blocks/frame";

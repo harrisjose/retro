@@ -1,13 +1,4 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import {
-  bindProxyToKVRef,
-  bindProxyToRef,
-  observeKeysInMapRef,
-  updateProxyState,
-} from "@retro/common";
-import { isNil, uniqBy } from "lodash-es";
-
-import { createContext, useContext, useEffect, useRef } from "react";
 import type {
   Block,
   Properties,
@@ -18,7 +9,18 @@ import type {
   YPropertiesMap,
   YSectionBase,
   YSectionMap,
-} from "src/sections/types.js";
+} from "@retro/common";
+import {
+  type Awareness,
+  type Collaborator,
+  type Document,
+  bindProxyToKVRef,
+  bindProxyToRef,
+  observeKeysInMapRef,
+  updateProxyState,
+} from "@retro/common";
+import { isNil, uniqBy } from "lodash-es";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
@@ -26,12 +28,7 @@ import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import {
-  type Awareness,
-  type Collaborator,
-  type Document,
-  type DocumentState,
-} from "./types.js";
+import { type DocumentState } from "./types.js";
 
 export const DocContext = createContext<DocumentState>({} as any);
 

@@ -1,11 +1,7 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
-import {
-  StickerJsonMap,
-  type StickerProperties,
-  StickerType,
-  useBlockProperties,
-} from "@retro/sdk";
+import { type StickerProperties, StickerType } from "@retro/common";
+import { StickerJsonMap, useBlockProperties } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { CanvasControllerContext } from "../../canvas/machine";

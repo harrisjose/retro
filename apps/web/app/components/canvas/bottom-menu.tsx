@@ -4,14 +4,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { cn, raw } from "@retro/common";
-import {
-  BlockType,
-  CardColor,
-  StickerJsonMap,
-  StickerType,
-  useDocument,
-} from "@retro/sdk";
+import { BlockType, CardColor, StickerType, cn, raw } from "@retro/common";
+import { StickerJsonMap, useDocument } from "@retro/sdk";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as Y from "yjs";

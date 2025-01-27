@@ -1,5 +1,5 @@
+import type { SectionMap } from "@retro/common";
 import { CanvasConstants } from "@retro/common";
-import type { SectionMap } from "@retro/sdk";
 import type { Bounds, Box, Camera, Point } from "./types";
 
 // Please read https://www.steveruiz.me/posts/zoom-ui for context before changing any of this

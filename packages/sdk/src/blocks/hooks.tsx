@@ -1,7 +1,3 @@
-import { fromSerialized } from "@retro/common";
-import * as random from "lib0/random";
-import { useContext } from "react";
-import { DocContext, useYDoc } from "src/document/document.js";
 import type {
   Block,
   Properties,
@@ -9,10 +5,14 @@ import type {
   YBlockMap,
   YProperties,
   YPropertiesMap,
-} from "src/sections/types.js";
+} from "@retro/common";
+import { fromSerialized } from "@retro/common";
+import * as random from "lib0/random";
+import { useContext } from "react";
 import { useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
+import { DocContext, useYDoc } from "../document/document.js";
 
 const insertBlock =
   (yBlockMap: YBlockMap, yPropertiesMap: YPropertiesMap) =>

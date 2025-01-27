@@ -1,5 +1,5 @@
 import { EditorContextProvider, ProsemirrorEditor } from "@/components/editor";
-import { cn } from "@retro/common";
+import { CardColor, type CardProperties, cn } from "@retro/common";
 import {
   EditorSchema,
   EditorState,
@@ -13,13 +13,7 @@ import {
   listKeymap,
   ySyncPlugin,
 } from "@retro/pm";
-import {
-  CardColor,
-  type CardProperties,
-  useBlock,
-  useBlockProperties,
-  useRawBlockProperty,
-} from "@retro/sdk";
+import { useBlock, useBlockProperties, useRawBlockProperty } from "@retro/sdk";
 import * as Y from "yjs";
 import { CanvasControllerContext } from "../../canvas/machine";
 import { buildDefaultKeymap } from "../../editor/keymap";

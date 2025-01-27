@@ -1,4 +1,4 @@
-import type { BlockType, Properties } from "@retro/sdk";
+import type { BlockType, Properties } from "@retro/common";
 
 export enum CanvasMode {
   None = "NONE",

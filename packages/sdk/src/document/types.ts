@@ -1,34 +1,11 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type {
   BlockMap,
+  Document,
+  Presence,
   PropertiesMap,
   SectionMap,
-} from "src/sections/types.js";
-
-export type Collaborator = {
-  id: string;
-  name: string;
-  image: string | null;
-  email: string;
-};
-
-export type Presence = {
-  collaborators: Collaborator[];
-};
-
-export type Awareness = {
-  user: Collaborator;
-};
-
-export type Document = {
-  id: string;
-  name: string;
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-  startDate: string;
-  endDate: string;
-};
+} from "@retro/common";
 
 export type DocumentState = {
   docId: string;

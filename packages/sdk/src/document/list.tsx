@@ -1,3 +1,4 @@
+import type { Document } from "@retro/common";
 import { DocumentListFilter } from "@retro/common";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
@@ -6,7 +7,6 @@ import { devtools } from "valtio/utils";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import type { Document } from "./types.js";
 
 type DocumentListState = {
   documents: Record<string, Document>;

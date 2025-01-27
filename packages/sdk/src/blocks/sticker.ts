@@ -1,11 +1,4 @@
-export enum StickerType {
-  StarStruck = "star-struck",
-  ClinkingBeerMugs = "clinking-beer-mugs",
-  FaceInClouds = "face-in-clouds",
-  Skull = "skull",
-  BottleWithPoppingCork = "bottle-with-popping-cork",
-  Poop = "poop",
-}
+import { StickerType } from "@retro/common";
 
 export const StickerJsonMap = {
   [StickerType.StarStruck]: {

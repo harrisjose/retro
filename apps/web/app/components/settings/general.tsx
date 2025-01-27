@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { authClient } from "@retro/sdk";
-import { useOrganization } from "@retro/sdk/src/settings/organization";
+import { authClient, useOrganization } from "@retro/sdk";
 import { useCallback, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

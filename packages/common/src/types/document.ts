@@ -1,7 +1,31 @@
-import type { TypedKV } from "@retro/common";
-import type { StickerType } from "src/blocks/sticker.js";
 import * as Y from "yjs";
 import type { TypedMap } from "yjs-types";
+import type { TypedKV } from "../yutils.js";
+
+export type Collaborator = {
+  id: string;
+  name: string;
+  image: string | null;
+  email: string;
+};
+
+export type Presence = {
+  collaborators: Collaborator[];
+};
+
+export type Awareness = {
+  user: Collaborator;
+};
+
+export type Document = {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  startDate: string;
+  endDate: string;
+};
 
 /**
  * YMaps are expensive to store when they have properties that change frequently. So we normalize data that we
@@ -78,10 +102,19 @@ export type CardProperties = {
 };
 
 export type YCardProperties = TypedMap<
-  CardProperties & {
+  Omit<CardProperties, "content"> & {
     content: Y.XmlFragment;
   }
 >;
+
+export enum StickerType {
+  StarStruck = "star-struck",
+  ClinkingBeerMugs = "clinking-beer-mugs",
+  FaceInClouds = "face-in-clouds",
+  Skull = "skull",
+  BottleWithPoppingCork = "bottle-with-popping-cork",
+  Poop = "poop",
+}
 
 export type StickerProperties = {
   stickerType: StickerType;
