@@ -1,8 +1,15 @@
+import { aiService, serializeDocForLlm } from "@retro/ai";
 import { DocumentListFilter } from "@retro/common";
+import * as Y from "yjs";
 import { z } from "zod";
-import { getInitialYDoc } from "../collab/utils.js";
+import { updateLiveYDoc } from "../collab/index.js";
+import {
+  getInitialYDoc,
+  patchFragmentFromSummaryResponse,
+} from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
+
 const documentRouter = router({
   list: publicProcedure
     .input(
@@ -103,6 +110,52 @@ const documentRouter = router({
       } catch (error) {
         console.error(error);
         throw new Error("Failed to create document");
+      }
+    }),
+  generateSummary: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        if (!ctx.user) {
+          throw new Error("Unauthorized");
+        }
+        const document = await db
+          .selectFrom("document")
+          .select(["yDoc", "yDocUpdatedAt"])
+          .where("id", "=", dbUtil.asUuid(input.id))
+          .executeTakeFirstOrThrow();
+
+        if (!document.yDoc) {
+          throw new Error("Document binary not found");
+        }
+        const yDoc = new Y.Doc();
+        Y.applyUpdate(yDoc, new Uint8Array(document.yDoc));
+
+        const serializedDocument = serializeDocForLlm(yDoc);
+
+        console.debug(`Generating summary for document ${input.id}`);
+        const result = await aiService.generateSummary(serializedDocument);
+        console.debug(`Summary generated for document ${input.id}`);
+
+        if (!result.ok) {
+          throw new Error(result.error);
+        }
+
+        await updateLiveYDoc(input.id, (yDoc) => {
+          const summarySection = yDoc.getMap("summary");
+          const contentFragment = summarySection.get(
+            "content",
+          ) as Y.XmlFragment;
+
+          patchFragmentFromSummaryResponse(contentFragment, result);
+        });
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to generate summary");
       }
     }),
 });

@@ -8,6 +8,7 @@ import type { HttpBindings } from "@hono/node-server";
 import type { Context, Hono, Next } from "hono";
 import type { WebSocket } from "ws";
 import { WebSocketServer } from "ws";
+import * as Y from "yjs";
 import { db, dbUtil } from "../db/index.js";
 
 const hocuspocus = new Hocuspocus({
@@ -114,4 +115,10 @@ export function withCollab<T extends Server | Http2Server | Http2SecureServer>(
   });
 
   return server;
+}
+
+export async function updateLiveYDoc(id: string, cb: (yDoc: Y.Doc) => void) {
+  const docConnection = await hocuspocus.openDirectConnection(id);
+  await docConnection.transact((doc) => cb(doc));
+  docConnection.disconnect();
 }

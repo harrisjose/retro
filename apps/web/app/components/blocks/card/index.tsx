@@ -83,7 +83,14 @@ export default function CardBlock({ id }: { id: string }) {
       >
         {content && (
           <EditorContextProvider id={id} createEditorState={createEditorState}>
-            <ProsemirrorEditor fragment={content} />
+            <ProsemirrorEditor
+              fragment={content}
+              className={cn(
+                // list fixes
+                "[&>.prosemirror-flat-list]:!ml-4",
+                "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
+              )}
+            />
           </EditorContextProvider>
         )}
       </div>

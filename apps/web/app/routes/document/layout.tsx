@@ -21,7 +21,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
     const binaryBuffer = await response.arrayBuffer();
     const binary = Array.from(new Uint8Array(binaryBuffer));
-    const document = await apiClient.documents.get.query({ id });
+    const document = await apiClient.document.get.query({ id });
 
     return { document, binary };
   } catch (error) {

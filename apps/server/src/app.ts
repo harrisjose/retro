@@ -22,6 +22,7 @@ app.use("/api/*", cors(corsOptions));
 app.get("/api/ping", (c) => {
   return c.text("pong");
 });
+
 app.get("/api/document/:id/binary", async (c) => {
   try {
     const document = await db

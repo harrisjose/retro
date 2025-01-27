@@ -35,7 +35,7 @@ export const DocContext = createContext<DocumentState>({} as any);
 const fetchDocument = async (state: Omit<DocumentState, "syncProvider">) => {
   try {
     state.loading = true;
-    const doc = await apiClient.documents.get.query({ id: state.docId });
+    const doc = await apiClient.document.get.query({ id: state.docId });
     if (!doc) throw new Error("Document not found");
 
     updateProxyState(state.document, doc);

@@ -5,7 +5,7 @@ import documentTimerRouter from "./document-timer.js";
 import documentRouter from "./document.js";
 
 export const appRouter = router({
-  documents: documentRouter,
+  document: documentRouter,
   documentTimer: documentTimerRouter,
   documentMusic: documentMusicRouter,
   documentEvents: documentEventsRouter,

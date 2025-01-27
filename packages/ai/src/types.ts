@@ -1,9 +1,25 @@
 export enum AiProvider {
-  Anthropic = "anthropic",
-  DeepSeek = "deepseek",
+  OpenRouter = "openrouter",
 }
 
 export enum AiModel {
-  Claude_3_5_Sonnet = "claude-3-5-sonnet",
-  DeepSeek_Chat = "deepseek-chat",
+  DeepSeek_Chat = "deepseek/deepseek-chat",
 }
+
+export type SerializedDocument = {
+  sections: Array<{
+    name: string;
+    content: string | null;
+    blocks: Array<{
+      content: string;
+      type: string;
+    }>;
+  }>;
+};
+
+export type Bounds = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+};

@@ -1,11 +1,13 @@
+import type { SummaryResponse } from "@retro/ai";
 import {
   CanvasConstants,
+  type Section,
   type YSection,
   type YSectionBase,
 } from "@retro/common";
 import { EditorSchema, HtmlUtils, prosemirrorToYXmlFragment } from "@retro/pm";
 import * as random from "lib0/random";
-import type { Section } from "node_modules/@retro/common/src/types/document";
+import { isEmpty } from "lodash-es";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
 
@@ -93,4 +95,37 @@ export const getInitialYDoc = () => {
     console.error("Error getting initial YDoc", error);
     throw error;
   }
+};
+
+export const patchFragmentFromSummaryResponse = (
+  fragment: Y.XmlFragment,
+  response: SummaryResponse,
+) => {
+  if (!response.ok) {
+    throw new Error("Invalid input in summary generation");
+  }
+  let html = `
+    <h2>Summary</h2>
+    <p>${response.summary}</p>
+  `;
+  if (!isEmpty(response.actionables)) {
+    html += `
+      <h3>Actionable items</h3>
+      <ul>
+        ${response.actionables
+          .map((item) => {
+            return `
+            <div class="prosemirror-flat-list" data-list-kind="task">
+              <div class="list-marker list-marker-click-target" contenteditable="false">
+                <label><input type="checkbox"></label>
+              </div>
+              <div class="list-content"><p>${item}</p></div>
+            </div>`;
+          })
+          .join("")}
+      </ul>
+    `;
+  }
+  const doc = HtmlUtils.generateDocFromHtml(html, EditorSchema.SummarySchema);
+  return prosemirrorToYXmlFragment(doc, fragment);
 };

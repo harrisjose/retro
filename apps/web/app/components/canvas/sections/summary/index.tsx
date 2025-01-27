@@ -1,7 +1,9 @@
+import "@retro/pm/flat-list-css";
 import "./index.css";
 
 import { ProsemirrorEditor } from "@/components/editor/editor";
 import { EditorContextProvider } from "@/components/editor/editor-provider";
+import { Button } from "@/components/ui/button";
 import { CanvasConstants } from "@retro/common";
 import {
   EditorSchema,
@@ -16,8 +18,8 @@ import {
   listKeymap,
   ySyncPlugin,
 } from "@retro/pm";
-import { useRawSummaryContent } from "@retro/sdk";
-import { useRef } from "react";
+import { apiClient, useDocument, useRawSummaryContent } from "@retro/sdk";
+import { useRef, useState } from "react";
 import * as Y from "yjs";
 import { buildDefaultKeymap } from "../../../editor/keymap";
 
@@ -45,7 +47,15 @@ function createEditorState(fragment: Y.XmlFragment) {
 
 export default function SummarySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const document = useDocument();
   const content = useRawSummaryContent();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const onClick = async () => {
+    setIsLoading(true);
+    await apiClient.document.generateSummary.mutate({ id: document.id });
+    setIsLoading(false);
+  };
 
   return (
     <div
@@ -67,6 +77,11 @@ export default function SummarySection() {
             <ProsemirrorEditor fragment={content} className="summary-pm" />
           </EditorContextProvider>
         )}
+      </div>
+      <div className="pt-[25px] w-full flex justify-start">
+        <Button onClick={onClick} disabled={isLoading}>
+          {isLoading ? "Generating summary..." : "Generate summary"}
+        </Button>
       </div>
     </div>
   );

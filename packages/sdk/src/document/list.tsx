@@ -61,7 +61,7 @@ async function fetchDocumentsList(state: DocumentListState) {
 
     if (!activeOrganization) throw new Error("Active organization not found");
 
-    const documents = await apiClient.documents.list.query({
+    const documents = await apiClient.document.list.query({
       organizationId: activeOrganization.id,
       filter: state.filter,
     });
@@ -135,7 +135,7 @@ export const useCreateDocument = () => {
     endDate: Date;
   }) => {
     try {
-      const document = await apiClient.documents.create.mutate({
+      const document = await apiClient.document.create.mutate({
         name,
         organizationId,
         startDate: startDate.toISOString(),

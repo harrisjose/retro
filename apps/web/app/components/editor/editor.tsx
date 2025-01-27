@@ -72,9 +72,6 @@ export function MemoProsemirrorEditor({
           "outline-none w-full h-fit",
           // styles
           "whitespace-pre-wrap",
-          // list fixes
-          "[&>.prosemirror-flat-list]:!ml-4",
-          "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
           className,
         )}
       />
