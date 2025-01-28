@@ -29,14 +29,17 @@ export const useEditorEventCallback = (
   const { id } = useContext(EditorContext);
   const canvasControllerRef = CanvasControllerContext.useActorRef();
 
-  useEditorEffect((view: EditorView) => {
-    const sub = canvasControllerRef.on("*", (event: any) => {
-      if (event.blockId === id && event.type.startsWith("editor.")) {
-        cb(view, event as EditorEvent);
-      }
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  });
+  useEditorEffect(
+    (view: EditorView) => {
+      const sub = canvasControllerRef.on("*", (event: any) => {
+        if (event.blockId === id && event.type.startsWith("editor.")) {
+          cb(view, event as EditorEvent);
+        }
+      });
+      return () => {
+        sub.unsubscribe();
+      };
+    },
+    [id, cb, canvasControllerRef],
+  );
 };

@@ -3,10 +3,7 @@ import { DocumentListFilter } from "@retro/common";
 import * as Y from "yjs";
 import { z } from "zod";
 import { updateLiveYDoc } from "../collab/index.js";
-import {
-  getInitialYDoc,
-  patchFragmentFromSummaryResponse,
-} from "../collab/utils.js";
+import { getInitialYDoc, patchFragmentWithSummary } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
 
@@ -137,9 +134,9 @@ const documentRouter = router({
 
         const serializedDocument = serializeDocForLlm(yDoc);
 
-        console.debug(`Generating summary for document ${input.id}`);
+        console.time(`Generating summary for document ${input.id}`);
         const result = await aiService.generateSummary(serializedDocument);
-        console.debug(`Summary generated for document ${input.id}`);
+        console.timeEnd(`Generating summary for document ${input.id}`);
 
         if (!result.ok) {
           throw new Error(result.error);
@@ -151,7 +148,7 @@ const documentRouter = router({
             "content",
           ) as Y.XmlFragment;
 
-          patchFragmentFromSummaryResponse(contentFragment, result);
+          patchFragmentWithSummary(contentFragment, result);
         });
       } catch (error) {
         console.error(error);

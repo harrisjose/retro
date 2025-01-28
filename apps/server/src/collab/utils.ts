@@ -97,7 +97,7 @@ export const getInitialYDoc = () => {
   }
 };
 
-export const patchFragmentFromSummaryResponse = (
+export const patchFragmentWithSummary = (
   fragment: Y.XmlFragment,
   response: SummaryResponse,
 ) => {
