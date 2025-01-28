@@ -6,6 +6,12 @@ import { useState } from "react";
 import isEmail from "validator/lib/isEmail";
 import DotMenu from "../svg/dot-menu";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import {
   Select,
@@ -17,10 +23,10 @@ import {
 
 const People = () => {
   const organization = useOrganization();
-  const invitations = organization?.invitations.filter(
-    (invite) => invite.status === "pending",
-  );
-  const members = organization?.members;
+  const members = organization?.members ?? [];
+  const invitations =
+    organization?.invitations.filter((invite) => invite.status === "pending") ??
+    [];
 
   const [role, setRole] = useState<Role>(Role.MEMBER);
   const [email, setEmail] = useState<string>("");
@@ -41,6 +47,18 @@ const People = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const removeInvitation = async (invitationId: string) => {
+    await authClient.organization.cancelInvitation({
+      invitationId,
+    });
+  };
+
+  const removeUser = async (userId: string) => {
+    await authClient.organization.removeMember({
+      memberIdOrEmail: userId,
+    });
   };
 
   return (
@@ -85,40 +103,6 @@ const People = () => {
             {isSaving ? "Inviting..." : "Invite"}
           </Button>
         </div>
-        {!isEmpty(invitations) && (
-          <>
-            <div className="flex flex-col">
-              <div className="flex">
-                <div className="basis-8/12 opacity-50 font-medium text-[12px]">
-                  Invitations
-                </div>
-                <div className="basis-2/12 opacity-50 font-medium text-[12px]">
-                  Status
-                </div>
-                <div className="basis-2/12 opacity-50 font-medium text-[12px] text-right">
-                  Actions
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              {invitations.map((invite) => {
-                return (
-                  <div key={invite.id} className="flex">
-                    <div className="basis-8/12 font-normal text-[14px]">
-                      {invite.email}
-                    </div>
-                    <div className="basis-2/12 font-normal text-[14px] capitalize">
-                      {invite.status}
-                    </div>
-                    <div className="flex justify-end basis-2/12 cursor-pointer">
-                      <DotMenu />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
         <div className="flex flex-col">
           <div className="flex">
             <div className="basis-8/12 opacity-50 font-medium text-[12px]">
@@ -132,8 +116,42 @@ const People = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          {organization!.members.map((member) => {
+        <div className="flex flex-col gap-[18px]">
+          {!isEmpty(invitations) && (
+            <>
+              {invitations.map((invite) => {
+                return (
+                  <div key={invite.id} className="flex">
+                    <div className="basis-8/12 font-normal text-[14px] flex items-center gap-1">
+                      {invite.email}{" "}
+                      <span className="text-[8px] px-1 rounded-xl bg-gray-500 text-white">
+                        Invited
+                      </span>
+                    </div>
+                    <div className="basis-2/12 font-normal text-[14px] capitalize">
+                      {invite.role}
+                    </div>
+                    <div className="flex justify-end basis-2/12">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="cursor-pointer">
+                          <DotMenu />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => removeInvitation(invite.id)}
+                          >
+                            Delete invitation
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          )}
+          {members.map((member) => {
             return (
               <div key={member.id} className="flex">
                 <div className="basis-8/12 font-normal text-[14px]">
@@ -142,8 +160,21 @@ const People = () => {
                 <div className="basis-2/12 font-normal text-[14px] capitalize">
                   {member.role}
                 </div>
-                <div className="flex justify-end basis-2/12 cursor-pointer">
-                  <DotMenu />
+                <div className="flex justify-end basis-2/12">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="cursor-pointer">
+                      <DotMenu />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        disabled={member.role === "owner"}
+                        onClick={() => removeUser(member.id)}
+                      >
+                        Remove
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             );
