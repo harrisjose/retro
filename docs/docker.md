@@ -1,6 +1,6 @@
-# From https://pnpm.io/docker
+> From https://pnpm.io/docker
 
-
+# Using Docker with pnpm
 
 > It is impossible to create reflinks or hardlinks between a Docker container and the host filesystem during build time.
 The next best thing you can do is using BuildKit cache mount to share cache between builds. Alternatively, you may use
