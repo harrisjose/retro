@@ -7,8 +7,7 @@
     "./flat-list-css": "./node_modules/prosemirror-flat-list/dist/style.css"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@nytimes/react-prosemirror": "^1.0.0",

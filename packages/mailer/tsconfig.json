@@ -1,0 +1,18 @@
+{
+  "include": ["**/*"],
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "types": ["node"],
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {},
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "outDir": "./dist",
+    "declaration": true
+  }
+}

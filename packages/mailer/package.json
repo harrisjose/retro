@@ -1,0 +1,33 @@
+{
+  "name": "@retro/mailer",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "default": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "doppler run -- email dev --port 5195"
+  },
+  "dependencies": {
+    "@react-email/components": "0.0.32",
+    "@react-email/render": "1.0.4",
+    "date-fns": "^4.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zeptomail": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/html-to-text": "^9.0.4",
+    "@types/node": "^20.17.10",
+    "@types/prismjs": "^1.26.5",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "react-email": "3.0.6",
+    "typescript": "^5.7.2"
+  }
+}
