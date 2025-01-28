@@ -9,6 +9,7 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
   try {
     const user = await db
       .selectFrom("user")
+      .select(["id", "email", "name", "image"])
       .where("email", "=", email)
       .executeTakeFirst();
     return user ? (user as User) : null;
@@ -43,6 +44,7 @@ export const auth = betterAuth({
         try {
           const inviteLink = `${config.app.url}/accept-invitation/${data.id}`;
           const maybeUser = await getUserByEmail(data.email);
+
           await emailService.sendInvitation({
             userEmail: data.email,
             userName: maybeUser?.name ?? undefined,

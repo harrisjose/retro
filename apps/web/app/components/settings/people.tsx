@@ -42,6 +42,7 @@ const People = () => {
         email,
         role,
       });
+      setEmail("");
     } catch (error) {
       console.error(error);
     } finally {

@@ -28,7 +28,7 @@ class ZeptoService implements EmailService {
       await this.client.sendMail({
         from: {
           address: "noreply@tm.mellow.team",
-          name: "noreply",
+          name: "Mellow",
         },
         to: [
           {
