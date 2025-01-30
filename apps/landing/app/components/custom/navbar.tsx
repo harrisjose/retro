@@ -14,7 +14,7 @@ export function Navbar() {
         <Link to="#pricing">Pricing</Link>
         <Link to="#features">Features</Link>
         <Link to="#faq">FAQ</Link>
-        <Button>Get Started for free</Button>
+        <Button className="hidden sm:block">Get Started for free</Button>
       </div>
     </nav>
   );

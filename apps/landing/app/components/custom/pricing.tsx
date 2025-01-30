@@ -76,6 +76,7 @@ function CustomPlan() {
         src="/mellow-balloon.png"
         aria-hidden="true"
         className={cn(
+          "hidden sm:block",
           "absolute top-1/2 -translate-y-1/2 right-0 translate-x-1/2",
           "w-20 rotate-[-35deg]",
           "transition-[transform] duration-300 ease-out",
