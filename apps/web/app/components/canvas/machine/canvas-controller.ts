@@ -10,61 +10,16 @@ import {
 import { keyEventListenerLogic } from "./actors";
 import {
   BlockEventType,
-  type BlockToInsert,
+  type CanvasContext,
   CanvasEventType,
   CanvasMode,
+  type DeleteActionBlockParams,
+  type EditableBlockGuardParams,
   type EditorEvent,
   EditorEventType,
+  type Events,
   SelectionMode,
 } from "./types";
-
-type Events =
-  | {
-      type: CanvasEventType.CanvasClick;
-    }
-  | {
-      type: CanvasEventType.CanvasDrag;
-    }
-  | {
-      type: CanvasEventType.InsertStart;
-      blockToInsert: BlockToInsert;
-    }
-  | {
-      type: CanvasEventType.InsertDone;
-      blockId: string;
-    }
-  | {
-      type: CanvasEventType.InsertCancel;
-    }
-  | {
-      type: BlockEventType.BlockClick;
-      blockId: string;
-    }
-  | {
-      type: BlockEventType.BlockDrag;
-      blockId: string;
-    }
-  | {
-      type: BlockEventType.BlockDragStart;
-      blockId: string;
-    }
-  | {
-      type: BlockEventType.BlockDragEnd;
-      blockId: string;
-    }
-  | EditorEvent
-  | {
-      type: "keydown";
-      key: string;
-    };
-
-type CanvasContext = {
-  selection: string[];
-  insertion: {
-    selectedBlock: BlockToInsert | null;
-    lastInsertedId: string | null;
-  };
-};
 
 export const canvasController = setup({
   types: {
@@ -76,6 +31,10 @@ export const canvasController = setup({
       assertEvent(event, Object.values(BlockEventType));
       return !context.selection.includes(event.blockId);
     },
+    isEditableBlock: (_: EditableBlockGuardParams) => {
+      console.log("Default isEditableBlock guard", event);
+      return false;
+    },
   },
   actions: {
     setSelection: assign(({ event }) => {
@@ -85,8 +44,8 @@ export const canvasController = setup({
     clearSelection: assign(() => {
       return { selection: [] };
     }),
-    deleteBlock: (_, params: { selected: string[] }) => {
-      console.log("Default delete block action", params);
+    deleteBlock: (...args: DeleteActionBlockParams) => {
+      console.log("Default delete block action", args);
     },
     focusEditor: emit(
       ({ context }) =>
@@ -100,9 +59,18 @@ export const canvasController = setup({
         ({
           type: EditorEventType.Blur,
           blockId: context.selection[0],
-          cursor: context.selection[0],
         }) as EditorEvent,
     ),
+    afterInsert: assign(({ event }) => {
+      assertEvent(event, [CanvasEventType.InsertDone]);
+      return {
+        insertion: {
+          selectedBlock: null,
+          lastInsertedId: event.blockId,
+        },
+        selection: [event.blockId],
+      };
+    }),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
@@ -163,6 +131,7 @@ export const canvasController = setup({
                 target: SelectionMode.Switching,
               },
               {
+                guard: "isEditableBlock",
                 target: SelectionMode.Editing,
               },
             ],
@@ -231,6 +200,9 @@ export const canvasController = setup({
                 target: SelectionMode.Dragging,
               },
             ],
+            [BlockEventType.BlockExitEditing]: {
+              target: SelectionMode.Idle,
+            },
             [CanvasEventType.CanvasClick]: {
               target: SelectionMode.Idle,
             },
@@ -285,18 +257,17 @@ export const canvasController = setup({
         input: { capture: true },
       },
       on: {
-        [CanvasEventType.InsertDone]: {
-          actions: [
-            assign(({ event }) => ({
-              insertion: {
-                selectedBlock: null,
-                lastInsertedId: event.blockId,
-              },
-              selection: [event.blockId],
-            })),
-          ],
-          target: `${CanvasMode.Selected}.${SelectionMode.Editing}`,
-        },
+        [CanvasEventType.InsertDone]: [
+          {
+            guard: "isEditableBlock",
+            actions: ["afterInsert"],
+            target: `${CanvasMode.Selected}.${SelectionMode.Editing}`,
+          },
+          {
+            actions: ["afterInsert"],
+            target: `${CanvasMode.Selected}.${SelectionMode.Idle}`,
+          },
+        ],
         [CanvasEventType.InsertCancel]: {
           actions: [
             assign({

@@ -26,6 +26,16 @@ export default function Frame({
       onDrag: ({ movement: [x, y], memo, event, tap }) => {
         const target = event.target as HTMLElement;
         if (tap) {
+          if (target.closest("[data-block-toolbar]")) {
+            // If its a toolbar element we should not trigger a click event
+            // since that might focus the block
+            controllerRef.send({
+              type: BlockEventType.BlockExitEditing,
+              blockId: id,
+            });
+            return;
+          }
+
           controllerRef.send({
             type: BlockEventType.BlockClick,
             blockId: id,

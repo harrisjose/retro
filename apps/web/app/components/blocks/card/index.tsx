@@ -50,10 +50,40 @@ function createEditorState(fragment: Y.XmlFragment) {
   return state;
 }
 
+const CardColorPicker = ({ id }: { id: string }) => {
+  const { properties, setProperty } = useBlockProperties<CardProperties>(id);
+
+  const onColorClick = (color: CardColor) => {
+    setProperty("color", color);
+  };
+
+  return (
+    <div
+      data-block-toolbar
+      className="absolute top-0 flex flex-col p-1.5 gap-1 bg-white rounded-lg shadow-[0px_0px_30px_3px_rgba(0,0,0,0.1)] -left-10 pointer-events-none"
+    >
+      {Object.values(CardColor).map((color) => {
+        return (
+          <div
+            key={color}
+            className="w-4 h-4 rounded-full cursor-pointer p-[5px] pointer-events-auto"
+            style={{ backgroundColor: colors[color] }}
+            onClickCapture={() => onColorClick(color)}
+          >
+            {color === properties.color && (
+              <div className="w-full h-full rounded-full bg-white" />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export default function CardBlock({ id }: { id: string }) {
   const { block } = useBlock(id);
 
-  const { properties, setProperty } = useBlockProperties<CardProperties>(id);
+  const { properties } = useBlockProperties<CardProperties>(id);
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
 
   const isSelected = CanvasControllerContext.useSelector((snapshot) => {
@@ -96,26 +126,7 @@ export default function CardBlock({ id }: { id: string }) {
         )}
       </div>
       {match(isSelected)
-        .with(true, () => {
-          return (
-            <div className="absolute top-0 flex flex-col p-1.5 gap-1 bg-white rounded-lg shadow-[0px_0px_30px_3px_rgba(0,0,0,0.1)] -left-10">
-              {Object.values(CardColor).map((color) => {
-                return (
-                  <div
-                    key={color}
-                    className="w-4 h-4 rounded-full cursor-pointer p-[5px]"
-                    style={{ backgroundColor: colors[color] }}
-                    onClick={() => setProperty("color", color)}
-                  >
-                    {color === properties.color && (
-                      <div className="w-full h-full rounded-full bg-white" />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })
+        .with(true, () => <CardColorPicker id={id} />)
         .with(false, () => null)
         .exhaustive()}
     </div>

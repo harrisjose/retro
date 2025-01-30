@@ -27,6 +27,7 @@ export enum BlockEventType {
   BlockDrag = "BLOCK_DRAG",
   BlockDragStart = "BLOCK_DRAG_START",
   BlockDragEnd = "BLOCK_DRAG_END",
+  BlockExitEditing = "BLOCK_EXIT_EDITING",
 }
 
 export type BlockToInsert = {
@@ -49,3 +50,61 @@ export type EditorEvent =
       type: EditorEventType.Blur;
       blockId: string;
     };
+
+export type Events =
+  | {
+      type: CanvasEventType.CanvasClick;
+    }
+  | {
+      type: CanvasEventType.CanvasDrag;
+    }
+  | {
+      type: CanvasEventType.InsertStart;
+      blockToInsert: BlockToInsert;
+    }
+  | {
+      type: CanvasEventType.InsertDone;
+      blockId: string;
+    }
+  | {
+      type: CanvasEventType.InsertCancel;
+    }
+  | {
+      type: BlockEventType.BlockClick;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockDrag;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockDragStart;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockDragEnd;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockExitEditing;
+      blockId: string;
+    }
+  | EditorEvent
+  | {
+      type: "keydown";
+      key: string;
+    };
+
+export type CanvasContext = {
+  selection: string[];
+  insertion: {
+    selectedBlock: BlockToInsert | null;
+    lastInsertedId: string | null;
+  };
+};
+
+export type DeleteActionBlockParams = [any, { selected: string[] }];
+export type EditableBlockGuardParams = {
+  context: CanvasContext;
+  event: Events;
+};

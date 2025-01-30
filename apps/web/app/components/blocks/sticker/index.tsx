@@ -6,7 +6,11 @@ import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { CanvasControllerContext } from "../../canvas/machine";
 
-const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
+const StickerRenderer = ({
+  src,
+  id,
+  isActive,
+}: { src: string; id: string; isActive: boolean }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
   const [lastInsertedBlockId] = CanvasControllerContext.useSelector(
@@ -62,6 +66,8 @@ const StickerRenderer = ({ src, id }: { src: string; id: string }) => {
       style={{
         width: "64px",
         height: "64px",
+        border: isActive ? "2px solid rgba(0, 0, 0, 0.2)" : "none",
+        borderRadius: "12px",
       }}
       speed={1.5}
       renderConfig={{
@@ -78,5 +84,15 @@ export default function StickerBlock({ id }: { id: string }) {
   const properties = useBlockProperties<StickerProperties>(id).properties;
   const stickerType = (properties as { stickerType: StickerType }).stickerType;
 
-  return <StickerRenderer src={StickerJsonMap[stickerType].json} id={id} />;
+  const isSelected = CanvasControllerContext.useSelector((snapshot) => {
+    return snapshot?.context.selection.includes(id);
+  });
+
+  return (
+    <StickerRenderer
+      src={StickerJsonMap[stickerType].json}
+      id={id}
+      isActive={isSelected}
+    />
+  );
 }

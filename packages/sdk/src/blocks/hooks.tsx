@@ -74,10 +74,14 @@ export const useBlock = (blockId: string) => {
 
 export const useMultiBlockActions = () => {
   const yDoc = useYDoc();
+  const { blocks } = useContext(DocContext);
+  const snapshot = useSnapshot(blocks);
+
+  const getBlocks = (blockId: string[]) => {
+    return blockId.map((id) => snapshot[id]);
+  };
 
   const deleteBlocks = (blockIds: string[]) => {
-    console.debug("Deleting blocks", blockIds);
-
     const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
     yDoc.transact(() => {
@@ -93,7 +97,7 @@ export const useMultiBlockActions = () => {
     console.log("Not implemented");
   };
 
-  return { deleteBlocks, moveBlocks };
+  return { deleteBlocks, moveBlocks, getBlocks };
 };
 
 export const useBlockProperties = <T extends Properties>(
