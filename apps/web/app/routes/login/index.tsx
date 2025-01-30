@@ -1,6 +1,7 @@
 import { LoginForm } from "@/components/login-form";
 import BaloonOutlineSvg from "@/components/svg/balloon-outline";
 import { authClient, config } from "@retro/sdk";
+import { isNil } from "lodash-es";
 import { Navigate } from "react-router";
 import type { Route } from "./+types";
 
@@ -10,7 +11,9 @@ export default function LoginPage() {
     const redirect = new URLSearchParams(location.search).get("redirect");
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: `${config.authCallbackUrl}?redirect=${redirect}`,
+      callbackURL: isNil(redirect)
+        ? `${config.authCallbackUrl}`
+        : `${config.authCallbackUrl}?redirect=${redirect}`,
     });
     if (error) {
       console.error(error);

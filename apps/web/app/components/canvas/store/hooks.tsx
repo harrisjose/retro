@@ -2,6 +2,7 @@ import { updateProxyState } from "@retro/common";
 import { useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
 import { animate } from "motion";
+import { useReducedMotion } from "motion/react";
 import {
   type RefObject,
   useContext,
@@ -56,23 +57,43 @@ export const useCamera = () => {
 };
 
 export const useSectionNavigation = () => {
+  const shouldReduceMotion = useReducedMotion();
   const sections = useSectionMap();
   const state = useContext(CanvasContext);
   const viewport = useWindowSize();
   const { z: defaultZoom } = computeDefaultCamera(viewport);
+  const currentCamera = useSnapshot(state.camera);
 
   const sectionPosMap = computeSectionCenters(sections, defaultZoom);
 
   const moveToSection = (sectionId: string | "intro" | "summary") => {
     const target = sectionPosMap[sectionId];
     const current = state.camera;
-    animate(current, target, {
+    if (shouldReduceMotion) {
+      updateProxyState(state.camera, { ...currentCamera, ...target });
+      return;
+    }
+    animate(current.x, target.x, {
       duration: 0.5,
+      onUpdate(latest) {
+        current.x = latest;
+      },
+    });
+    animate(current.y, target.y, {
+      duration: 0.5,
+      onUpdate(latest) {
+        current.y = latest;
+      },
+    });
+    animate(current.z, target.z, {
+      duration: 0.5,
+      onUpdate(latest) {
+        current.z = latest;
+      },
     });
   };
 
   const [activeSection, setActiveSection] = useState("intro");
-  const currentCamera = useSnapshot(state.camera);
 
   useEffect(() => {
     const rafId = requestAnimationFrame(() => {

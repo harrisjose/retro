@@ -31,7 +31,6 @@ type LoaderResponse =
 export async function clientLoader() {
   return new Promise<LoaderResponse>(async (resolve) => {
     try {
-      debugger;
       const { data: activeOrganization } =
         await authClient.organization.getFullOrganization();
 
