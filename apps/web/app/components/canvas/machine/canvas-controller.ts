@@ -213,10 +213,15 @@ export const canvasController = setup({
           entry: ["focusEditor"],
           exit: ["blurEditor"],
           on: {
-            [BlockEventType.BlockClick]: {
-              guard: "isDifferentBlock",
-              target: SelectionMode.Switching,
-            },
+            [BlockEventType.BlockClick]: [
+              {
+                guard: "isDifferentBlock",
+                target: SelectionMode.Switching,
+              },
+              {
+                actions: ["focusEditor"],
+              },
+            ],
             [BlockEventType.BlockDrag]: [
               {
                 guard: "isDifferentBlock",

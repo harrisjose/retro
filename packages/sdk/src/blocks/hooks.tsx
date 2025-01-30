@@ -96,10 +96,26 @@ export const useMultiBlockActions = () => {
   return { deleteBlocks, moveBlocks };
 };
 
-export const useBlockProperties = (blockId: string) => {
+export const useBlockProperties = <T extends Properties>(
+  blockId: string,
+): {
+  properties: T;
+  setProperty: (propertyName: keyof T, value: T[keyof T]) => void;
+} => {
+  const yDoc = useYDoc();
   const { properties } = useContext(DocContext);
   const snapshot = useSnapshot(properties);
-  return snapshot[blockId];
+
+  const setProperty = (propertyName: keyof T, value: T[keyof T]) => {
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    const yProperties = yPropertiesMap.get(blockId) as YProperties;
+    yDoc.transact(() => {
+      // @ts-ignore
+      yProperties.set(propertyName, value);
+    });
+  };
+
+  return { properties: snapshot[blockId] as T, setProperty };
 };
 
 export const useRawBlockProperty = <T extends any>(
