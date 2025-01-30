@@ -1,7 +1,7 @@
 import { OrganizationForm } from "@/components/organization-form";
 import BaloonOutlineSvg from "@/components/svg/balloon-outline";
 import { authClient } from "@retro/sdk";
-import { isEmpty } from "lodash-es";
+import { isEmpty, isNil } from "lodash-es";
 import { Suspense } from "react";
 import { Await, Navigate, useNavigate } from "react-router";
 import { match } from "ts-pattern";
@@ -115,7 +115,7 @@ export default function LoginCallback({ loaderData }: Route.ComponentProps) {
                 </div>
               ))
               .with("continue", () => {
-                if ("redirect" in value) {
+                if ("redirect" in value && !isNil(value.redirect)) {
                   return <Navigate to={value.redirect!} />;
                 }
                 return <Navigate to="/dashboard" />;
