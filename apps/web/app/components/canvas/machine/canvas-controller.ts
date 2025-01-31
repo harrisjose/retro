@@ -4,6 +4,7 @@ import {
   assertEvent,
   assign,
   emit,
+  enqueueActions,
   raise,
   setup,
 } from "xstate";
@@ -18,6 +19,7 @@ import {
   type EditorEvent,
   EditorEventType,
   type Events,
+  type NotifySelectionActionParams,
   SelectionMode,
 } from "./types";
 
@@ -37,16 +39,45 @@ export const canvasController = setup({
     },
   },
   actions: {
-    setSelection: assign(({ event }) => {
-      assertEvent(event, Object.values(BlockEventType));
-      return { selection: [event.blockId] };
-    }),
-    clearSelection: assign(() => {
-      return { selection: [] };
-    }),
     deleteBlock: (...args: DeleteActionBlockParams) => {
       console.log("Default delete block action", args);
     },
+    notifySelection: (...args: NotifySelectionActionParams) => {
+      console.log("Default notifySelection action", args);
+    },
+    //
+    setSelection: enqueueActions(({ event, enqueue }) => {
+      assertEvent(event, Object.values(BlockEventType));
+      const selected = [event.blockId];
+      enqueue.assign({ selection: selected });
+      enqueue({
+        type: "notifySelection",
+        params: { selected } as NotifySelectionActionParams[1],
+      });
+    }),
+    clearSelection: enqueueActions(({ enqueue }) => {
+      const selected: string[] = [];
+      enqueue.assign({ selection: selected });
+      enqueue({
+        type: "notifySelection",
+        params: { selected } as NotifySelectionActionParams[1],
+      });
+    }),
+    afterInsert: enqueueActions(({ event, enqueue }) => {
+      assertEvent(event, [CanvasEventType.InsertDone]);
+      const selected = [event.blockId];
+      enqueue.assign({
+        insertion: {
+          selectedBlock: null,
+          lastInsertedId: event.blockId,
+        },
+        selection: selected,
+      });
+      enqueue({
+        type: "notifySelection",
+        params: { selected } as NotifySelectionActionParams[1],
+      });
+    }),
     focusEditor: emit(
       ({ context }) =>
         ({
@@ -61,16 +92,6 @@ export const canvasController = setup({
           blockId: context.selection[0],
         }) as EditorEvent,
     ),
-    afterInsert: assign(({ event }) => {
-      assertEvent(event, [CanvasEventType.InsertDone]);
-      return {
-        insertion: {
-          selectedBlock: null,
-          lastInsertedId: event.blockId,
-        },
-        selection: [event.blockId],
-      };
-    }),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,

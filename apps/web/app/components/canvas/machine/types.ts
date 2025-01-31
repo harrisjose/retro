@@ -108,3 +108,9 @@ export type EditableBlockGuardParams = {
   context: CanvasContext;
   event: Events;
 };
+export type NotifySelectionActionParams = [
+  any,
+  {
+    selected: string[];
+  },
+];

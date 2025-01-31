@@ -1,6 +1,7 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import type {
   Block,
+  CollaboratorSelection,
   Properties,
   Section,
   YBlockBase,
@@ -78,6 +79,11 @@ const usePresenceSync = (state: DocumentState) => {
           .map((s) => s.user)
           .filter((u) => !isNil(u));
         state.presence.collaborators = uniqBy(collaborators, "id");
+
+        const selections = states
+          .map((s) => s.selection)
+          .filter((s) => !isNil(s));
+        state.presence.selections = uniqBy(selections, "id");
       },
     );
   }, []);
@@ -179,6 +185,7 @@ export const DocProvider = ({
       ),
       presence: {
         collaborators: [],
+        selections: [],
       },
       isReady: false,
     }),
@@ -207,6 +214,21 @@ export const useCollaborators = () => {
   const { presence } = useContext(DocContext);
   const snapshot = useSnapshot(presence); // collaborators is reassigned so dont snapshot on that
   return snapshot.collaborators ?? [];
+};
+
+export const useAwarenessActions = () => {
+  const state = useContext(DocContext);
+  return {
+    updateSelectionAwareness: async (selected: string[]) => {
+      const { data } = await authClient.getSession();
+      if (data?.user) {
+        state.syncProvider.setAwarenessField("selection", {
+          id: data.user.id,
+          selected,
+        } satisfies CollaboratorSelection);
+      }
+    },
+  };
 };
 
 //

@@ -9,12 +9,19 @@ export type Collaborator = {
   email: string;
 };
 
+export type CollaboratorSelection = {
+  id: string;
+  selected: string[];
+};
+
 export type Presence = {
   collaborators: Collaborator[];
+  selections: CollaboratorSelection[];
 };
 
 export type Awareness = {
   user: Collaborator;
+  selection: CollaboratorSelection;
 };
 
 export type Document = {

@@ -7,7 +7,9 @@ import type {
   YPropertiesMap,
 } from "@retro/common";
 import { fromSerialized } from "@retro/common";
+import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
+import { isNil } from "lodash-es";
 import { useContext } from "react";
 import { useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
@@ -133,4 +135,25 @@ export const useRawBlockProperty = <T extends any>(
   if (!yProperties) return null;
 
   return ((yProperties as any).get(propertyName) as T) ?? null;
+};
+
+export const useBlockAwareness = (blockId: string) => {
+  const { data } = authClient.useSession();
+  const state = useContext(DocContext);
+  const snapshot = useSnapshot(state.presence);
+  const { selections, collaborators } = snapshot;
+
+  const selectedByBlockId = selections.filter((s) =>
+    s.selected.includes(blockId),
+  );
+
+  const collaboratorsByBlockId = selectedByBlockId
+    .map((s) => s.id)
+    .filter((id) => id !== data?.user.id)
+    .map((id) => collaborators.find((c) => c.id === id))
+    .filter((c) => !isNil(c));
+
+  return {
+    collaborators: collaboratorsByBlockId,
+  };
 };

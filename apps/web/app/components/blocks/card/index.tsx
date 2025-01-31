@@ -13,7 +13,12 @@ import {
   listKeymap,
   ySyncPlugin,
 } from "@retro/pm";
-import { useBlock, useBlockProperties, useRawBlockProperty } from "@retro/sdk";
+import {
+  useBlock,
+  useBlockAwareness,
+  useBlockProperties,
+  useRawBlockProperty,
+} from "@retro/sdk";
 import { match } from "ts-pattern";
 import * as Y from "yjs";
 import { CanvasControllerContext } from "../../canvas/machine";
@@ -80,6 +85,32 @@ const CardColorPicker = ({ id }: { id: string }) => {
   );
 };
 
+const CardCollaborators = ({ id }: { id: string }) => {
+  const { collaborators } = useBlockAwareness(id);
+  return (
+    <div className="absolute top-1 right-1 flex -space-x-0.5 translate-x-1/2 -translate-y-1/2">
+      {collaborators.map((c) => (
+        <div
+          key={c.id}
+          className="w-[28px] h-[28px] rounded-full border-2 border-white overflow-hidden"
+        >
+          {c.image ? (
+            <img
+              src={c.image}
+              alt={c.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xs font-medium">
+              {c.name[0]}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export default function CardBlock({ id }: { id: string }) {
   const { block } = useBlock(id);
 
@@ -129,6 +160,7 @@ export default function CardBlock({ id }: { id: string }) {
         .with(true, () => <CardColorPicker id={id} />)
         .with(false, () => null)
         .exhaustive()}
+      <CardCollaborators id={id} />
     </div>
   );
 }
