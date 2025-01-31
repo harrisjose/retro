@@ -153,6 +153,11 @@ export default function CardBlock({ id }: { id: string }) {
                 "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
               )}
             />
+            {properties.createdBy && (
+              <div className="text-xs text-muted-foreground">
+                {properties.createdBy.name}
+              </div>
+            )}
           </EditorContextProvider>
         )}
       </div>

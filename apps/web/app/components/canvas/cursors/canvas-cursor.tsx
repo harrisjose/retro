@@ -4,7 +4,7 @@ import {
   type StickerProperties,
   raw,
 } from "@retro/common";
-import { useCreateBlock } from "@retro/sdk";
+import { useCreateBlock, useProfile } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import * as random from "lib0/random";
 import { match } from "ts-pattern";
@@ -23,6 +23,8 @@ export const CanvasCursor = () => {
 
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();
+  const { profile } = useProfile();
+
   const [isInsertionActive, blockToInsert] =
     CanvasControllerContext.useSelector((snapshot) => {
       return [
@@ -39,6 +41,7 @@ export const CanvasCursor = () => {
       camera,
     );
 
+    console.log("canvas cursor", profile);
     switch (blockToInsert.type) {
       case BlockType.Sticker: {
         const properties = blockToInsert.properties as StickerProperties;
@@ -79,6 +82,10 @@ export const CanvasCursor = () => {
           {
             color: properties.color,
             content: raw(new Y.XmlFragment()),
+            createdBy: {
+              id: profile.id,
+              name: profile.name,
+            },
           },
         );
 

@@ -106,6 +106,10 @@ export enum CardColor {
 export type CardProperties = {
   content: string;
   color: CardColor;
+  createdBy: {
+    id: string;
+    name: string;
+  } | null;
 };
 
 export type YCardProperties = TypedMap<

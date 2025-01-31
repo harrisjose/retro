@@ -4,7 +4,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BlockType, CardColor, StickerType, cn, raw } from "@retro/common";
-import { StickerJsonMap, useDocument } from "@retro/sdk";
+import { StickerJsonMap, useDocument, useProfile } from "@retro/sdk";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as Y from "yjs";
@@ -68,7 +68,9 @@ const StickerMenu = () => {
 
 const CardMenu = () => {
   const controllerRef = CanvasControllerContext.useActorRef();
+  const { profile } = useProfile();
 
+  console.log("card menu", profile);
   const insertCard = () => {
     controllerRef.send({
       type: CanvasEventType.InsertStart,
@@ -77,6 +79,10 @@ const CardMenu = () => {
         properties: {
           color: getRandomCardColor(),
           content: raw(new Y.XmlFragment()),
+          createdBy: {
+            id: profile.id,
+            name: profile.name,
+          },
         },
       },
     });
