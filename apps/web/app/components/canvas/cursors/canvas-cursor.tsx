@@ -93,6 +93,7 @@ export const CanvasCursor = () => {
 
   if (!isInsertionActive || !blockToInsert) return null;
 
+  console.log("blockToInsert", blockToInsert);
   return (
     <div
       onClick={handleClick}
@@ -100,7 +101,13 @@ export const CanvasCursor = () => {
     >
       {match(blockToInsert.type)
         .with(BlockType.Card, () => <CardCursor />)
-        .with(BlockType.Sticker, () => <StickerCursor />)
+        .with(BlockType.Sticker, () => (
+          <StickerCursor
+            stickerType={
+              (blockToInsert.properties as StickerProperties).stickerType
+            }
+          />
+        ))
         .exhaustive()}
     </div>
   );

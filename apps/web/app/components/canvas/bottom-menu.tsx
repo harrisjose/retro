@@ -3,7 +3,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { BlockType, CardColor, StickerType, cn, raw } from "@retro/common";
 import { StickerJsonMap, useDocument } from "@retro/sdk";
 import { useState } from "react";
@@ -56,23 +55,10 @@ const StickerMenu = () => {
         {Object.entries(StickerJsonMap).map(([key, value]) => (
           <div
             key={key}
-            className="hover:scale-[1.2] transition-all hover:rotate-[4deg] p-[12px] cursor-pointer"
+            className="hover:scale-[1.2] transition-all hover:rotate-[4deg] cursor-pointer"
             onClick={() => handleClick(key as StickerType)}
           >
-            <DotLottieReact
-              layout={{
-                align: [0.5, 0.5],
-                fit: "fit-width",
-              }}
-              style={{
-                width: "28px",
-                height: "28px",
-              }}
-              renderConfig={{
-                devicePixelRatio: 4,
-              }}
-              src={value.json}
-            />
+            <img src={`/stickers/${key}.png`} className="w-10 h-10" />
           </div>
         ))}
       </PopoverContent>

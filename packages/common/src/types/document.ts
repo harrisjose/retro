@@ -115,12 +115,24 @@ export type YCardProperties = TypedMap<
 >;
 
 export enum StickerType {
+  PlusSign = "plus-sign",
+  Fire = "fire",
   StarStruck = "star-struck",
-  ClinkingBeerMugs = "clinking-beer-mugs",
-  FaceInClouds = "face-in-clouds",
+  ThinkingFace = "thinking-face",
+  Rocket = "rocket",
+  Hundred = "hundred",
+  PartyingFace = "partying-face",
+  Heart = "heart",
+  CheckMark = "check-mark",
+  Joy = "joy",
+  SlightlyFrowningFace = "slightly-frowning-face",
+  HoldingBackTears = "holding-back-tears",
+  ThumbsUp = "thumbs-up",
+  ThumbsDown = "thumbs-down",
+  ClappingHands = "clapping-hands",
+  RaisingHands = "raising-hands",
+  Eyes = "eyes",
   Skull = "skull",
-  BottleWithPoppingCork = "bottle-with-popping-cork",
-  Poop = "poop",
 }
 
 export type StickerProperties = {
