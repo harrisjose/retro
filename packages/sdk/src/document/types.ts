@@ -6,6 +6,7 @@ import type {
   PropertiesMap,
   SectionMap,
 } from "@retro/common";
+import type { UndoManager } from "yjs";
 
 export type DocumentState = {
   docId: string;
@@ -19,6 +20,7 @@ export type DocumentState = {
   properties: PropertiesMap;
   // sync
   syncProvider: HocuspocusProvider;
+  undoManager: UndoManager | null;
   isReady: boolean;
   presence: Presence;
 };

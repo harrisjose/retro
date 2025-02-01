@@ -22,7 +22,9 @@ import {
   EditorEventType,
   type Events,
   type NotifySelectionActionParams,
+  type RedoActionParams,
   SelectionMode,
+  type UndoActionParams,
 } from "./types";
 
 export const canvasController = setup({
@@ -41,6 +43,12 @@ export const canvasController = setup({
     },
   },
   actions: {
+    undo: (...args: UndoActionParams) => {
+      console.log("Default undo action", args);
+    },
+    redo: (...args: RedoActionParams) => {
+      console.log("Default redo action", args);
+    },
     deleteBlock: (...args: DeleteActionBlockParams) => {
       console.log("Default delete block action", args);
     },
@@ -113,6 +121,10 @@ export const canvasController = setup({
       lastInsertedId: null,
     },
   },
+  invoke: {
+    src: "keyEventListener",
+    input: { capture: true },
+  },
   on: {
     [CanvasEventType.InsertStart]: {
       target: `#${CanvasMode.Inserting}`,
@@ -126,6 +138,17 @@ export const canvasController = setup({
         "clearSelection",
       ],
     },
+    keydown: [
+      {
+        guard: ({ event }) =>
+          event.key === "z" && event.metaKey && event.shiftKey,
+        actions: ["redo"],
+      },
+      {
+        guard: ({ event }) => event.key === "z" && event.metaKey,
+        actions: ["undo"],
+      },
+    ],
   },
   initial: CanvasMode.None,
   states: {
@@ -147,10 +170,6 @@ export const canvasController = setup({
       // Make sure that selection is set before entering the state
       id: CanvasMode.Selected,
       initial: SelectionMode.Idle,
-      invoke: {
-        src: "keyEventListener",
-        input: { capture: true },
-      },
       entry: [
         {
           type: "bringBlockToFront",
@@ -301,10 +320,6 @@ export const canvasController = setup({
     },
     [CanvasMode.Inserting]: {
       id: CanvasMode.Inserting,
-      invoke: {
-        src: "keyEventListener",
-        input: { capture: true },
-      },
       on: {
         [CanvasEventType.InsertDone]: [
           {

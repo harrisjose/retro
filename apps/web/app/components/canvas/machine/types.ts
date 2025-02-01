@@ -93,6 +93,10 @@ export type Events =
   | {
       type: "keydown";
       key: string;
+      shiftKey: boolean;
+      ctrlKey: boolean;
+      metaKey: boolean;
+      altKey: boolean;
     };
 
 export type CanvasContext = {
@@ -116,3 +120,5 @@ export type NotifySelectionActionParams = [
     selected: string[];
   },
 ];
+export type UndoActionParams = [any];
+export type RedoActionParams = [any];

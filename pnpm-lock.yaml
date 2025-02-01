@@ -482,6 +482,9 @@ importers:
       '@retro/common':
         specifier: workspace:*
         version: link:../common
+      '@retro/pm':
+        specifier: workspace:*
+        version: link:../pm
       '@trpc/client':
         specifier: 11.0.0-rc.682
         version: 11.0.0-rc.682(@trpc/server@11.0.0-rc.682(typescript@5.7.3))(typescript@5.7.3)

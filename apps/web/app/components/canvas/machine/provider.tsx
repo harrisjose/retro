@@ -1,5 +1,9 @@
 import { BlockType } from "@retro/common";
-import { useAwarenessActions, useMultiBlockActions } from "@retro/sdk";
+import {
+  useAwarenessActions,
+  useMultiBlockActions,
+  useYjsHistory,
+} from "@retro/sdk";
 import type { PropsWithChildren } from "react";
 import { assertEvent, enqueueActions } from "xstate";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
@@ -13,7 +17,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
     useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
-
+  const { redo, undo } = useYjsHistory();
   return (
     <CanvasControllerContext.Provider
       logic={canvasController.provide({
@@ -54,6 +58,8 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               bringBlockToFront(params.blockIds[0]);
             }
           },
+          undo,
+          redo,
         },
       })}
     >
