@@ -9,7 +9,7 @@ import type {
 import { fromSerialized } from "@retro/common";
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
-import { isNil } from "lodash-es";
+import { isEqual, isNil, isUndefined } from "lodash-es";
 import { useContext } from "react";
 import { useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
@@ -66,12 +66,30 @@ export const useBlock = (blockId: string) => {
     const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
     const yBlock = new YKeyValue(yBlockBase);
     yDoc.transact(() => {
-      yBlock.set("x", x);
-      yBlock.set("y", y);
+      if (!isEqual(yBlock.get("x"), x)) yBlock.set("x", x);
+      if (!isEqual(yBlock.get("y"), y)) yBlock.set("y", y);
     });
   };
 
-  return { block: snapshot[blockId] as Block, setPosition };
+  const setSize = ({
+    width,
+    height,
+  }: {
+    width?: number;
+    height?: number;
+  }) => {
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
+    const yBlock = new YKeyValue(yBlockBase);
+    yDoc.transact(() => {
+      if (!isUndefined(width) && !isEqual(yBlock.get("width"), width))
+        yBlock.set("width", width);
+      if (!isUndefined(height) && !isEqual(yBlock.get("height"), height))
+        yBlock.set("height", height);
+    });
+  };
+
+  return { block: snapshot[blockId] as Block, setPosition, setSize };
 };
 
 export const useMultiBlockActions = () => {

@@ -1,10 +1,11 @@
 import {
   BlockType,
+  CardConstants,
   type CardProperties,
   type StickerProperties,
   raw,
 } from "@retro/common";
-import { useCreateBlock } from "@retro/sdk";
+import { useCreateBlock, useProfile } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import * as random from "lib0/random";
 import { match } from "ts-pattern";
@@ -23,6 +24,8 @@ export const CanvasCursor = () => {
 
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();
+  const { profile } = useProfile();
+
   const [isInsertionActive, blockToInsert] =
     CanvasControllerContext.useSelector((snapshot) => {
       return [
@@ -73,12 +76,16 @@ export const CanvasCursor = () => {
             type: BlockType.Card,
             x: point.x,
             y: point.y,
-            width: 200,
-            height: 240,
+            width: CardConstants.Width,
+            height: CardConstants.Height,
           },
           {
             color: properties.color,
             content: raw(new Y.XmlFragment()),
+            createdBy: {
+              id: profile.id,
+              name: profile.name,
+            },
           },
         );
 

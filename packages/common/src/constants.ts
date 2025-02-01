@@ -5,3 +5,8 @@ export const CanvasConstants = {
   PaddingBetween: 24,
   IntroSectionWidth: 822,
 };
+
+export const CardConstants = {
+  Height: 240,
+  Width: 200,
+};
