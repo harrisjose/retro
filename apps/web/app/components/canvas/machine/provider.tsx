@@ -6,7 +6,7 @@ import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import { BlockEventType, CanvasEventType } from "./types";
 
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
-  const { deleteBlocks, getBlocks } = useMultiBlockActions();
+  const { deleteBlocks, getBlocks, duplicateBlocks } = useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
 
   return (
@@ -29,6 +29,11 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
         actions: {
           deleteBlock: (_, params) => {
             deleteBlocks(params.selected);
+          },
+          duplicateBlock: (_, params) => {
+            const newBlockIds = duplicateBlocks(params.selected);
+            console.log("newBlockIds", newBlockIds);
+            updateSelectionAwareness(newBlockIds);
           },
           notifySelection: (_, params) => {
             updateSelectionAwareness(params.selected);

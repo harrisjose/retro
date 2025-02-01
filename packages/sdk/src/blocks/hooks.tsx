@@ -1,6 +1,8 @@
 import type {
   Block,
+  BlockType,
   Properties,
+  YBlock,
   YBlockBase,
   YBlockMap,
   YProperties,
@@ -112,12 +114,44 @@ export const useMultiBlockActions = () => {
     });
   };
 
+  const duplicateBlocks = (blockIds: string[]) => {
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    const newBlockIds: string[] = [];
+    yDoc.transact(() => {
+      blockIds.forEach((blockId) => {
+        const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
+        const yBlock = new YKeyValue(yBlockBase) as YBlock;
+        const yProperties = yPropertiesMap.get(blockId) as YProperties;
+        const newBlockId = random.uuidv4();
+
+        yBlockMap.set(newBlockId, new Y.Array() as YBlockBase);
+
+        const newYBlockBase = yBlockMap.get(newBlockId) as YBlockBase;
+        const newYBlock = new YKeyValue(newYBlockBase);
+
+        newYBlock.set("id", newBlockId);
+        newYBlock.set("type", yBlock.get("type") as BlockType);
+        newYBlock.set("x", (yBlock.get("x") as number) + 50);
+        newYBlock.set("y", (yBlock.get("y") as number) + 50);
+        newYBlock.set("width", yBlock.get("width") as number);
+        newYBlock.set("height", yBlock.get("height") as number);
+
+        yPropertiesMap.set(newBlockId, yProperties.clone());
+
+        newBlockIds.push(newBlockId);
+      });
+    });
+
+    return newBlockIds;
+  };
+
   const moveBlocks = (blockIds: string[], dx: number, dy: number) => {
     console.debug("Moving blocks", blockIds, dx, dy);
     console.log("Not implemented");
   };
 
-  return { deleteBlocks, moveBlocks, getBlocks };
+  return { deleteBlocks, moveBlocks, getBlocks, duplicateBlocks };
 };
 
 export const useBlockProperties = <T extends Properties>(

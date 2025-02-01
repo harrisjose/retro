@@ -104,6 +104,7 @@ export type CanvasContext = {
 };
 
 export type DeleteActionBlockParams = [any, { selected: string[] }];
+export type DuplicateBlockActionParams = [any, { selected: string[] }];
 export type EditableBlockGuardParams = {
   context: CanvasContext;
   event: Events;

@@ -15,6 +15,7 @@ import {
   CanvasEventType,
   CanvasMode,
   type DeleteActionBlockParams,
+  type DuplicateBlockActionParams,
   type EditableBlockGuardParams,
   type EditorEvent,
   EditorEventType,
@@ -44,6 +45,9 @@ export const canvasController = setup({
     },
     notifySelection: (...args: NotifySelectionActionParams) => {
       console.log("Default notifySelection action", args);
+    },
+    duplicateBlock: (...args: DuplicateBlockActionParams) => {
+      console.log("Default duplicate block action", args);
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -185,6 +189,18 @@ export const canvasController = setup({
                   "clearSelection",
                 ],
                 target: `#${CanvasMode.None}`,
+              },
+              {
+                guard: ({ event }) => event.key === "d" && event.ctrlKey,
+                actions: [
+                  {
+                    type: "duplicateBlock",
+
+                    params: ({ context }: { context: CanvasContext }) => ({
+                      selected: context.selection,
+                    }),
+                  },
+                ],
               },
             ],
           },
