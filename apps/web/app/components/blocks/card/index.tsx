@@ -1,5 +1,10 @@
 import { EditorContextProvider, ProsemirrorEditor } from "@/components/editor";
-import { CardColor, type CardProperties, cn } from "@retro/common";
+import {
+  CardColor,
+  CardConstants,
+  type CardProperties,
+  cn,
+} from "@retro/common";
 import {
   EditorSchema,
   EditorState,
@@ -19,7 +24,10 @@ import {
   useBlockProperties,
   useRawBlockProperty,
 } from "@retro/sdk";
+import { isNil } from "lodash-es";
+import { type RefObject, useRef } from "react";
 import { match } from "ts-pattern";
+import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
 import * as Y from "yjs";
 import { CanvasControllerContext } from "../../canvas/machine";
 import { buildDefaultKeymap } from "../../editor/keymap";
@@ -115,7 +123,7 @@ const CardCollaborators = ({ id }: { id: string }) => {
 };
 
 export default function CardBlock({ id }: { id: string }) {
-  const { block } = useBlock(id);
+  const { block, setSize } = useBlock(id);
 
   const { properties } = useBlockProperties<CardProperties>(id);
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
@@ -124,12 +132,34 @@ export default function CardBlock({ id }: { id: string }) {
     return snapshot?.context.selection.includes(block.id);
   });
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const onResize = useDebounceCallback(
+    (size: {
+      width: number | undefined;
+      height: number | undefined;
+    }) => {
+      if (!isNil(size.height)) {
+        if (size.height > CardConstants.Height) {
+          setSize({ height: size.height });
+        } else {
+          setSize({ height: CardConstants.Height });
+        }
+      }
+    },
+    10,
+  );
+  useResizeObserver({
+    ref: contentRef as RefObject<HTMLElement>,
+    onResize,
+    box: "border-box",
+  });
+
   // TODO: later add a layoutEffect to update the child height
   // back to yDoc
   return (
     <div
       className={cn(
-        "w-full h-full rounded-xl flex flex-col border-2 border-transparent",
+        "w-full h-full overflow-hidden rounded-xl flex flex-col border-2 border-transparent",
         isSelected
           ? "border-opacity-20 border-black border-2 pointer-events-auto"
           : "pointer-events-none",
@@ -140,9 +170,12 @@ export default function CardBlock({ id }: { id: string }) {
       }}
     >
       <div
+        ref={contentRef}
         className={cn(
-          "overflow-y-scroll overflow-x-clip p-4 ",
-          "w-full h-full grow flex flex-col font-normal text-sm leading-5 selection:bg-[#00000020]",
+          "w-full h-fit grow p-3 pb-0",
+          "flex flex-col font-normal text-sm leading-5",
+          "selection:bg-[#00000020]",
+          "overflow-x-clip",
         )}
         style={{ overflowAnchor: "none" }}
       >
@@ -156,13 +189,15 @@ export default function CardBlock({ id }: { id: string }) {
                 "[&>.prosemirror-flat-list_p]:!my-0 [&_.list-content]:!ml-2",
               )}
             />
-            {properties.createdBy && (
-              <div className="text-xs text-muted-foreground mt-auto">
-                {properties.createdBy.name}
-              </div>
-            )}
           </EditorContextProvider>
         )}
+        <div className="mt-auto h-7">
+          {properties.createdBy && (
+            <div className="text-xs shrink-0 text-black opacity-60 ">
+              {properties.createdBy.name}
+            </div>
+          )}
+        </div>
       </div>
       {match(isSelected)
         .with(true, () => <CardColorPicker id={id} />)

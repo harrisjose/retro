@@ -1,5 +1,6 @@
 import {
   BlockType,
+  CardConstants,
   type CardProperties,
   type StickerProperties,
   raw,
@@ -75,8 +76,8 @@ export const CanvasCursor = () => {
             type: BlockType.Card,
             x: point.x,
             y: point.y,
-            width: 200,
-            height: 240,
+            width: CardConstants.Width,
+            height: CardConstants.Height,
           },
           {
             color: properties.color,
