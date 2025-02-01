@@ -6,9 +6,11 @@ import { Navigate } from "react-router";
 import type { Route } from "./+types";
 
 export default function LoginPage() {
+  const redirect = new URLSearchParams(location.search).get("redirect");
+  const { data } = authClient.useSession();
+
   const onLoginStart = async (provider: "google" | null = null) => {
     if (!provider) return;
-    const redirect = new URLSearchParams(location.search).get("redirect");
     const { error } = await authClient.signIn.social({
       provider,
       callbackURL: isNil(redirect)
@@ -20,9 +22,12 @@ export default function LoginPage() {
     }
   };
 
-  const { data } = authClient.useSession();
-
-  if (data?.session) return <Navigate to="/dashboard" />;
+  if (data?.session)
+    return redirect ? (
+      <Navigate to={decodeURIComponent(redirect)} />
+    ) : (
+      <Navigate to="/dashboard" />
+    );
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
