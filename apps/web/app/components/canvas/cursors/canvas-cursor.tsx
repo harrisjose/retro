@@ -41,7 +41,6 @@ export const CanvasCursor = () => {
       camera,
     );
 
-    console.log("canvas cursor", profile);
     switch (blockToInsert.type) {
       case BlockType.Sticker: {
         const properties = blockToInsert.properties as StickerProperties;

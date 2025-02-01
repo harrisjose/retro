@@ -97,7 +97,7 @@ async function clearDocuments(state: DocumentListState) {
 const useDocumentListSync = (state: DocumentListState) => {
   const filter = useSnapshot(state).filter;
   useEffect(() => {
-    console.log("Initiating list fetch");
+    console.info("Initiating list fetch");
     clearDocuments(state);
     fetchDocumentsList(state);
   }, [filter]);

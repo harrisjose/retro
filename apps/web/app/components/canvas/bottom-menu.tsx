@@ -70,7 +70,6 @@ const CardMenu = () => {
   const controllerRef = CanvasControllerContext.useActorRef();
   const { profile } = useProfile();
 
-  console.log("card menu", profile);
   const insertCard = () => {
     controllerRef.send({
       type: CanvasEventType.InsertStart,

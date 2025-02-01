@@ -65,7 +65,10 @@ const CardColorPicker = ({ id }: { id: string }) => {
   return (
     <div
       data-block-toolbar
-      className="absolute top-0 flex flex-col p-1.5 gap-1 bg-white rounded-lg shadow-[0px_0px_30px_3px_rgba(0,0,0,0.1)] -left-10 pointer-events-none"
+      className={cn(
+        "absolute top-0 flex flex-col p-1.5 gap-1 -left-10 bg-white",
+        "pointer-events-none rounded-lg shadow-[0px_0px_30px_3px_rgba(0,0,0,0.1)]",
+      )}
     >
       {Object.values(CardColor).map((color) => {
         return (
@@ -154,7 +157,7 @@ export default function CardBlock({ id }: { id: string }) {
               )}
             />
             {properties.createdBy && (
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-muted-foreground mt-auto">
                 {properties.createdBy.name}
               </div>
             )}
