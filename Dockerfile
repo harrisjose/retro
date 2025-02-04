@@ -8,7 +8,8 @@ RUN apk add --no-cache libc6-compat gcompat python3 make g++ && \
 # Setup pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g corepack
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 FROM base AS build
 COPY . /usr/src/app
