@@ -5,10 +5,15 @@ import { ProseMirror, Selection } from "@retro/pm";
 import { memo, useState } from "react";
 import * as Y from "yjs";
 import { EditorEventType } from "../canvas/machine/types.js";
-import { useEditorEventCallback } from "./editor-provider.js";
+import {
+  useEditorEventCallback,
+  useEditorHistoryCallback,
+} from "./editor-provider.js";
 import { useEditorState } from "./editor-state.js";
 
 const EditorEventHandlers = () => {
+  // Keeps adding cursor info the undoManager history stack
+  useEditorHistoryCallback();
   // TODO @harris: Sync focus state back to canvas machine since focus can be
   // restored to an instance of the editor. We want the machine to also transition
   // to editing state when that happens.
