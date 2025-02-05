@@ -1,6 +1,9 @@
 {
   "name": "api",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "setup-better-auth": "doppler run -- cli migrate --config ./src/lib/auth.ts",

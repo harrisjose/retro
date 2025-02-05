@@ -15,7 +15,7 @@
     "lib0": "^0.2.99",
     "lodash-es": "^4.17.21",
     "y-utility": "^0.1.4",
-    "yjs": "^13.6.21",
+    "yjs": "13.6.23",
     "yjs-types": "^0.0.1"
   },
   "optionalDependencies": {

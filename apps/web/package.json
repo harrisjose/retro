@@ -2,6 +2,9 @@
   "name": "web",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production react-router build",
     "postbuild": "cp _redirects build/client/ && cp vercel.json build/client/",

@@ -24,7 +24,7 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4(yjs@13.6.23)
       yjs:
-        specifier: ^13.6.21
+        specifier: 13.6.23
         version: 13.6.23
       yjs-types:
         specifier: ^0.0.1
