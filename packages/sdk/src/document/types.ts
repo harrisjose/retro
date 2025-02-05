@@ -24,3 +24,9 @@ export type DocumentState = {
   isReady: boolean;
   presence: Presence;
 };
+
+export type UndoManagerEvent = {
+  stackItem: { meta: Map<string, any> };
+  type: "undo" | "redo";
+  origin: any;
+};

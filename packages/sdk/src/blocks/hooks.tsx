@@ -249,12 +249,3 @@ export const useBlockAwareness = (blockId: string) => {
     collaborators: collaboratorsByBlockId,
   };
 };
-
-export const useYjsHistory = () => {
-  const { undoManager } = useContext(DocContext);
-
-  return {
-    undo: () => undoManager?.undo(),
-    redo: () => undoManager?.redo(),
-  };
-};

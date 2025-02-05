@@ -35,7 +35,7 @@ import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import { type DocumentState } from "./types.js";
+import { type DocumentState, type UndoManagerEvent } from "./types.js";
 
 export const DocContext = createContext<DocumentState>({} as any);
 
@@ -264,4 +264,23 @@ export const useReadyStatus = () => {
   const state = useContext(DocContext);
   const snap = useSnapshot(state);
   return snap.isReady;
+};
+
+export const useHistory = () => {
+  const { undoManager } = useContext(DocContext);
+
+  return {
+    undo: () => undoManager?.undo(),
+    redo: () => undoManager?.redo(),
+    onPush: (cb: (event: UndoManagerEvent) => void) => {
+      undoManager?.on("stack-item-added", (event: UndoManagerEvent) =>
+        cb(event),
+      );
+    },
+    onPop: (cb: (event: UndoManagerEvent) => void) => {
+      undoManager?.on("stack-item-popped", (event: UndoManagerEvent) =>
+        cb(event),
+      );
+    },
+  };
 };

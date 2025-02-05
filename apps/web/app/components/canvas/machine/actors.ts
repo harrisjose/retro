@@ -1,3 +1,4 @@
+import type { UndoManagerEvent } from "@retro/sdk";
 import { isEmpty } from "lodash-es";
 import { type EventObject, fromCallback } from "xstate";
 
@@ -31,4 +32,29 @@ const keyEventListenerLogic = fromCallback<
   };
 });
 
-export { keyEventListenerLogic };
+const createHistoryEventListenerLogic = (
+  onPop?: (cb: (event: UndoManagerEvent) => void) => void,
+  onPush?: (cb: (event: UndoManagerEvent) => void) => void,
+) =>
+  fromCallback<EventObject, undefined>(({ sendBack }) => {
+    onPop?.((event: UndoManagerEvent) => {
+      sendBack({
+        type: "history.pop",
+        payload: {
+          event,
+        },
+      });
+    });
+    onPush?.((event: UndoManagerEvent) => {
+      sendBack({
+        type: "history.push",
+        payload: {
+          event,
+        },
+      });
+    });
+
+    return () => {};
+  });
+
+export { createHistoryEventListenerLogic, keyEventListenerLogic };

@@ -1,4 +1,5 @@
 import type { BlockType, Properties } from "@retro/common";
+import type { UndoManagerEvent } from "@retro/sdk";
 
 export enum CanvasMode {
   None = "NONE",
@@ -40,7 +41,7 @@ export enum EditorEventType {
   Blur = "editor.blur",
 }
 
-export type EditorEvent =
+export type EditorEvents =
   | {
       type: EditorEventType.Focus;
       blockId: string;
@@ -49,6 +50,29 @@ export type EditorEvent =
   | {
       type: EditorEventType.Blur;
       blockId: string;
+    };
+
+export type KeyboardEvents = {
+  type: "keydown";
+  key: string;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+};
+
+export type HistoryEvents =
+  | {
+      type: "history.push";
+      payload: {
+        event: UndoManagerEvent;
+      };
+    }
+  | {
+      type: "history.pop";
+      payload: {
+        event: UndoManagerEvent;
+      };
     };
 
 export type Events =
@@ -89,15 +113,9 @@ export type Events =
       type: BlockEventType.BlockExitEditing;
       blockId: string;
     }
-  | EditorEvent
-  | {
-      type: "keydown";
-      key: string;
-      shiftKey: boolean;
-      ctrlKey: boolean;
-      metaKey: boolean;
-      altKey: boolean;
-    };
+  | EditorEvents
+  | KeyboardEvents
+  | HistoryEvents;
 
 export type CanvasContext = {
   selection: string[];

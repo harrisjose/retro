@@ -1,4 +1,5 @@
 import { createActorContext } from "@xstate/react";
+import { isEmpty } from "lodash-es";
 import {
   type ActorRefFrom,
   assertEvent,
@@ -8,7 +9,10 @@ import {
   raise,
   setup,
 } from "xstate";
-import { keyEventListenerLogic } from "./actors";
+import {
+  createHistoryEventListenerLogic,
+  keyEventListenerLogic,
+} from "./actors";
 import {
   BlockEventType,
   type BringBlockToFrontActionParams,
@@ -18,8 +22,8 @@ import {
   type DeleteActionBlockParams,
   type DuplicateBlockActionParams,
   type EditableBlockGuardParams,
-  type EditorEvent,
   EditorEventType,
+  type EditorEvents,
   type Events,
   type NotifySelectionActionParams,
   type RedoActionParams,
@@ -94,23 +98,26 @@ export const canvasController = setup({
         params: { selected } as NotifySelectionActionParams[1],
       });
     }),
+    // Emit the event so that editors subscribed to it can handle
+    // the focus/blur event.
     focusEditor: emit(
       ({ context }) =>
         ({
           type: EditorEventType.Focus,
           blockId: context.selection[0],
-        }) as EditorEvent,
+        }) as EditorEvents,
     ),
     blurEditor: emit(
       ({ context }) =>
         ({
           type: EditorEventType.Blur,
           blockId: context.selection[0],
-        }) as EditorEvent,
+        }) as EditorEvents,
     ),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
+    historyEventListener: createHistoryEventListenerLogic(),
   },
 }).createMachine({
   id: "canvas-controller",
@@ -121,10 +128,17 @@ export const canvasController = setup({
       lastInsertedId: null,
     },
   },
-  invoke: {
-    src: "keyEventListener",
-    input: { capture: true },
-  },
+  invoke: [
+    {
+      id: "keyEventListener",
+      src: "keyEventListener",
+      input: { capture: true },
+    },
+    {
+      id: "historyEventListener",
+      src: "historyEventListener",
+    },
+  ],
   on: {
     [CanvasEventType.InsertStart]: {
       target: `#${CanvasMode.Inserting}`,
@@ -149,6 +163,42 @@ export const canvasController = setup({
         actions: ["undo"],
       },
     ],
+    "history.push": {
+      actions: [
+        ({ event, context }) => {
+          const payload = event.payload;
+          const undoManagerEvent = payload.event;
+          const origin = undoManagerEvent.origin;
+
+          undoManagerEvent.stackItem.meta.set("selection", context.selection);
+        },
+        // Emit the event so that subscribers can react to it
+        emit(({ event }) => event),
+      ],
+    },
+    "history.pop": {
+      guard: ({ event, context }) => {
+        const undoManagerEvent = event.payload.event;
+        const selection = undoManagerEvent.stackItem.meta.get("selection");
+        return (
+          !isEmpty(selection) &&
+          !selection.every((id: string) => context.selection.includes(id))
+        );
+      },
+      actions: [
+        assign(({ event }) => {
+          const undoManagerEvent = event.payload.event;
+          const selection: string[] =
+            undoManagerEvent.stackItem.meta.get("selection");
+          return {
+            selection,
+          };
+        }),
+        // Emit the event so that subscribers can react to it
+        emit(({ event }) => event),
+      ],
+      target: `#${CanvasMode.Selected}`,
+    },
   },
   initial: CanvasMode.None,
   states: {

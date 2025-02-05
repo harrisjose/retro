@@ -1,11 +1,12 @@
 import { BlockType } from "@retro/common";
 import {
   useAwarenessActions,
+  useHistory,
   useMultiBlockActions,
-  useYjsHistory,
 } from "@retro/sdk";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren, useMemo } from "react";
 import { assertEvent, enqueueActions } from "xstate";
+import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
   BlockEventType,
@@ -17,7 +18,13 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
     useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
-  const { redo, undo } = useYjsHistory();
+  const { redo, undo, onPop, onPush } = useHistory();
+
+  const historyEventListenerLogic = useMemo(
+    () => createHistoryEventListenerLogic(onPop, onPush),
+    [],
+  );
+
   return (
     <CanvasControllerContext.Provider
       logic={canvasController.provide({
@@ -34,6 +41,9 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               return false;
             }
           },
+        },
+        actors: {
+          historyEventListener: historyEventListenerLogic,
         },
         actions: {
           deleteBlock: (_, params) => {
