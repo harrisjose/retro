@@ -154,7 +154,7 @@ export const useMultiBlockActions = () => {
   const bringBlockToFront = (blockId: string) => {
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
     const currentBlock = snapshot[blockId];
-    if (currentBlock.type !== BlockType.Card) return;
+    if (currentBlock && currentBlock.type !== BlockType.Card) return;
 
     const yProperties = yPropertiesMap.get(blockId) as YCardProperties;
     const blocksZIndexMap = Object.entries(snapshot)
