@@ -156,7 +156,7 @@ export default function CardBlock({ id }: { id: string }) {
   return (
     <div
       className={cn(
-        "w-full h-full overflow-hidden rounded-xl flex flex-col border-2 border-transparent relative",
+        "w-full h-full rounded-xl flex flex-col border-2 border-transparent relative",
         isSelected
           ? "border-opacity-20 border-black border-2 pointer-events-auto"
           : "pointer-events-none",
