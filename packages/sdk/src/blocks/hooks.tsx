@@ -1,12 +1,14 @@
 import type {
   Block,
   Properties,
+  YBlock,
   YBlockBase,
   YBlockMap,
+  YCardProperties,
   YProperties,
   YPropertiesMap,
 } from "@retro/common";
-import { fromSerialized } from "@retro/common";
+import { BlockType, fromSerialized } from "@retro/common";
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";
@@ -112,12 +114,83 @@ export const useMultiBlockActions = () => {
     });
   };
 
+  const duplicateBlocks = (blockIds: string[]) => {
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    const newBlockIds: string[] = [];
+    yDoc.transact(() => {
+      blockIds.forEach((blockId) => {
+        const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
+        const yBlock = new YKeyValue(yBlockBase) as YBlock;
+        const yProperties = yPropertiesMap.get(blockId) as YProperties;
+        const newBlockId = random.uuidv4();
+
+        yBlockMap.set(newBlockId, new Y.Array() as YBlockBase);
+
+        const newYBlockBase = yBlockMap.get(newBlockId) as YBlockBase;
+        const newYBlock = new YKeyValue(newYBlockBase);
+
+        newYBlock.set("id", newBlockId);
+        newYBlock.set("type", yBlock.get("type") as BlockType);
+        newYBlock.set("x", (yBlock.get("x") as number) + 50);
+        newYBlock.set("y", (yBlock.get("y") as number) + 50);
+        newYBlock.set("width", yBlock.get("width") as number);
+        newYBlock.set("height", yBlock.get("height") as number);
+
+        yPropertiesMap.set(newBlockId, yProperties.clone());
+
+        newBlockIds.push(newBlockId);
+      });
+    });
+
+    return newBlockIds;
+  };
+
   const moveBlocks = (blockIds: string[], dx: number, dy: number) => {
     console.debug("Moving blocks", blockIds, dx, dy);
     console.log("Not implemented");
   };
 
-  return { deleteBlocks, moveBlocks, getBlocks };
+  const bringBlockToFront = (blockId: string) => {
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    const currentBlock = snapshot[blockId];
+    if (currentBlock.type !== BlockType.Card) return;
+
+    const yProperties = yPropertiesMap.get(blockId) as YCardProperties;
+    const blocksZIndexMap = Object.entries(snapshot)
+      .filter(([id, block]) => {
+        if (id === blockId || block.type !== BlockType.Card) return false;
+
+        // Check if blocks overlap
+        const isOverlapping =
+          currentBlock.x < block.x + block.width &&
+          currentBlock.x + currentBlock.width > block.x &&
+          currentBlock.y < block.y + block.height &&
+          currentBlock.y + currentBlock.height > block.y;
+
+        return isOverlapping;
+      })
+      .map(([id, block]) => ({
+        id,
+        zIndex: (yPropertiesMap.get(id) as YCardProperties).get(
+          "zIndex",
+        ) as number,
+      }));
+
+    const maxZIndex = Math.max(...blocksZIndexMap.map((b) => b.zIndex ?? 0));
+
+    yDoc.transact(() => {
+      yProperties.set("zIndex", maxZIndex + 1);
+    });
+  };
+
+  return {
+    deleteBlocks,
+    moveBlocks,
+    getBlocks,
+    duplicateBlocks,
+    bringBlockToFront,
+  };
 };
 
 export const useBlockProperties = <T extends Properties>(

@@ -11,10 +11,12 @@ import {
 import { keyEventListenerLogic } from "./actors";
 import {
   BlockEventType,
+  type BringBlockToFrontActionParams,
   type CanvasContext,
   CanvasEventType,
   CanvasMode,
   type DeleteActionBlockParams,
+  type DuplicateBlockActionParams,
   type EditableBlockGuardParams,
   type EditorEvent,
   EditorEventType,
@@ -44,6 +46,12 @@ export const canvasController = setup({
     },
     notifySelection: (...args: NotifySelectionActionParams) => {
       console.log("Default notifySelection action", args);
+    },
+    duplicateBlock: (...args: DuplicateBlockActionParams) => {
+      console.log("Default duplicate block action", args);
+    },
+    bringBlockToFront: (...args: BringBlockToFrontActionParams) => {
+      console.log("Default bringBlockToFront action", args);
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -143,6 +151,14 @@ export const canvasController = setup({
         src: "keyEventListener",
         input: { capture: true },
       },
+      entry: [
+        {
+          type: "bringBlockToFront",
+          params: ({ context }: { context: CanvasContext }) => ({
+            blockIds: context.selection,
+          }),
+        },
+      ],
       states: {
         [SelectionMode.Idle]: {
           on: {
@@ -185,6 +201,18 @@ export const canvasController = setup({
                   "clearSelection",
                 ],
                 target: `#${CanvasMode.None}`,
+              },
+              {
+                guard: ({ event }) => event.key === "d" && event.ctrlKey,
+                actions: [
+                  {
+                    type: "duplicateBlock",
+
+                    params: ({ context }: { context: CanvasContext }) => ({
+                      selected: context.selection,
+                    }),
+                  },
+                ],
               },
             ],
           },

@@ -134,10 +134,7 @@ export default function CardBlock({ id }: { id: string }) {
 
   const contentRef = useRef<HTMLDivElement>(null);
   const onResize = useDebounceCallback(
-    (size: {
-      width: number | undefined;
-      height: number | undefined;
-    }) => {
+    (size: { width: number | undefined; height: number | undefined }) => {
       if (!isNil(size.height)) {
         if (size.height > CardConstants.Height) {
           setSize({ height: size.height });
@@ -159,7 +156,7 @@ export default function CardBlock({ id }: { id: string }) {
   return (
     <div
       className={cn(
-        "w-full h-full overflow-hidden rounded-xl flex flex-col border-2 border-transparent",
+        "w-full h-full overflow-hidden rounded-xl flex flex-col border-2 border-transparent relative",
         isSelected
           ? "border-opacity-20 border-black border-2 pointer-events-auto"
           : "pointer-events-none",
@@ -167,6 +164,7 @@ export default function CardBlock({ id }: { id: string }) {
       style={{
         height: block.height,
         backgroundColor: colors[properties.color],
+        zIndex: properties.zIndex ?? 0,
       }}
     >
       <div

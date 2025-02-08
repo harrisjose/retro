@@ -1,12 +1,17 @@
 import { BlockType } from "@retro/common";
 import { useAwarenessActions, useMultiBlockActions } from "@retro/sdk";
 import type { PropsWithChildren } from "react";
-import { assertEvent } from "xstate";
+import { assertEvent, enqueueActions } from "xstate";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
-import { BlockEventType, CanvasEventType } from "./types";
+import {
+  BlockEventType,
+  CanvasEventType,
+  type NotifySelectionActionParams,
+} from "./types";
 
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
-  const { deleteBlocks, getBlocks } = useMultiBlockActions();
+  const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
+    useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
 
   return (
@@ -30,8 +35,24 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
           deleteBlock: (_, params) => {
             deleteBlocks(params.selected);
           },
+          duplicateBlock: enqueueActions(({ event, enqueue }, params) => {
+            const newBlockIds = duplicateBlocks(params.selected);
+            enqueue.assign({ selection: newBlockIds });
+            enqueue({
+              type: "notifySelection",
+              params: {
+                selected: newBlockIds,
+              } as NotifySelectionActionParams[1],
+            });
+          }),
           notifySelection: (_, params) => {
             updateSelectionAwareness(params.selected);
+          },
+          bringBlockToFront: (_, params) => {
+            // Bring block to front is only supported for single block selection
+            if (params.blockIds.length === 1) {
+              bringBlockToFront(params.blockIds[0]);
+            }
           },
         },
       })}

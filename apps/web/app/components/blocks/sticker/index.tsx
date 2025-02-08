@@ -6,6 +6,7 @@ import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { CanvasControllerContext } from "../../canvas/machine";
 
+const ANIMATION_PLAY_COUNT = 3;
 const StickerRenderer = ({
   src,
   id,
@@ -13,6 +14,7 @@ const StickerRenderer = ({
 }: { src: string; id: string; isActive: boolean }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
+  const [playCount, setPlayCount] = useState(0);
   const [lastInsertedBlockId] = CanvasControllerContext.useSelector(
     (snapshot) => {
       return [snapshot?.context.insertion.lastInsertedId];
@@ -20,24 +22,34 @@ const StickerRenderer = ({
     shallowEqual,
   );
 
-  const dotLottieRefCallback = (dotLottie: DotLottie) => {
+  const dotLottieRefCallback = (dotLottie: DotLottie | null) => {
     setDotLottie(dotLottie);
   };
 
   useEffect(() => {
     const onComplete = () => {
       if (dotLottie) {
-        setAnimationInProgress(false);
-        dotLottie.stop();
+        setPlayCount((count) => {
+          const newCount = count + 1;
+          if (newCount >= ANIMATION_PLAY_COUNT) {
+            setAnimationInProgress(false);
+            dotLottie.stop();
+            return 0;
+          }
+          dotLottie.play();
+          return newCount;
+        });
       }
     };
 
     const onLoad = () => {
       if (dotLottie && lastInsertedBlockId === id) {
         setAnimationInProgress(true);
+        setPlayCount(0);
         dotLottie.play();
       }
     };
+
     if (dotLottie) {
       dotLottie.addEventListener("complete", onComplete);
       dotLottie.addEventListener("load", onLoad);
@@ -59,6 +71,7 @@ const StickerRenderer = ({
       }}
       onMouseEnter={() => {
         if (dotLottie && !animationInProgress) {
+          setPlayCount(0);
           dotLottie.play();
           setAnimationInProgress(true);
         }
@@ -66,7 +79,9 @@ const StickerRenderer = ({
       style={{
         width: "64px",
         height: "64px",
-        border: isActive ? "2px solid rgba(0, 0, 0, 0.2)" : "none",
+        border: isActive
+          ? "2px solid rgba(0, 0, 0, 0.2)"
+          : "2px solid transparent",
         borderRadius: "12px",
       }}
       speed={1.5}
@@ -89,10 +104,12 @@ export default function StickerBlock({ id }: { id: string }) {
   });
 
   return (
-    <StickerRenderer
-      src={StickerJsonMap[stickerType].json}
-      id={id}
-      isActive={isSelected}
-    />
+    <div className="relative z-[100]">
+      <StickerRenderer
+        src={StickerJsonMap[stickerType].json}
+        id={id}
+        isActive={isSelected}
+      />
+    </div>
   );
 }

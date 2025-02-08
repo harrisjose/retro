@@ -110,6 +110,7 @@ export type CardProperties = {
     id: string;
     name: string;
   } | null;
+  zIndex?: number;
 };
 
 export type YCardProperties = TypedMap<
