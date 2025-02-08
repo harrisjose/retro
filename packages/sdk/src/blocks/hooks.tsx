@@ -154,10 +154,10 @@ export const useMultiBlockActions = () => {
   const bringBlockToFront = (blockId: string) => {
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
     const currentBlock = snapshot[blockId];
-    if (currentBlock && currentBlock.type !== BlockType.Card) return;
+    if (!currentBlock || currentBlock.type !== BlockType.Card) return;
 
     const yProperties = yPropertiesMap.get(blockId) as YCardProperties;
-    const blocksZIndexMap = Object.entries(snapshot)
+    const blocksZIndexList = Object.entries(snapshot)
       .filter(([id, block]) => {
         if (id === blockId || block.type !== BlockType.Card) return false;
 
@@ -177,7 +177,8 @@ export const useMultiBlockActions = () => {
         ) as number,
       }));
 
-    const maxZIndex = Math.max(...blocksZIndexMap.map((b) => b.zIndex ?? 0));
+    if (blocksZIndexList.length === 0) return;
+    const maxZIndex = Math.max(...blocksZIndexList.map((b) => b.zIndex ?? 0));
 
     yDoc.transact(() => {
       yProperties.set("zIndex", maxZIndex + 1);
