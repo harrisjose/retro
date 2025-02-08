@@ -10,7 +10,8 @@ import {
 } from "./types";
 
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
-  const { deleteBlocks, getBlocks, duplicateBlocks } = useMultiBlockActions();
+  const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
+    useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
 
   return (
@@ -46,6 +47,12 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
           }),
           notifySelection: (_, params) => {
             updateSelectionAwareness(params.selected);
+          },
+          bringBlockToFront: (_, params) => {
+            // Bring block to front is only supported for single block selection
+            if (params.blockIds.length === 1) {
+              bringBlockToFront(params.blockIds[0]);
+            }
           },
         },
       })}

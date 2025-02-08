@@ -1,14 +1,14 @@
 import type {
   Block,
-  BlockType,
   Properties,
   YBlock,
   YBlockBase,
   YBlockMap,
+  YCardProperties,
   YProperties,
   YPropertiesMap,
 } from "@retro/common";
-import { fromSerialized } from "@retro/common";
+import { BlockType, fromSerialized } from "@retro/common";
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";
@@ -151,7 +151,46 @@ export const useMultiBlockActions = () => {
     console.log("Not implemented");
   };
 
-  return { deleteBlocks, moveBlocks, getBlocks, duplicateBlocks };
+  const bringBlockToFront = (blockId: string) => {
+    const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
+    const currentBlock = snapshot[blockId];
+    if (currentBlock.type !== BlockType.Card) return;
+
+    const yProperties = yPropertiesMap.get(blockId) as YCardProperties;
+    const blocksZIndexMap = Object.entries(snapshot)
+      .filter(([id, block]) => {
+        if (id === blockId || block.type !== BlockType.Card) return false;
+
+        // Check if blocks overlap
+        const isOverlapping =
+          currentBlock.x < block.x + block.width &&
+          currentBlock.x + currentBlock.width > block.x &&
+          currentBlock.y < block.y + block.height &&
+          currentBlock.y + currentBlock.height > block.y;
+
+        return isOverlapping;
+      })
+      .map(([id, block]) => ({
+        id,
+        zIndex: (yPropertiesMap.get(id) as YCardProperties).get(
+          "zIndex",
+        ) as number,
+      }));
+
+    const maxZIndex = Math.max(...blocksZIndexMap.map((b) => b.zIndex ?? 0));
+
+    yDoc.transact(() => {
+      yProperties.set("zIndex", maxZIndex + 1);
+    });
+  };
+
+  return {
+    deleteBlocks,
+    moveBlocks,
+    getBlocks,
+    duplicateBlocks,
+    bringBlockToFront,
+  };
 };
 
 export const useBlockProperties = <T extends Properties>(

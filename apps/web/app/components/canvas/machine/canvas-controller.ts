@@ -11,6 +11,7 @@ import {
 import { keyEventListenerLogic } from "./actors";
 import {
   BlockEventType,
+  type BringBlockToFrontActionParams,
   type CanvasContext,
   CanvasEventType,
   CanvasMode,
@@ -48,6 +49,9 @@ export const canvasController = setup({
     },
     duplicateBlock: (...args: DuplicateBlockActionParams) => {
       console.log("Default duplicate block action", args);
+    },
+    bringBlockToFront: (...args: BringBlockToFrontActionParams) => {
+      console.log("Default bringBlockToFront action", args);
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -147,6 +151,14 @@ export const canvasController = setup({
         src: "keyEventListener",
         input: { capture: true },
       },
+      entry: [
+        {
+          type: "bringBlockToFront",
+          params: ({ context }: { context: CanvasContext }) => ({
+            blockIds: context.selection,
+          }),
+        },
+      ],
       states: {
         [SelectionMode.Idle]: {
           on: {
