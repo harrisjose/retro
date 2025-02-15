@@ -29,6 +29,7 @@ export enum BlockEventType {
   BlockDragStart = "BLOCK_DRAG_START",
   BlockDragEnd = "BLOCK_DRAG_END",
   BlockExitEditing = "BLOCK_EXIT_EDITING",
+  BlockEnterEditing = "BLOCK_ENTER_EDITING",
 }
 
 export type BlockToInsert = {
@@ -61,15 +62,20 @@ export type KeyboardEvents = {
   altKey: boolean;
 };
 
+export enum HistoryEventType {
+  Push = "history.push",
+  Pop = "history.pop",
+}
+
 export type HistoryEvents =
   | {
-      type: "history.push";
+      type: HistoryEventType.Push;
       payload: {
         event: UndoManagerEvent;
       };
     }
   | {
-      type: "history.pop";
+      type: HistoryEventType.Pop;
       payload: {
         event: UndoManagerEvent;
       };
@@ -111,6 +117,10 @@ export type Events =
     }
   | {
       type: BlockEventType.BlockExitEditing;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockEnterEditing;
       blockId: string;
     }
   | EditorEvents

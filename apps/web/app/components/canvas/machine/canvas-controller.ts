@@ -25,6 +25,7 @@ import {
   EditorEventType,
   type EditorEvents,
   type Events,
+  HistoryEventType,
   type NotifySelectionActionParams,
   type RedoActionParams,
   SelectionMode,
@@ -152,6 +153,14 @@ export const canvasController = setup({
         "clearSelection",
       ],
     },
+    [BlockEventType.BlockEnterEditing]: {
+      actions: [
+        assign(({ event }) => ({
+          selection: [event.blockId],
+        })),
+      ],
+      target: `#${CanvasMode.Selected}.${SelectionMode.Editing}`,
+    },
     keydown: [
       {
         guard: ({ event }) =>
@@ -163,7 +172,7 @@ export const canvasController = setup({
         actions: ["undo"],
       },
     ],
-    "history.push": {
+    [HistoryEventType.Push]: {
       actions: [
         ({ event, context }) => {
           const payload = event.payload;
@@ -176,7 +185,7 @@ export const canvasController = setup({
         emit(({ event }) => event),
       ],
     },
-    "history.pop": {
+    [HistoryEventType.Pop]: {
       guard: ({ event, context }) => {
         const undoManagerEvent = event.payload.event;
         const selection = undoManagerEvent.stackItem.meta.get("selection");

@@ -1,6 +1,7 @@
 import type { UndoManagerEvent } from "@retro/sdk";
 import { isEmpty } from "lodash-es";
 import { type EventObject, fromCallback } from "xstate";
+import { HistoryEventType } from "./types";
 
 /**
  * @param input.key - The key to listen for. Sends back all events if not provided.
@@ -39,7 +40,7 @@ const createHistoryEventListenerLogic = (
   fromCallback<EventObject, undefined>(({ sendBack }) => {
     onPop?.((event: UndoManagerEvent) => {
       sendBack({
-        type: "history.pop",
+        type: HistoryEventType.Pop,
         payload: {
           event,
         },
@@ -47,7 +48,7 @@ const createHistoryEventListenerLogic = (
     });
     onPush?.((event: UndoManagerEvent) => {
       sendBack({
-        type: "history.push",
+        type: HistoryEventType.Push,
         payload: {
           event,
         },

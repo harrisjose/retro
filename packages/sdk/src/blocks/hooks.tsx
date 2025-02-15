@@ -8,7 +8,11 @@ import type {
   YProperties,
   YPropertiesMap,
 } from "@retro/common";
-import { BlockType, fromSerialized, CanvasTransactionOrigin } from "@retro/common";
+import {
+  BlockType,
+  CanvasTransactionOrigin,
+  fromSerialized,
+} from "@retro/common";
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";

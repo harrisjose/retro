@@ -1,15 +1,18 @@
 import {
+  type DOMEventMap,
   EditorState,
   EditorView,
   useEditorEffect,
+  useEditorEventListener,
   ySyncPluginKey,
 } from "@retro/pm";
-import { isEmpty } from "lodash-es";
 import { type PropsWithChildren, createContext, useContext } from "react";
 import * as Y from "yjs";
 import {
   CanvasControllerContext,
+  type CanvasControllerRef,
   type EditorEvents,
+  HistoryEventType,
   type HistoryEvents,
 } from "../canvas/machine";
 
@@ -33,7 +36,12 @@ export const EditorContextProvider = ({
   );
 };
 
-export const useEditorEventCallback = (
+export const useEditorId = () => {
+  const { id } = useContext(EditorContext);
+  return id;
+};
+
+export const useEditorEventsFromCanvas = (
   cb: (view: EditorView, event: EditorEvents) => void,
 ) => {
   const { id } = useContext(EditorContext);
@@ -54,40 +62,52 @@ export const useEditorEventCallback = (
   );
 };
 
-export const useEditorHistoryCallback = () => {
+export const useEditorEventsFromHistory = (
+  cb: (view: EditorView, event: HistoryEvents) => void,
+) => {
   const { id } = useContext(EditorContext);
   const canvasControllerRef = CanvasControllerContext.useActorRef();
 
   useEditorEffect(
     (view: EditorView) => {
-      const sub = canvasControllerRef.on("history.push", (event: any) => {
-        // If the event is a history.push and the block id matches, the canvas controller will add
-        // metadata re canvas-selection to the stackItem. If the change is from the ySyncPlugin, we also
-        // want to associate the cursor position with the stackItem.
-        if (
-          (event as HistoryEvents).payload?.event?.origin === ySyncPluginKey
-        ) {
-          const selection = (
-            event as HistoryEvents
-          ).payload?.event?.stackItem?.meta.get("selection");
-          if (selection && selection.includes(id)) {
-            const cursor = view.state.selection;
-            if (!isEmpty(cursor)) {
-              (event as HistoryEvents).payload.event.stackItem.meta.set(
-                "cursor",
-                {
-                  from: cursor.from,
-                  to: cursor.to,
-                },
-              );
+      const sub = canvasControllerRef.on(
+        HistoryEventType.Push,
+        (event: any) => {
+          if (
+            (event as HistoryEvents).payload?.event?.origin === ySyncPluginKey
+          ) {
+            const selection = (
+              event as HistoryEvents
+            ).payload?.event?.stackItem?.meta.get("selection");
+
+            if (selection && selection.includes(id)) {
+              cb(view, event as HistoryEvents);
             }
           }
-        }
-      });
+        },
+      );
       return () => {
         sub.unsubscribe();
       };
     },
     [id, canvasControllerRef],
   );
+};
+
+export const useEditorEventsFromDomHandlers = (
+  cb: (
+    event: DOMEventMap[keyof DOMEventMap],
+    canvasRef: CanvasControllerRef,
+  ) => void,
+) => {
+  const canvasControllerRef = CanvasControllerContext.useActorRef();
+
+  useEditorEventListener("focus", (_, event) => {
+    cb(event, canvasControllerRef);
+    return true;
+  });
+  useEditorEventListener("blur", (_, event) => {
+    cb(event, canvasControllerRef);
+    return true;
+  });
 };
