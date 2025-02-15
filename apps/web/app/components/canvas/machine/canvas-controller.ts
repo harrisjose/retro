@@ -119,21 +119,6 @@ export const canvasController = setup({
           blockId: context.selection[0],
         }) as EditorEvents,
     ),
-    onCanvasDragStart: enqueueActions(({ event, enqueue }) => {
-      assertEvent(event, [CanvasEventType.CanvasDragStart]);
-      if (!event.pointerEvent.shiftKey) {
-        enqueue("clearSelection");
-      }
-      enqueue.assign({
-        dragSelectionStart: event.pointerEvent,
-      });
-    }),
-    onCanvasDragEnd: enqueueActions(({ event, enqueue }) => {
-      assertEvent(event, [CanvasEventType.CanvasDragEnd]);
-      enqueue.assign({
-        dragSelectionStart: null,
-      });
-    }),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
@@ -148,7 +133,10 @@ export const canvasController = setup({
       lastInsertedId: null,
     },
 
-    dragSelectionStart: null,
+    dragSelection: {
+      start: null,
+      current: null,
+    },
   },
   invoke: [
     {
@@ -228,6 +216,23 @@ export const canvasController = setup({
         emit(({ event }) => event),
       ],
       target: `#${CanvasMode.Selected}`,
+    },
+    [CanvasEventType.CanvasDragStart]: {
+      actions: [
+        enqueueActions(({ event, enqueue }) => {
+          assertEvent(event, [CanvasEventType.CanvasDragStart]);
+          if (!event.event.shiftKey) {
+            enqueue("clearSelection");
+          }
+          enqueue.assign({
+            dragSelection: {
+              start: event.event,
+              current: event.event,
+            },
+          });
+        }),
+      ],
+      target: `#${CanvasMode.Selecting}`,
     },
   },
   initial: CanvasMode.None,
@@ -393,24 +398,53 @@ export const canvasController = setup({
     [CanvasMode.Selecting]: {
       id: CanvasMode.Selecting,
       on: {
-        [CanvasEventType.CanvasDragStart]: {
-          actions: ["onCanvasDragStart"],
-        },
         [CanvasEventType.CanvasDrag]: {
           actions: [
-            {
-              type: "onCanvasDragUpdate",
-              params: ({ context, event }) => ({
-                pointerEvent: event.pointerEvent,
-                dragSelectionStart: context.dragSelectionStart,
-                existingSelection: context.selection,
-              }),
-            },
+            enqueueActions(({ event, enqueue, context }) => {
+              enqueue.assign({
+                dragSelection: {
+                  start: context.dragSelection.start,
+                  current: event.event,
+                },
+              });
+              enqueue({
+                type: "onCanvasDragUpdate",
+                params: ({ context, event }) => ({
+                  start: context.dragSelection.start,
+                  current: event.event,
+                  existingSelection: event.event.shiftKey
+                    ? context.selection
+                    : [],
+                }),
+              });
+            }),
           ],
         },
-        [CanvasEventType.CanvasDragEnd]: {
-          actions: ["onCanvasDragEnd"],
-        },
+        [CanvasEventType.CanvasDragEnd]: [
+          {
+            guard: ({ context }) => context.selection.length > 0,
+            actions: [
+              assign({
+                dragSelection: {
+                  start: null,
+                  current: null,
+                },
+              }),
+            ],
+            target: CanvasMode.Selected,
+          },
+          {
+            actions: [
+              assign({
+                dragSelection: {
+                  start: null,
+                  current: null,
+                },
+              }),
+            ],
+            target: CanvasMode.None,
+          },
+        ],
       },
     },
     [CanvasMode.Inserting]: {

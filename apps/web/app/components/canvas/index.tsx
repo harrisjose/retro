@@ -8,7 +8,8 @@ import { CanvasControllerContext, CanvasEventType } from "./machine";
 import IntroSection from "./sections/intro";
 import SectionRenderer from "./sections/section";
 import SummarySection from "./sections/summary";
-import { useCamera, useCanvasGestures } from "./store";
+import { SelectionRect } from "./selection-rect";
+import { screenToCanvas, useCamera, useCanvasGestures } from "./store";
 import Zoom from "./zoom-menu";
 
 export default function Canvas() {
@@ -27,6 +28,48 @@ export default function Canvas() {
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
       moveBy(deltaX, deltaY);
+    },
+    onDragStart(event) {
+      const point = screenToCanvas(
+        { x: event.clientX, y: event.clientY },
+        camera,
+      );
+      controller.send({
+        type: CanvasEventType.CanvasDragStart,
+        event: {
+          x: point.x,
+          y: point.y,
+          shiftKey: event.shiftKey,
+        },
+      });
+    },
+    onDrag(event) {
+      const point = screenToCanvas(
+        { x: event.clientX, y: event.clientY },
+        camera,
+      );
+      controller.send({
+        type: CanvasEventType.CanvasDrag,
+        event: {
+          x: point.x,
+          y: point.y,
+          shiftKey: event.shiftKey,
+        },
+      });
+    },
+    onDragEnd(event) {
+      const point = screenToCanvas(
+        { x: event.clientX, y: event.clientY },
+        camera,
+      );
+      controller.send({
+        type: CanvasEventType.CanvasDragEnd,
+        event: {
+          x: point.x,
+          y: point.y,
+          shiftKey: event.shiftKey,
+        },
+      });
     },
     onClick: () => {
       controller.send({ type: CanvasEventType.CanvasClick });
@@ -70,6 +113,7 @@ export default function Canvas() {
           <SummarySection />
         </div>
         <CanvasCursor />
+        <SelectionRect />
       </div>
       <Zoom current={camera.z} onChange={zoomBy} />
     </>

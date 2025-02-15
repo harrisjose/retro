@@ -6,7 +6,7 @@ import {
 } from "@retro/sdk";
 import { type PropsWithChildren, useMemo } from "react";
 import { assertEvent, enqueueActions } from "xstate";
-import { useCanvasSearch } from "../store";
+import { getRectangleFromPoints, useCanvasSearch } from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -72,29 +72,13 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               bringBlockToFront(params.blockIds[0]);
             }
           },
-          onCanvasDragUpdate: enqueueActions(({ event, enqueue }, params) => {
-            if (!params.dragSelectionStart) {
-              console.error("drag selection start is not defined");
+          onCanvasDragUpdate: enqueueActions(({ enqueue }, params) => {
+            if (!params.start || !params.current) {
+              console.error("Drag pointers are not defined");
               return;
             }
 
-            const { xCanvasOffset: xStart, yCanvasOffset: yStart } =
-              params.dragSelectionStart;
-
-            const { xCanvasOffset: xCurr, yCanvasOffset: yCurr } =
-              params.pointerEvent;
-
-            const minX = Math.min(xCurr, xStart);
-            const maxX = Math.max(xCurr, xStart);
-            const minY = Math.min(yCurr, yStart);
-            const maxY = Math.max(yCurr, yStart);
-
-            const rect = {
-              x: minX,
-              y: minY,
-              width: maxX - minX,
-              height: maxY - minY,
-            };
+            const rect = getRectangleFromPoints(params.start, params.current);
             const matches = searchByRectangle(rect);
 
             const newSelection = [

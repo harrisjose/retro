@@ -15,9 +15,9 @@ export enum SelectionMode {
   Switching = "SWITCHING",
 }
 
-export type CanvasPointerEvent = {
-  xCanvasOffset: number;
-  yCanvasOffset: number;
+export type PointerEventSnapshot = {
+  x: number;
+  y: number;
   shiftKey: boolean;
 };
 
@@ -95,14 +95,15 @@ export type Events =
     }
   | {
       type: CanvasEventType.CanvasDragStart;
-      pointerEvent: CanvasPointerEvent;
+      event: PointerEventSnapshot;
     }
   | {
       type: CanvasEventType.CanvasDrag;
-      pointerEvent: CanvasPointerEvent;
+      event: PointerEventSnapshot;
     }
   | {
       type: CanvasEventType.CanvasDragEnd;
+      event: PointerEventSnapshot;
     }
   | {
       type: CanvasEventType.InsertStart;
@@ -150,8 +151,11 @@ export type CanvasContext = {
     lastInsertedId: string | null;
   };
 
-  // To handle multi selection handling
-  dragSelectionStart: CanvasPointerEvent | null;
+  // To handle drag-to-select
+  dragSelection: {
+    start: PointerEventSnapshot | null;
+    current: PointerEventSnapshot | null;
+  };
 };
 
 export type DeleteActionBlockParams = [any, { selected: string[] }];
@@ -164,8 +168,8 @@ export type EditableBlockGuardParams = {
 export type OnCanvasDragUpdateActionParams = [
   any,
   {
-    pointerEvent: CanvasPointerEvent;
-    dragSelectionStart: CanvasPointerEvent | null;
+    start: PointerEventSnapshot | null;
+    current: PointerEventSnapshot | null;
     existingSelection: string[];
   },
 ];

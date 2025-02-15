@@ -4,7 +4,7 @@ import {
   type Rectangle,
   updateProxyState,
 } from "@retro/common";
-import { useBlockMap, useSectionMap } from "@retro/sdk";
+import { useBlockMapProxy, useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
 import { animate } from "motion";
 import { useReducedMotion } from "motion/react";
@@ -125,16 +125,30 @@ export const useCanvasGestures = (
     onPinch,
     onWheel,
     onClick,
+    onDragStart,
+    onDrag,
+    onDragEnd,
   }: {
     onPinch: (event: WheelEvent) => void;
     onWheel: (event: WheelEvent) => void;
     onClick: (event: MouseEvent) => void;
+    onDragStart: (event: MouseEvent) => void;
+    onDrag: (event: MouseEvent) => void;
+    onDragEnd: (event: MouseEvent) => void;
   },
 ) => {
   // Ideally this would have been using hooks from useGesture, but it seems to be causing issues
   // with the pinch origin not being correct. UseGesture probably is doing some translation of the
   // event coordinates.
   // TODO @harris: Investigate later since useGesture has debouncing and other nice-ities built in.
+
+  const DRAG_THRESHOLD = 4; // pixels
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(
+    null,
+  );
+  const [hasPassedThreshold, setHasPassedThreshold] = useState(false);
+
   function handleWheel(event: WheelEvent) {
     event.preventDefault();
 
@@ -145,13 +159,42 @@ export const useCanvasGestures = (
     }
   }
 
-  function handleClick(event: MouseEvent) {
+  function handleMouseDown(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (
-      target.getAttribute("data-clear-selection") &&
-      !event?.defaultPrevented
-    ) {
-      onClick(event);
+    if (target.getAttribute("data-clear-selection")) {
+      setStartPoint({ x: event.clientX, y: event.clientY });
+      setIsDragging(true);
+      setHasPassedThreshold(false);
+    }
+  }
+
+  function handleMouseMove(event: MouseEvent) {
+    if (isDragging && startPoint) {
+      const dx = event.clientX - startPoint.x;
+      const dy = event.clientY - startPoint.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (!hasPassedThreshold && distance >= DRAG_THRESHOLD) {
+        setHasPassedThreshold(true);
+        onDragStart(event);
+      }
+
+      if (hasPassedThreshold) {
+        onDrag(event);
+      }
+    }
+  }
+
+  function handleMouseUp(event: MouseEvent) {
+    if (isDragging) {
+      if (hasPassedThreshold) {
+        onDragEnd(event);
+      } else {
+        onClick(event);
+      }
+      setIsDragging(false);
+      setStartPoint(null);
+      setHasPassedThreshold(false);
     }
   }
 
@@ -166,13 +209,20 @@ export const useCanvasGestures = (
       passive: false,
       signal: controller.signal,
     });
-    rootEl.addEventListener("click", handleClick, {
+    rootEl.addEventListener("mousedown", handleMouseDown, {
       signal: controller.signal,
     });
+    window.addEventListener("mousemove", handleMouseMove, {
+      signal: controller.signal,
+    });
+    window.addEventListener("mouseup", handleMouseUp, {
+      signal: controller.signal,
+    });
+
     return () => {
       controller.abort();
     };
-  }, [ref, onPinch, onWheel]);
+  }, [ref, onPinch, onWheel, isDragging, startPoint, hasPassedThreshold]);
 };
 
 export const useScale = () => {
@@ -182,8 +232,9 @@ export const useScale = () => {
 };
 
 export const useCanvasSearch = () => {
-  const blockMap = useBlockMap();
   const searchTree = useMemo(() => new Search(), []);
+
+  const blockMap = useBlockMapProxy();
 
   useEffect(() => {
     const toIdRectangle = (block: Block): IdRectangle => ({
@@ -210,7 +261,7 @@ export const useCanvasSearch = () => {
     return () => {
       unsubscribe();
     };
-  }, [searchTree]);
+  }, []);
 
   const searchByRectangle = ({
     x,
