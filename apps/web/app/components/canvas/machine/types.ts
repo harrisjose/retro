@@ -1,4 +1,5 @@
 import type { BlockType, Properties } from "@retro/common";
+import type { UndoManagerEvent } from "@retro/sdk";
 
 export enum CanvasMode {
   None = "NONE",
@@ -28,6 +29,7 @@ export enum BlockEventType {
   BlockDragStart = "BLOCK_DRAG_START",
   BlockDragEnd = "BLOCK_DRAG_END",
   BlockExitEditing = "BLOCK_EXIT_EDITING",
+  BlockEnterEditing = "BLOCK_ENTER_EDITING",
 }
 
 export type BlockToInsert = {
@@ -40,7 +42,7 @@ export enum EditorEventType {
   Blur = "editor.blur",
 }
 
-export type EditorEvent =
+export type EditorEvents =
   | {
       type: EditorEventType.Focus;
       blockId: string;
@@ -49,6 +51,34 @@ export type EditorEvent =
   | {
       type: EditorEventType.Blur;
       blockId: string;
+    };
+
+export type KeyboardEvents = {
+  type: "keydown";
+  key: string;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+};
+
+export enum HistoryEventType {
+  Push = "history.push",
+  Pop = "history.pop",
+}
+
+export type HistoryEvents =
+  | {
+      type: HistoryEventType.Push;
+      payload: {
+        event: UndoManagerEvent;
+      };
+    }
+  | {
+      type: HistoryEventType.Pop;
+      payload: {
+        event: UndoManagerEvent;
+      };
     };
 
 export type Events =
@@ -89,11 +119,13 @@ export type Events =
       type: BlockEventType.BlockExitEditing;
       blockId: string;
     }
-  | EditorEvent
   | {
-      type: "keydown";
-      key: string;
-    };
+      type: BlockEventType.BlockEnterEditing;
+      blockId: string;
+    }
+  | EditorEvents
+  | KeyboardEvents
+  | HistoryEvents;
 
 export type CanvasContext = {
   selection: string[];
@@ -116,3 +148,5 @@ export type NotifySelectionActionParams = [
     selected: string[];
   },
 ];
+export type UndoActionParams = [any];
+export type RedoActionParams = [any];

@@ -10,3 +10,5 @@ export const CardConstants = {
   Height: 240,
   Width: 200,
 };
+
+export const CanvasTransactionOrigin = "canvas";

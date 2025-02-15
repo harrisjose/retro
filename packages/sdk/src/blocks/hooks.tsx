@@ -8,7 +8,11 @@ import type {
   YProperties,
   YPropertiesMap,
 } from "@retro/common";
-import { BlockType, fromSerialized } from "@retro/common";
+import {
+  BlockType,
+  CanvasTransactionOrigin,
+  fromSerialized,
+} from "@retro/common";
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";
@@ -46,7 +50,7 @@ export const useCreateBlock = () => {
   const createBlock = (input: Exclude<Block, "id">, properties: Properties) => {
     yDoc.transact(() => {
       insertBlock(yBlockMap, yPropertiesMap)(input, properties);
-    });
+    }, CanvasTransactionOrigin);
   };
 
   return createBlock;
@@ -70,7 +74,7 @@ export const useBlock = (blockId: string) => {
     yDoc.transact(() => {
       if (!isEqual(yBlock.get("x"), x)) yBlock.set("x", x);
       if (!isEqual(yBlock.get("y"), y)) yBlock.set("y", y);
-    });
+    }, CanvasTransactionOrigin);
   };
 
   const setSize = ({
@@ -88,7 +92,7 @@ export const useBlock = (blockId: string) => {
         yBlock.set("width", width);
       if (!isUndefined(height) && !isEqual(yBlock.get("height"), height))
         yBlock.set("height", height);
-    });
+    }, CanvasTransactionOrigin);
   };
 
   return { block: snapshot[blockId] as Block, setPosition, setSize };
@@ -111,7 +115,7 @@ export const useMultiBlockActions = () => {
         yBlockMap.delete(blockId);
         yPropertiesMap.delete(blockId);
       });
-    });
+    }, CanvasTransactionOrigin);
   };
 
   const duplicateBlocks = (blockIds: string[]) => {
@@ -210,7 +214,7 @@ export const useBlockProperties = <T extends Properties>(
     yDoc.transact(() => {
       // @ts-ignore
       yProperties.set(propertyName, value);
-    });
+    }, CanvasTransactionOrigin);
   };
 
   return { properties: snapshot[blockId] as T, setProperty };

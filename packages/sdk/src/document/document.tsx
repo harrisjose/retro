@@ -1,7 +1,10 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import type {
+  Awareness,
   Block,
+  Collaborator,
   CollaboratorSelection,
+  Document,
   Properties,
   Section,
   YBlockBase,
@@ -12,14 +15,17 @@ import type {
   YSectionMap,
 } from "@retro/common";
 import {
-  type Awareness,
-  type Collaborator,
-  type Document,
+  CanvasTransactionOrigin,
   bindProxyToKVRef,
   bindProxyToRef,
   observeKeysInMapRef,
   updateProxyState,
 } from "@retro/common";
+import {
+  defaultDeleteFilter,
+  defaultProtectedNodes,
+  ySyncPluginKey,
+} from "@retro/pm";
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useInterval } from "usehooks-ts";
@@ -29,7 +35,7 @@ import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
 import config from "../../lib/config.js";
 import { apiClient } from "../../lib/trpc-client.js";
-import { type DocumentState } from "./types.js";
+import { type DocumentState, type UndoManagerEvent } from "./types.js";
 
 export const DocContext = createContext<DocumentState>({} as any);
 
@@ -162,13 +168,13 @@ type DocProviderProps = React.PropsWithChildren & {
 export const DocProvider = ({
   children,
   docId,
-  initialData,
+  initialData: { document, yDoc },
 }: DocProviderProps) => {
   const state = useRef<DocumentState>(
     proxy({
       docId,
       // Entity (from db) stores
-      document: initialData.document,
+      document: document,
       loading: false,
       error: null,
       // Yjs related stores
@@ -180,8 +186,25 @@ export const DocProvider = ({
         new HocuspocusProvider({
           name: docId,
           url: config.collabUrl,
-          document: initialData.yDoc,
+          document: yDoc,
         }),
+      ),
+      undoManager: ref(
+        new Y.UndoManager(
+          [
+            yDoc.getMap("sections"),
+            yDoc.getMap("blocks"),
+            yDoc.getMap("properties"),
+          ],
+          {
+            trackedOrigins: new Set([ySyncPluginKey, CanvasTransactionOrigin]),
+            deleteFilter: (item) =>
+              defaultDeleteFilter(item, defaultProtectedNodes),
+            captureTransaction: (tr) => {
+              return tr.meta.get("addToHistory") !== false;
+            },
+          },
+        ),
       ),
       presence: {
         collaborators: [],
@@ -241,4 +264,23 @@ export const useReadyStatus = () => {
   const state = useContext(DocContext);
   const snap = useSnapshot(state);
   return snap.isReady;
+};
+
+export const useHistory = () => {
+  const { undoManager } = useContext(DocContext);
+
+  return {
+    undo: () => undoManager?.undo(),
+    redo: () => undoManager?.redo(),
+    onPush: (cb: (event: UndoManagerEvent) => void) => {
+      undoManager?.on("stack-item-added", (event: UndoManagerEvent) =>
+        cb(event),
+      );
+    },
+    onPop: (cb: (event: UndoManagerEvent) => void) => {
+      undoManager?.on("stack-item-popped", (event: UndoManagerEvent) =>
+        cb(event),
+      );
+    },
+  };
 };
