@@ -15,9 +15,17 @@ export enum SelectionMode {
   Switching = "SWITCHING",
 }
 
+export type CanvasPointerEvent = {
+  xCanvasOffset: number;
+  yCanvasOffset: number;
+  shiftKey: boolean;
+};
+
 export enum CanvasEventType {
   CanvasClick = "CANVAS_CLICK",
+  CanvasDragStart = "CANVAS_DRAG_START",
   CanvasDrag = "CANVAS_DRAG",
+  CanvasDragEnd = "CANVAS_DRAG_END",
   InsertStart = "START_INSERTION",
   InsertDone = "COMPLETE_INSERTION",
   InsertCancel = "CANCEL_INSERTION",
@@ -86,7 +94,15 @@ export type Events =
       type: CanvasEventType.CanvasClick;
     }
   | {
+      type: CanvasEventType.CanvasDragStart;
+      pointerEvent: CanvasPointerEvent;
+    }
+  | {
       type: CanvasEventType.CanvasDrag;
+      pointerEvent: CanvasPointerEvent;
+    }
+  | {
+      type: CanvasEventType.CanvasDragEnd;
     }
   | {
       type: CanvasEventType.InsertStart;
@@ -133,6 +149,9 @@ export type CanvasContext = {
     selectedBlock: BlockToInsert | null;
     lastInsertedId: string | null;
   };
+
+  // To handle multi selection handling
+  dragSelectionStart: CanvasPointerEvent | null;
 };
 
 export type DeleteActionBlockParams = [any, { selected: string[] }];
@@ -142,6 +161,14 @@ export type EditableBlockGuardParams = {
   context: CanvasContext;
   event: Events;
 };
+export type OnCanvasDragUpdateActionParams = [
+  any,
+  {
+    pointerEvent: CanvasPointerEvent;
+    dragSelectionStart: CanvasPointerEvent | null;
+    existingSelection: string[];
+  },
+];
 export type NotifySelectionActionParams = [
   any,
   {

@@ -1,6 +1,8 @@
 import type {
   Block,
+  IdRectangle,
   Properties,
+  Rectangle,
   YBlock,
   YBlockBase,
   YBlockMap,
@@ -16,11 +18,12 @@ import {
 import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";
-import { useContext } from "react";
-import { useSnapshot } from "valtio";
+import { useContext, useEffect, useMemo } from "react";
+import { subscribe, useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
 import { DocContext, useYDoc } from "../document/document.js";
+import Search from "./searchTree.js";
 
 const insertBlock =
   (yBlockMap: YBlockMap, yPropertiesMap: YPropertiesMap) =>
@@ -96,6 +99,58 @@ export const useBlock = (blockId: string) => {
   };
 
   return { block: snapshot[blockId] as Block, setPosition, setSize };
+};
+
+export const useMultiBlockSelection = () => {
+  const { blocks } = useContext(DocContext);
+  const searchTree = useMemo(() => new Search(), []);
+
+  useEffect(() => {
+    searchTree.init();
+
+    // Subscribe to block changes using valtio's subscribe
+    const unsubscribe = subscribe(blocks, () => {
+      const blockList = Object.values(blocks).map(
+        ({ id, x, y, width, height }) => ({
+          id,
+          x,
+          y,
+          width,
+          height,
+        }),
+      );
+      searchTree.clearAll();
+      searchTree.addItems(blockList);
+    });
+
+    // Initial setup
+    const blockList = Object.values(blocks).map(
+      ({ id, x, y, width, height }) => ({
+        id,
+        x,
+        y,
+        width,
+        height,
+      }),
+    );
+    searchTree.clearAll();
+    searchTree.addItems(blockList);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [blocks, searchTree]);
+
+  const searchByRectangle = ({
+    x,
+    y,
+    width,
+    height,
+  }: Rectangle): IdRectangle[] => {
+    return searchTree.searchByRectangle({ x, y, width, height });
+  };
+
+  return { searchByRectangle };
 };
 
 export const useMultiBlockActions = () => {

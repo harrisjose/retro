@@ -28,6 +28,7 @@ import {
   HistoryEventType,
   type NotifySelectionActionParams,
   type RedoActionParams,
+  type OnCanvasDragUpdateActionParams,
   SelectionMode,
   type UndoActionParams,
 } from "./types";
@@ -65,6 +66,9 @@ export const canvasController = setup({
     },
     bringBlockToFront: (...args: BringBlockToFrontActionParams) => {
       console.log("Default bringBlockToFront action", args);
+    },
+    onCanvasDragUpdate: (...args: OnCanvasDragUpdateActionParams) => {
+      console.log("Default onCanvasDragUpdate action", args);
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -115,6 +119,21 @@ export const canvasController = setup({
           blockId: context.selection[0],
         }) as EditorEvents,
     ),
+    onCanvasDragStart: enqueueActions(({ event, enqueue }) => {
+      assertEvent(event, [CanvasEventType.CanvasDragStart]);
+      if (!event.pointerEvent.shiftKey) {
+        enqueue("clearSelection");
+      }
+      enqueue.assign({
+        dragSelectionStart: event.pointerEvent,
+      });
+    }),
+    onCanvasDragEnd: enqueueActions(({ event, enqueue }) => {
+      assertEvent(event, [CanvasEventType.CanvasDragEnd]);
+      enqueue.assign({
+        dragSelectionStart: null,
+      });
+    }),
   },
   actors: {
     keyEventListener: keyEventListenerLogic,
@@ -128,6 +147,8 @@ export const canvasController = setup({
       selectedBlock: null,
       lastInsertedId: null,
     },
+
+    dragSelectionStart: null,
   },
   invoke: [
     {
@@ -372,8 +393,23 @@ export const canvasController = setup({
     [CanvasMode.Selecting]: {
       id: CanvasMode.Selecting,
       on: {
+        [CanvasEventType.CanvasDragStart]: {
+          actions: ["onCanvasDragStart"],
+        },
         [CanvasEventType.CanvasDrag]: {
-          // Handle multi selection box here
+          actions: [
+            {
+              type: "onCanvasDragUpdate",
+              params: ({ context, event }) => ({
+                pointerEvent: event.pointerEvent,
+                dragSelectionStart: context.dragSelectionStart,
+                existingSelection: context.selection,
+              }),
+            },
+          ],
+        },
+        [CanvasEventType.CanvasDragEnd]: {
+          actions: ["onCanvasDragEnd"],
         },
       },
     },

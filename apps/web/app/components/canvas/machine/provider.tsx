@@ -3,6 +3,7 @@ import {
   useAwarenessActions,
   useHistory,
   useMultiBlockActions,
+  useMultiBlockSelection,
 } from "@retro/sdk";
 import { type PropsWithChildren, useMemo } from "react";
 import { assertEvent, enqueueActions } from "xstate";
@@ -19,6 +20,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     useMultiBlockActions();
   const { updateSelectionAwareness } = useAwarenessActions();
   const { redo, undo, onPop, onPush } = useHistory();
+  const { searchByRectangle } = useMultiBlockSelection();
 
   const historyEventListenerLogic = useMemo(
     () => createHistoryEventListenerLogic(onPop, onPush),
@@ -68,6 +70,46 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               bringBlockToFront(params.blockIds[0]);
             }
           },
+          onCanvasDragUpdate: enqueueActions(({ event, enqueue }, params) => {
+            if (!params.dragSelectionStart) {
+              console.error("drag selection start is not defined");
+              return;
+            }
+
+            const { xCanvasOffset: xStart, yCanvasOffset: yStart } =
+              params.dragSelectionStart;
+
+            const { xCanvasOffset: xCurr, yCanvasOffset: yCurr } =
+              params.pointerEvent;
+
+            const minX = Math.min(xCurr, xStart);
+            const maxX = Math.max(xCurr, xStart);
+            const minY = Math.min(yCurr, yStart);
+            const maxY = Math.max(yCurr, yStart);
+
+            const rect = {
+              x: minX,
+              y: minY,
+              width: maxX - minX,
+              height: maxY - minY,
+            };
+            const matches = searchByRectangle(rect);
+
+            const newSelection = [
+              ...new Set([
+                ...matches.map((item) => item.id),
+                ...params.existingSelection,
+              ]),
+            ];
+
+            enqueue.assign({ selection: newSelection });
+            enqueue({
+              type: "notifySelection",
+              params: {
+                selected: newSelection,
+              } as NotifySelectionActionParams[1],
+            });
+          }),
           undo,
           redo,
         },

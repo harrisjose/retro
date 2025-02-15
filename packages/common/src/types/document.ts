@@ -71,13 +71,20 @@ export enum BlockType {
   Sticker = "sticker",
 }
 
-export type Block = {
-  id: string;
-  type: BlockType;
+export type Rectangle = {
   x: number;
   y: number;
   width: number;
   height: number;
+};
+
+export type Block = Rectangle & {
+  id: string;
+  type: BlockType;
+};
+
+export type IdRectangle = Rectangle & {
+  id: string;
 };
 
 /**
