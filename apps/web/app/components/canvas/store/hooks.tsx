@@ -1,5 +1,10 @@
-import { updateProxyState } from "@retro/common";
-import { useSectionMap } from "@retro/sdk";
+import {
+  type Block,
+  type IdRectangle,
+  type Rectangle,
+  updateProxyState,
+} from "@retro/common";
+import { useBlockMap, useSectionMap } from "@retro/sdk";
 import { omit } from "lodash-es";
 import { animate } from "motion";
 import { useReducedMotion } from "motion/react";
@@ -11,8 +16,9 @@ import {
   useState,
 } from "react";
 import { useWindowSize } from "usehooks-ts";
-import { useSnapshot } from "valtio";
+import { subscribe, useSnapshot } from "valtio";
 import { CanvasContext } from "./provider.js";
+import Search from "./search-tree.js";
 import { type Point } from "./types.js";
 import {
   computeDefaultCamera,
@@ -173,4 +179,47 @@ export const useScale = () => {
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
   return snap.z;
+};
+
+export const useCanvasSearch = () => {
+  const blockMap = useBlockMap();
+  const searchTree = useMemo(() => new Search(), []);
+
+  useEffect(() => {
+    const toIdRectangle = (block: Block): IdRectangle => ({
+      id: block.id,
+      x: block.x,
+      y: block.y,
+      width: block.width,
+      height: block.height,
+    });
+
+    const onBlockMapChange = (search: Search) => {
+      const blockList = Object.values(blockMap).map(toIdRectangle);
+      search.clearAll();
+      search.addItems(blockList);
+    };
+
+    searchTree.init();
+    // Call once for initial setup
+    onBlockMapChange(searchTree);
+    // Subscribe to block changes using valtio's subscribe
+    // TODO @harris @pravin: See if this impacts perf negatively, subscribe isn't optimized
+    const unsubscribe = subscribe(blockMap, () => onBlockMapChange(searchTree));
+
+    return () => {
+      unsubscribe();
+    };
+  }, [searchTree]);
+
+  const searchByRectangle = ({
+    x,
+    y,
+    width,
+    height,
+  }: Rectangle): IdRectangle[] => {
+    return searchTree.searchByRectangle({ x, y, width, height });
+  };
+
+  return { searchByRectangle };
 };

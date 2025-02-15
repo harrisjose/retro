@@ -288,6 +288,9 @@ importers:
       motion:
         specifier: ^11.15.0
         version: 11.18.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      rbush:
+        specifier: ^4.0.1
+        version: 4.0.1
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -306,6 +309,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.1(@types/node@20.17.16)(typescript@5.7.3)))
+      tinyqueue:
+        specifier: ^3.0.0
+        version: 3.0.0
       ts-pattern:
         specifier: ^5.6.0
         version: 5.6.2
@@ -328,6 +334,9 @@ importers:
       '@types/node':
         specifier: ^20.17.10
         version: 20.17.16
+      '@types/rbush':
+        specifier: ^4.0.0
+        version: 4.0.0
       '@types/react':
         specifier: ^19.0.1
         version: 19.0.8
@@ -485,24 +494,15 @@ importers:
       '@trpc/client':
         specifier: 11.0.0-rc.682
         version: 11.0.0-rc.682(@trpc/server@11.0.0-rc.682(typescript@5.7.3))(typescript@5.7.3)
-      '@types/rbush':
-        specifier: ^4.0.0
-        version: 4.0.0
       lib0:
         specifier: ^0.2.99
         version: 0.2.99
-      rbush:
-        specifier: ^4.0.1
-        version: 4.0.1
       react:
         specifier: ^19.0.0
         version: 19.0.0
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
-      tinyqueue:
-        specifier: ^3.0.0
-        version: 3.0.0
       ts-pattern:
         specifier: ^5.6.0
         version: 5.6.2

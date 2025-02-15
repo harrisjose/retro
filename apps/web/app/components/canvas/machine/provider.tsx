@@ -3,10 +3,10 @@ import {
   useAwarenessActions,
   useHistory,
   useMultiBlockActions,
-  useMultiBlockSelection,
 } from "@retro/sdk";
 import { type PropsWithChildren, useMemo } from "react";
 import { assertEvent, enqueueActions } from "xstate";
+import { useCanvasSearch } from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -16,11 +16,13 @@ import {
 } from "./types";
 
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
+  const { searchByRectangle } = useCanvasSearch();
+  //
   const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
     useMultiBlockActions();
-  const { updateSelectionAwareness } = useAwarenessActions();
   const { redo, undo, onPop, onPush } = useHistory();
-  const { searchByRectangle } = useMultiBlockSelection();
+  //
+  const { updateSelectionAwareness } = useAwarenessActions();
 
   const historyEventListenerLogic = useMemo(
     () => createHistoryEventListenerLogic(onPop, onPush),

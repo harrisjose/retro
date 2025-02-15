@@ -27,8 +27,8 @@ import {
   type Events,
   HistoryEventType,
   type NotifySelectionActionParams,
-  type RedoActionParams,
   type OnCanvasDragUpdateActionParams,
+  type RedoActionParams,
   SelectionMode,
   type UndoActionParams,
 } from "./types";
