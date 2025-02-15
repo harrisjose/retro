@@ -8,7 +8,7 @@ import { CanvasControllerContext, CanvasEventType } from "./machine";
 import IntroSection from "./sections/intro";
 import SectionRenderer from "./sections/section";
 import SummarySection from "./sections/summary";
-import { SelectionRect } from "./selection-rect";
+import { SelectionRectangle } from "./selection-rect";
 import { screenToCanvas, useCamera, useCanvasGestures } from "./store";
 import Zoom from "./zoom-menu";
 
@@ -113,7 +113,7 @@ export default function Canvas() {
           <SummarySection />
         </div>
         <CanvasCursor />
-        <SelectionRect />
+        <SelectionRectangle />
       </div>
       <Zoom current={camera.z} onChange={zoomBy} />
     </>

@@ -29,7 +29,7 @@ import { type RefObject, useRef } from "react";
 import { match } from "ts-pattern";
 import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
 import * as Y from "yjs";
-import { CanvasControllerContext } from "../../canvas/machine";
+import { CanvasControllerContext, CanvasMode } from "../../canvas/machine";
 import { buildDefaultKeymap } from "../../editor/keymap";
 
 const colors = {
@@ -128,9 +128,16 @@ export default function CardBlock({ id }: { id: string }) {
   const { properties } = useBlockProperties<CardProperties>(id);
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
 
-  const isSelected = CanvasControllerContext.useSelector((snapshot) => {
-    return snapshot?.context.selection.includes(block.id);
-  });
+  const [isSelected, canShowToolbar] = CanvasControllerContext.useSelector(
+    (s) => {
+      return [
+        s?.context.selection.includes(block.id),
+        s?.context.selection.includes(block.id) &&
+          s?.context.selection.length === 1 &&
+          s?.matches(CanvasMode.Selected),
+      ];
+    },
+  );
 
   const contentRef = useRef<HTMLDivElement>(null);
   const onResize = useDebounceCallback(
@@ -151,8 +158,6 @@ export default function CardBlock({ id }: { id: string }) {
     box: "border-box",
   });
 
-  // TODO: later add a layoutEffect to update the child height
-  // back to yDoc
   return (
     <div
       className={cn(
@@ -197,7 +202,7 @@ export default function CardBlock({ id }: { id: string }) {
           )}
         </div>
       </div>
-      {match(isSelected)
+      {match(canShowToolbar)
         .with(true, () => <CardColorPicker id={id} />)
         .with(false, () => null)
         .exhaustive()}

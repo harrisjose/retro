@@ -5,7 +5,38 @@ import { CanvasMode } from "./machine/types";
 import { canvasToScreen, getRectangleFromPoints } from "./store";
 import { useCamera } from "./store/hooks";
 
-export function SelectionRect() {
+type RafCallback = (timestamp: number) => void;
+
+export function useRafLoop(
+  callback: RafCallback,
+  enabled: boolean,
+  throttleMs = 0,
+) {
+  const rafRef = useRef<number>(null);
+  const lastUpdateRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!enabled) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      return;
+    }
+    const updateLoop = (timestamp: number) => {
+      if (throttleMs === 0 || timestamp - lastUpdateRef.current >= throttleMs) {
+        callback(timestamp);
+        lastUpdateRef.current = timestamp;
+      }
+      rafRef.current = requestAnimationFrame(updateLoop);
+    };
+
+    rafRef.current = requestAnimationFrame(updateLoop);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [callback, enabled, throttleMs]);
+}
+
+export function SelectionRectangle() {
   const { camera } = useCamera();
   const controllerRef = CanvasControllerContext.useActorRef();
   const [rectangle, setRectangle] = useState<{
@@ -14,36 +45,36 @@ export function SelectionRect() {
     width: number;
     height: number;
   } | null>(null);
-  const rafRef = useRef<number>(null);
 
   const [isSelecting, selectionProps] = useSelector(controllerRef, (state) => [
     state.matches(CanvasMode.Selecting),
     state.context.dragSelection,
   ]);
 
+  // Clear rectangle immediately when not selecting
   useEffect(() => {
-    if (!isSelecting || !selectionProps.start || !selectionProps.current) {
+    if (!isSelecting) {
       setRectangle(null);
-      return;
     }
+  }, [isSelecting]);
 
-    const updateRectangle = () => {
+  useRafLoop(
+    () => {
+      if (!isSelecting || !selectionProps.start || !selectionProps.current) {
+        return;
+      }
+
       const newRectangle = getRectangleFromPoints(
-        canvasToScreen(selectionProps.start!, camera),
-        canvasToScreen(selectionProps.current!, camera),
+        canvasToScreen(selectionProps.start, camera),
+        canvasToScreen(selectionProps.current, camera),
       );
       setRectangle(newRectangle);
-      rafRef.current = requestAnimationFrame(updateRectangle);
-    };
+    },
+    isSelecting,
+    16, // Optional throttle at ~60fps
+  );
 
-    rafRef.current = requestAnimationFrame(updateRectangle);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [isSelecting, selectionProps.start, selectionProps.current, camera]);
-
-  if (!rectangle) {
+  if (!rectangle || !isSelecting) {
     return null;
   }
 
@@ -57,7 +88,7 @@ export function SelectionRect() {
         height: rectangle.height,
         backgroundColor: "rgba(35, 131, 226, 0.1)",
         border: "1px solid rgb(35, 131, 226)",
-        borderRadius: 0,
+        borderRadius: 2,
         pointerEvents: "none",
       }}
     />
