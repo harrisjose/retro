@@ -62,6 +62,11 @@ export const useBlockMap = () => {
   return snapshot as Record<string, Block>;
 };
 
+export const useBlockMapProxy = () => {
+  const { blocks } = useContext(DocContext);
+  return blocks;
+};
+
 export const useBlock = (blockId: string) => {
   const { blocks } = useContext(DocContext);
   const snapshot = useSnapshot(blocks);

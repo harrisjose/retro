@@ -1,4 +1,4 @@
-import type { SectionMap } from "@retro/common";
+import type { Rectangle, SectionMap } from "@retro/common";
 import { CanvasConstants } from "@retro/common";
 import type { Bounds, Box, Camera, Point } from "./types";
 
@@ -204,4 +204,15 @@ export const getActiveSectionOnScreen = (
   });
 
   return closestSection;
+};
+
+export const getRectangleFromPoints = (
+  pointA: Point,
+  pointB: Point,
+): Rectangle => {
+  const minX = Math.min(pointA.x, pointB.x);
+  const minY = Math.min(pointA.y, pointB.y);
+  const maxX = Math.max(pointA.x, pointB.x);
+  const maxY = Math.max(pointA.y, pointB.y);
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 };

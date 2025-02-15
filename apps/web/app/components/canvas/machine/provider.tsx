@@ -6,6 +6,7 @@ import {
 } from "@retro/sdk";
 import { type PropsWithChildren, useMemo } from "react";
 import { assertEvent, enqueueActions } from "xstate";
+import { getRectangleFromPoints, useCanvasSearch } from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -15,10 +16,13 @@ import {
 } from "./types";
 
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
+  const { searchByRectangle } = useCanvasSearch();
+  //
   const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
     useMultiBlockActions();
-  const { updateSelectionAwareness } = useAwarenessActions();
   const { redo, undo, onPop, onPush } = useHistory();
+  //
+  const { updateSelectionAwareness } = useAwarenessActions();
 
   const historyEventListenerLogic = useMemo(
     () => createHistoryEventListenerLogic(onPop, onPush),
@@ -68,6 +72,30 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               bringBlockToFront(params.blockIds[0]);
             }
           },
+          onCanvasDragUpdate: enqueueActions(({ enqueue }, params) => {
+            if (!params.start || !params.current) {
+              console.error("Drag pointers are not defined");
+              return;
+            }
+
+            const rect = getRectangleFromPoints(params.start, params.current);
+            const matches = searchByRectangle(rect);
+
+            const newSelection = [
+              ...new Set([
+                ...matches.map((item) => item.id),
+                ...params.existingSelection,
+              ]),
+            ];
+
+            enqueue.assign({ selection: newSelection });
+            enqueue({
+              type: "notifySelection",
+              params: {
+                selected: newSelection,
+              } as NotifySelectionActionParams[1],
+            });
+          }),
           undo,
           redo,
         },
