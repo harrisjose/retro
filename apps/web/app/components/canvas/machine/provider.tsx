@@ -4,8 +4,10 @@ import {
   useHistory,
   useMultiBlockActions,
 } from "@retro/sdk";
+import { isNil } from "lodash-es";
 import { type PropsWithChildren, useMemo } from "react";
-import { assertEvent, enqueueActions } from "xstate";
+import { useDebounceCallback } from "usehooks-ts";
+import { assertEvent, assign, enqueueActions } from "xstate";
 import { getRectangleFromPoints, useCanvasSearch } from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
@@ -18,7 +20,7 @@ import {
 export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const { searchByRectangle } = useCanvasSearch();
   //
-  const { deleteBlocks, getBlocks, duplicateBlocks, bringBlockToFront } =
+  const { deleteBlocks, getBlocks, duplicateBlocks, bringToFront, moveBlocks } =
     useMultiBlockActions();
   const { redo, undo, onPop, onPush } = useHistory();
   //
@@ -28,6 +30,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     () => createHistoryEventListenerLogic(onPop, onPush),
     [],
   );
+  const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
 
   return (
     <CanvasControllerContext.Provider
@@ -69,10 +72,37 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
           bringBlockToFront: (_, params) => {
             // Bring block to front is only supported for single block selection
             if (params.blockIds.length === 1) {
-              bringBlockToFront(params.blockIds[0]);
+              bringToFront(params.blockIds[0]);
             }
           },
-          onCanvasDragUpdate: enqueueActions(({ enqueue }, params) => {
+          memoizeSelectionPosition: assign(({ event, context }) => {
+            assertEvent(event, [BlockEventType.BlockDrag]);
+            const selection = context.selection;
+            const blocks = getBlocks(selection);
+            const selectionPositions = Object.fromEntries(
+              selection
+                .map((id) => {
+                  const block = blocks.find((block) => block.id === id);
+                  if (!block) return null;
+                  return [id, { x: block.x, y: block.y }];
+                })
+                .filter((item) => !isNil(item)),
+            );
+            return {
+              selectionPositions,
+            };
+          }),
+          onBlockDrag: ({ context }, params) => {
+            const positions = Object.entries(context.selectionPositions).map(
+              ([id, position]) => ({
+                blockId: id,
+                x: position.x + params.payload.dx,
+                y: position.y + params.payload.dy,
+              }),
+            );
+            debouncedMoveBlocks(positions);
+          },
+          onCanvasDrag: enqueueActions(({ enqueue }, params) => {
             if (!params.start || !params.current) {
               console.error("Drag pointers are not defined");
               return;

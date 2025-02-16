@@ -15,10 +15,15 @@ export enum SelectionMode {
   Switching = "SWITCHING",
 }
 
-export type PointerEventSnapshot = {
+export type PointerEventPayload = {
   x: number;
   y: number;
   shiftKey: boolean;
+};
+
+export type BlockMovePayload = {
+  dx: number;
+  dy: number;
 };
 
 export enum CanvasEventType {
@@ -34,7 +39,7 @@ export enum CanvasEventType {
 export enum BlockEventType {
   BlockClick = "BLOCK_CLICK",
   BlockDrag = "BLOCK_DRAG",
-  BlockDragStart = "BLOCK_DRAG_START",
+  // BlockDragStart = "BLOCK_DRAG_START",
   BlockDragEnd = "BLOCK_DRAG_END",
   BlockExitEditing = "BLOCK_EXIT_EDITING",
   BlockEnterEditing = "BLOCK_ENTER_EDITING",
@@ -95,15 +100,15 @@ export type Events =
     }
   | {
       type: CanvasEventType.CanvasDragStart;
-      event: PointerEventSnapshot;
+      payload: PointerEventPayload;
     }
   | {
       type: CanvasEventType.CanvasDrag;
-      event: PointerEventSnapshot;
+      payload: PointerEventPayload;
     }
   | {
       type: CanvasEventType.CanvasDragEnd;
-      event: PointerEventSnapshot;
+      payload: PointerEventPayload;
     }
   | {
       type: CanvasEventType.InsertStart;
@@ -123,10 +128,7 @@ export type Events =
   | {
       type: BlockEventType.BlockDrag;
       blockId: string;
-    }
-  | {
-      type: BlockEventType.BlockDragStart;
-      blockId: string;
+      payload: BlockMovePayload;
     }
   | {
       type: BlockEventType.BlockDragEnd;
@@ -153,8 +155,14 @@ export type CanvasContext = {
 
   // To handle drag-to-select
   dragSelection: {
-    start: PointerEventSnapshot | null;
-    current: PointerEventSnapshot | null;
+    start: PointerEventPayload | null;
+    current: PointerEventPayload | null;
+  };
+  selectionPositions: {
+    [blockId: string]: {
+      x: number;
+      y: number;
+    };
   };
 };
 
@@ -165,12 +173,19 @@ export type EditableBlockGuardParams = {
   context: CanvasContext;
   event: Events;
 };
-export type OnCanvasDragUpdateActionParams = [
+export type OnCanvasDragActionParams = [
   any,
   {
-    start: PointerEventSnapshot | null;
-    current: PointerEventSnapshot | null;
+    start: PointerEventPayload | null;
+    current: PointerEventPayload | null;
     existingSelection: string[];
+  },
+];
+export type OnBlockDragActionParams = [
+  any,
+  {
+    selected: string[];
+    payload: BlockMovePayload;
   },
 ];
 export type NotifySelectionActionParams = [

@@ -104,7 +104,7 @@ export default function StickerBlock({ id }: { id: string }) {
   });
 
   return (
-    <div className="relative z-[100]">
+    <div className="relative z-[100] select-none">
       <StickerRenderer
         src={StickerJsonMap[stickerType].json}
         id={id}

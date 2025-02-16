@@ -27,7 +27,8 @@ import {
   type Events,
   HistoryEventType,
   type NotifySelectionActionParams,
-  type OnCanvasDragUpdateActionParams,
+  type OnBlockDragActionParams,
+  type OnCanvasDragActionParams,
   type RedoActionParams,
   SelectionMode,
   type UndoActionParams,
@@ -67,8 +68,14 @@ export const canvasController = setup({
     bringBlockToFront: (...args: BringBlockToFrontActionParams) => {
       console.log("Default bringBlockToFront action", args);
     },
-    onCanvasDragUpdate: (...args: OnCanvasDragUpdateActionParams) => {
-      console.log("Default onCanvasDragUpdate action", args);
+    onCanvasDrag: (...args: OnCanvasDragActionParams) => {
+      console.log("Default onCanvasDrag action", args);
+    },
+    onBlockDrag: (...args: OnBlockDragActionParams) => {
+      console.log("Default onBlockDrag action", args);
+    },
+    memoizeSelectionPosition: () => {
+      console.log("Default memoizeSelectionPosition action");
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -132,11 +139,11 @@ export const canvasController = setup({
       selectedBlock: null,
       lastInsertedId: null,
     },
-
     dragSelection: {
       start: null,
       current: null,
     },
+    selectionPositions: {},
   },
   invoke: [
     {
@@ -221,13 +228,13 @@ export const canvasController = setup({
       actions: [
         enqueueActions(({ event, enqueue }) => {
           assertEvent(event, [CanvasEventType.CanvasDragStart]);
-          if (!event.event.shiftKey) {
+          if (!event.payload.shiftKey) {
             enqueue("clearSelection");
           }
           enqueue.assign({
             dragSelection: {
-              start: event.event,
-              current: event.event,
+              start: event.payload,
+              current: event.payload,
             },
           });
         }),
@@ -242,12 +249,21 @@ export const canvasController = setup({
       entry: ["clearSelection"],
       on: {
         [BlockEventType.BlockClick]: {
-          target: CanvasMode.Selected,
           actions: ["setSelection"],
+          target: CanvasMode.Selected,
         },
         [BlockEventType.BlockDrag]: {
+          actions: [
+            enqueueActions(({ enqueue }) => {
+              enqueue({
+                type: "setSelection",
+              });
+              enqueue({
+                type: "memoizeSelectionPosition",
+              });
+            }),
+          ],
           target: `${CanvasMode.Selected}.${SelectionMode.Dragging}`,
-          actions: ["setSelection"],
         },
       },
     },
@@ -282,6 +298,7 @@ export const canvasController = setup({
                 target: SelectionMode.Switching,
               },
               {
+                actions: ["memoizeSelectionPosition"],
                 target: SelectionMode.Dragging,
               },
             ],
@@ -311,7 +328,6 @@ export const canvasController = setup({
                 actions: [
                   {
                     type: "duplicateBlock",
-
                     params: ({ context }: { context: CanvasContext }) => ({
                       selected: context.selection,
                     }),
@@ -350,6 +366,7 @@ export const canvasController = setup({
                 target: SelectionMode.Switching,
               },
               {
+                actions: ["memoizeSelectionPosition"],
                 target: SelectionMode.Dragging,
               },
             ],
@@ -382,10 +399,24 @@ export const canvasController = setup({
                 target: SelectionMode.Switching,
               },
               {
+                actions: [
+                  {
+                    type: "onBlockDrag",
+                    params: ({ event, context }) => ({
+                      selected: context.selection,
+                      payload: event.payload,
+                    }),
+                  },
+                ],
                 target: SelectionMode.Dragging,
               },
             ],
             [BlockEventType.BlockDragEnd]: {
+              actions: [
+                assign({
+                  selectionPositions: {},
+                }),
+              ],
               target: SelectionMode.Idle,
             },
             [CanvasEventType.CanvasClick]: {
@@ -404,15 +435,15 @@ export const canvasController = setup({
               enqueue.assign({
                 dragSelection: {
                   start: context.dragSelection.start,
-                  current: event.event,
+                  current: event.payload,
                 },
               });
               enqueue({
-                type: "onCanvasDragUpdate",
+                type: "onCanvasDrag",
                 params: ({ context, event }) => ({
                   start: context.dragSelection.start,
-                  current: event.event,
-                  existingSelection: event.event.shiftKey
+                  current: event.payload,
+                  existingSelection: event.payload.shiftKey
                     ? context.selection
                     : [],
                 }),

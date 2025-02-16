@@ -36,7 +36,7 @@ export default function Canvas() {
       );
       controller.send({
         type: CanvasEventType.CanvasDragStart,
-        event: {
+        payload: {
           x: point.x,
           y: point.y,
           shiftKey: event.shiftKey,
@@ -50,7 +50,7 @@ export default function Canvas() {
       );
       controller.send({
         type: CanvasEventType.CanvasDrag,
-        event: {
+        payload: {
           x: point.x,
           y: point.y,
           shiftKey: event.shiftKey,
@@ -64,7 +64,7 @@ export default function Canvas() {
       );
       controller.send({
         type: CanvasEventType.CanvasDragEnd,
-        event: {
+        payload: {
           x: point.x,
           y: point.y,
           shiftKey: event.shiftKey,

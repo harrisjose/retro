@@ -150,17 +150,26 @@ export const useMultiBlockActions = () => {
 
         newBlockIds.push(newBlockId);
       });
-    });
+    }, CanvasTransactionOrigin);
 
     return newBlockIds;
   };
 
-  const moveBlocks = (blockIds: string[], dx: number, dy: number) => {
-    console.debug("Moving blocks", blockIds, dx, dy);
-    console.log("Not implemented");
+  const moveBlocks = (
+    positions: { blockId: string; x: number; y: number }[],
+  ) => {
+    const yBlockMap = yDoc.getMap("blocks") as YBlockMap;
+    yDoc.transact(() => {
+      positions.forEach(({ blockId, x, y }) => {
+        const yBlockBase = yBlockMap.get(blockId) as YBlockBase;
+        const yBlock = new YKeyValue(yBlockBase);
+        yBlock.set("x", x);
+        yBlock.set("y", y);
+      });
+    }, CanvasTransactionOrigin);
   };
 
-  const bringBlockToFront = (blockId: string) => {
+  const bringToFront = (blockId: string) => {
     const yPropertiesMap = yDoc.getMap("properties") as YPropertiesMap;
     const currentBlock = snapshot[blockId];
     if (!currentBlock || currentBlock.type !== BlockType.Card) return;
@@ -179,7 +188,7 @@ export const useMultiBlockActions = () => {
 
         return isOverlapping;
       })
-      .map(([id, block]) => ({
+      .map(([id]) => ({
         id,
         zIndex: (yPropertiesMap.get(id) as YCardProperties).get(
           "zIndex",
@@ -199,7 +208,7 @@ export const useMultiBlockActions = () => {
     moveBlocks,
     getBlocks,
     duplicateBlocks,
-    bringBlockToFront,
+    bringToFront,
   };
 };
 

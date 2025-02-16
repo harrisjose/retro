@@ -2,7 +2,6 @@ import { cn } from "@retro/common";
 import { useBlock } from "@retro/sdk";
 import { useGesture } from "@use-gesture/react";
 import { type PropsWithChildren, useRef } from "react";
-import { useDebounceCallback } from "usehooks-ts";
 import { BlockEventType, CanvasControllerContext } from "../canvas/machine";
 import { useCamera } from "../canvas/store/hooks";
 
@@ -11,8 +10,7 @@ export default function Frame({
   isAutoHeight = false,
   children,
 }: PropsWithChildren<{ id: string; isAutoHeight?: boolean }>) {
-  const { block, setPosition } = useBlock(id);
-  const debouncedSetPosition = useDebounceCallback(setPosition, 5);
+  const { block } = useBlock(id);
 
   const {
     camera: { z },
@@ -23,7 +21,7 @@ export default function Frame({
 
   useGesture(
     {
-      onDrag: ({ movement: [x, y], memo, event, tap }) => {
+      onDrag: ({ movement: [x, y], event, tap }) => {
         const target = event.target as HTMLElement;
         if (tap) {
           if (target.closest("[data-block-toolbar]")) {
@@ -42,6 +40,9 @@ export default function Frame({
           });
           return;
         }
+
+        // If the target is in an editor, we should not trigger a drag event
+        // TODO @harris: How can we make editable areas also draggable?
         if (
           target.isContentEditable ||
           target.closest("[contenteditable=true]")
@@ -49,13 +50,11 @@ export default function Frame({
           return;
         }
 
-        memo = memo ?? { x: block.x, y: block.y };
-
-        controllerRef.send({ type: BlockEventType.BlockDrag, blockId: id });
-
-        debouncedSetPosition(memo.x + x / z, memo.y + y / z);
-
-        return memo;
+        controllerRef.send({
+          type: BlockEventType.BlockDrag,
+          blockId: id,
+          payload: { dx: x / z, dy: y / z },
+        });
       },
       onDragEnd: () => {
         controllerRef.send({ type: BlockEventType.BlockDragEnd, blockId: id });
