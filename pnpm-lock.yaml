@@ -214,8 +214,8 @@ importers:
         specifier: ^0.12.0
         version: 0.12.2(react@19.0.0)
       '@lottiefiles/dotlottie-web':
-        specifier: ^0.38.2
-        version: 0.38.2
+        specifier: ^0.40.0
+        version: 0.40.0
       '@radix-ui/react-dialog':
         specifier: ^1.1.4
         version: 1.1.5(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1489,9 +1489,6 @@ packages:
     resolution: {integrity: sha512-RK0VZHsjLlU+eUBsW0IDF/PEuqCP3+OSx597+RtsGIZYgNlvlLUfTQL5/kMn/ky664eLYIfgiOWMbNls7d40IA==}
     peerDependencies:
       react: ^17 || ^18 || ^19
-
-  '@lottiefiles/dotlottie-web@0.38.2':
-    resolution: {integrity: sha512-01d+UjJ8NG7ZStYQxtb8FPzknzGmauG7gEkcH+wHfSdiSQJY9PoBNVSTB9V6F5hAnmFqOxaocTtd7TIEEnzMnA==}
 
   '@lottiefiles/dotlottie-web@0.40.0':
     resolution: {integrity: sha512-QeDr6/spi+JRp4gsuzq3GmkzUd9/pGXdLEa329bqH7bWaU5cn2isleTZhmCCFhc24nTrVjuF6lE5zs8Cp7YSyw==}
@@ -6390,8 +6387,6 @@ snapshots:
     dependencies:
       '@lottiefiles/dotlottie-web': 0.40.0
       react: 19.0.0
-
-  '@lottiefiles/dotlottie-web@0.38.2': {}
 
   '@lottiefiles/dotlottie-web@0.40.0': {}
 

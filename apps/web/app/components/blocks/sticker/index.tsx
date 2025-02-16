@@ -4,14 +4,19 @@ import { type StickerProperties, StickerType } from "@retro/common";
 import { StickerJsonMap, useBlockProperties } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
-import { CanvasControllerContext } from "../../canvas/machine";
+import {
+  CanvasControllerContext,
+  CanvasMode,
+  SelectionMode,
+} from "../../canvas/machine";
 
 const ANIMATION_PLAY_COUNT = 3;
 const StickerRenderer = ({
   src,
   id,
   isActive,
-}: { src: string; id: string; isActive: boolean }) => {
+  isDragging,
+}: { src: string; id: string; isActive: boolean; isDragging: boolean }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
   const [playCount, setPlayCount] = useState(0);
@@ -63,6 +68,14 @@ const StickerRenderer = ({
     };
   }, [dotLottie]);
 
+  useEffect(() => {
+    if (isDragging) {
+      dotLottie?.pause();
+    } else if (animationInProgress) {
+      dotLottie?.play();
+    }
+  }, [isDragging, animationInProgress]);
+
   return (
     <DotLottieReact
       layout={{
@@ -99,8 +112,11 @@ export default function StickerBlock({ id }: { id: string }) {
   const properties = useBlockProperties<StickerProperties>(id).properties;
   const stickerType = (properties as { stickerType: StickerType }).stickerType;
 
-  const isSelected = CanvasControllerContext.useSelector((snapshot) => {
-    return snapshot?.context.selection.includes(id);
+  const [isSelected, isDragging] = CanvasControllerContext.useSelector((s) => {
+    return [
+      s?.context.selection.includes(id),
+      s?.matches({ [CanvasMode.Selected]: SelectionMode.Dragging }),
+    ];
   });
 
   return (
@@ -109,6 +125,7 @@ export default function StickerBlock({ id }: { id: string }) {
         src={StickerJsonMap[stickerType].json}
         id={id}
         isActive={isSelected}
+        isDragging={isDragging}
       />
     </div>
   );
