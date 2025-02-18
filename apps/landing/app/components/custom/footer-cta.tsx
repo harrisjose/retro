@@ -23,7 +23,11 @@ export function FooterCta() {
         Run Engaging Retros That Bring Teams Together
       </h2>
       <div className="mt-4">
-        <Button variant="inverted" className="px-6 py-3 rounded-xl">
+        <Button
+          variant="inverted"
+          className="px-6 py-3 rounded-xl"
+          onClick={() => (window.location.href = "/join-waitlist")}
+        >
           Get Started for free
         </Button>
       </div>
