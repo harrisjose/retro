@@ -54,7 +54,7 @@ export class AiService {
   ): Promise<SummaryResponse> {
     const model = await this.lazyLoadModel(
       AiProvider.OpenRouter,
-      AiModel.DeepSeek_Chat,
+      AiModel.Gemini2_Flash_Free,
     );
     const prompt = `
       You are a helpful assistant that summarizes retro boards. Retro boards are structured as a list of sections,
