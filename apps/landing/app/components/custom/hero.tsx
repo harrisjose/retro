@@ -21,7 +21,11 @@ export function Hero() {
         </h3>
       </hgroup>
       <div>
-        <Button size={"xl"} className="py-2 px-6 font-[500] mt-2">
+        <Button
+          size={"xl"}
+          className="py-2 px-6 font-[500] mt-2"
+          onClick={() => (window.location.href = "/join-waitlist")}
+        >
           Get Started<span className="opacity-40">- 60 day free trail</span>
         </Button>
       </div>

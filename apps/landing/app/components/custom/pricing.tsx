@@ -53,8 +53,10 @@ function BasePlan() {
         variant="inverted"
         size={"xl"}
         className="px-6 rounded-xl mt-auto"
+        onClick={() => (window.location.href = "/join-waitlist")}
       >
-        Get Started<span className="opacity-40">- 60 day free trail</span>
+        Get Started
+        <span className="opacity-40">- 60 day free trail</span>
       </Button>
     </PricingCard>
   );
