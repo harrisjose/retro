@@ -14,11 +14,11 @@ type OrganizationFormProps = React.ComponentPropsWithoutRef<"div"> & {
   onCreate: (name: string) => Promise<void>;
 };
 
-export function OrganizationForm({
+export const OrganizationForm = ({
   onCreate,
   className,
   ...props
-}: OrganizationFormProps) {
+}: OrganizationFormProps) => {
   const [disabled, setDisabled] = useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -65,4 +65,4 @@ export function OrganizationForm({
       </Card>
     </div>
   );
-}
+};

@@ -1,6 +1,8 @@
 import { DocumentListFilter } from "@retro/common";
-import { useDocumentList } from "@retro/sdk";
-import { useMemo } from "react";
+import { authClient, useDocumentList } from "@retro/sdk";
+import { Suspense, useMemo } from "react";
+import { Await, Navigate } from "react-router";
+import { match } from "ts-pattern";
 import FilterPanel from "../../components/dashboard/filter-panel";
 import FooterPanel from "../../components/dashboard/footer-panel";
 import RetroList from "../../components/dashboard/retro-list";
@@ -16,7 +18,45 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function Dashboard() {
+type LoaderResponse =
+  | {
+      status: "setup-org";
+    }
+  | {
+      status: "continue";
+      redirect?: string;
+    }
+  | {
+      status: "error";
+      errorCode?: string;
+    };
+
+export async function clientLoader() {
+  return new Promise<LoaderResponse>(async (resolve) => {
+    try {
+      const { data: organizations, error } =
+        await authClient.organization.list();
+      if (error) {
+        throw error;
+      }
+      if (organizations.length === 0) {
+        return resolve({
+          status: "setup-org",
+        });
+      }
+      return resolve({
+        status: "continue",
+      });
+    } catch (error) {
+      console.error(error);
+      resolve({
+        status: "error",
+        errorCode: "1001",
+      });
+    }
+  });
+}
+export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const { activeFilter, setFilter } = useDocumentList();
 
   const filters = useMemo(() => {
@@ -28,16 +68,42 @@ export default function Dashboard() {
 
   return (
     <div className="w-screen h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
-      <WorkspacePanel />
-      <UserGreetings />
-      <FilterPanel
-        filters={filters}
-        activeFilter={activeFilter}
-        onFilterChange={setFilter}
-      >
-        <RetroList />
-      </FilterPanel>
-      <FooterPanel />
+      <Suspense fallback={<div className="text-center">Loading...</div>}>
+        <Await resolve={loaderData}>
+          {(value) => {
+            return match(value.status)
+              .with("setup-org", () => <Navigate to="/setup-org" />)
+              .with("error", () => (
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold">
+                    Oops, something went wrong.
+                  </h1>
+                  <p>
+                    Please try reloading the page or contact support if the
+                    issue persists.
+                  </p>
+                </div>
+              ))
+              .with("continue", () => {
+                return (
+                  <>
+                    <WorkspacePanel />
+                    <UserGreetings />
+                    <FilterPanel
+                      filters={filters}
+                      activeFilter={activeFilter}
+                      onFilterChange={setFilter}
+                    >
+                      <RetroList />
+                    </FilterPanel>
+                    <FooterPanel />
+                  </>
+                );
+              })
+              .exhaustive();
+          }}
+        </Await>
+      </Suspense>
     </div>
   );
 }

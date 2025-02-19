@@ -10,6 +10,7 @@ export default [
   layout("components/protected-layout.tsx", [
     //
     route("/loginCallback", "routes/login/callback.tsx"),
+    route("/setup-org", "routes/setup-org/index.tsx"),
     //
     route("/accept-invitation/:id", "routes/accept-invitation/index.tsx"),
     //

@@ -1,9 +1,7 @@
-import { OrganizationForm } from "@/components/organization-form";
-import BaloonOutlineSvg from "@/components/svg/balloon-outline";
 import { authClient } from "@retro/sdk";
 import { isEmpty, isNil } from "lodash-es";
 import { Suspense } from "react";
-import { Await, Navigate, useNavigate } from "react-router";
+import { Await, Navigate } from "react-router";
 import { match } from "ts-pattern";
 import type { Route } from "./+types/callback";
 
@@ -65,26 +63,6 @@ export async function clientLoader() {
 }
 
 export default function LoginCallback({ loaderData }: Route.ComponentProps) {
-  const navigate = useNavigate();
-
-  const createOrganization = async (name: string) => {
-    const { data: createdOrganization, error } =
-      await authClient.organization.create({
-        name,
-        slug: crypto.randomUUID(),
-      });
-
-    if (error) {
-      console.error("Failed to create organizations:", error);
-    } else {
-      authClient.organization.setActive({
-        organizationId: createdOrganization.id,
-      });
-
-      navigate("/dashboard");
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
       {/* TODO @harris: Investigate why suspense doesnt work as expected - fallback doesnt show at all, whole component seems suspended */}
@@ -92,17 +70,7 @@ export default function LoginCallback({ loaderData }: Route.ComponentProps) {
         <Await resolve={loaderData}>
           {(value) => {
             return match(value.status)
-              .with("setup-org", () => (
-                <div className="flex w-full max-w-sm flex-col gap-6">
-                  <div className="flex items-center justify-center gap-2 self-center font-medium">
-                    <div className="text-primary-foreground">
-                      <BaloonOutlineSvg className="size-6" />
-                    </div>
-                    <span className="text-xl font-bold">Mellow</span>
-                  </div>
-                  <OrganizationForm onCreate={createOrganization} />
-                </div>
-              ))
+              .with("setup-org", () => <Navigate to="/setup-org" />)
               .with("error", () => (
                 <div className="text-center">
                   <h1 className="text-2xl font-bold">
