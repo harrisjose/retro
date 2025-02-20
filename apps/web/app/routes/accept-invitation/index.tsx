@@ -42,9 +42,9 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
 
     return { invitation };
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    throw new Error("Error while fetching invitation");
+    return redirect(`/error?code=${error.code}&message=${error.message}`);
   }
 }
 

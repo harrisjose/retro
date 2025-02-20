@@ -21,5 +21,6 @@ export default [
     layout("routes/document/layout.tsx", [
       route("/document/:id", "routes/document/index.tsx"),
     ]),
+    route("/error", "routes/error/index.tsx"),
   ]),
 ] satisfies RouteConfig;
