@@ -6,6 +6,8 @@ import { collabHandler } from "./collab/index.js";
 import { db, dbUtil } from "./db/index.js";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
+
+import slackRoutes from "./routes/slack.router.js";
 import { createHonoTrpcContext } from "./trpc/config.js";
 import { appRouter } from "./trpc/index.js";
 
@@ -67,5 +69,8 @@ app.use(
 );
 
 app.get("/collab", cors(corsOptions), collabHandler);
+
+// Create a Slack routes middleware
+app.route("/api/slack", slackRoutes);
 
 export default app;
