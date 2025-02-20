@@ -8,24 +8,97 @@ import { db } from "../db/index.js";
 const slack = new Hono<{ Bindings: HttpBindings }>();
 
 interface SlackPayload {
-  team_id: string;
-  channel_id: string;
-  user_id: string;
-  message: { ts: string };
-  type?: string;
-  actions?: Array<{ action_id: string }>;
-  text?: string;
+  type: string;
+
+  command: string;
+  user: {
+    id: string;
+    username: string;
+    name: string;
+    team_id: string;
+  };
+  container: {
+    type: string;
+    message_ts: string;
+    channel_id: string;
+    is_ephemeral: boolean;
+  };
+  team: {
+    id: string;
+    domain: string;
+  };
+  channel: { id: string; name: string };
+  state?: {
+    values: Record<string, any>;
+  };
+  actions?: Array<{
+    action_id: string;
+    block_id: string;
+    text: any;
+    style: string;
+    type: string;
+    action_ts: string;
+  }>;
 }
 
 type ProcessRequestResult = Awaited<ReturnType<typeof processRequest>>;
 
+slack.post("/command", async (c) => {
+  const formData = await c.req.formData();
+  const timestamp = c.req.header("X-Slack-Request-Timestamp");
+  const payload = Object.fromEntries(formData.entries()) as unknown as {
+    team_id: string;
+    channel_id: string;
+    user_id: string;
+  };
+
+  console.log("payload", payload, timestamp);
+  const { team_id, channel_id, user_id } = payload;
+
+  if (!team_id || !channel_id || !user_id) {
+    throw new Error("Missing required fields");
+  }
+
+  const integration = await db
+    .selectFrom("integration")
+    .selectAll()
+    .where("integration.teamId", "=", team_id)
+    .executeTakeFirst();
+
+  if (!integration || !integration.botToken) {
+    throw new Error("Slack bot not installed for this organization");
+  }
+
+  const slackClient = new WebClient(integration.botToken);
+
+  await slackClient.chat.postEphemeral({
+    channel: payload.channel_id,
+    user: payload.user_id,
+    blocks: [
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: { type: "plain_text", text: "Create Retro" },
+            action_id: "create_retro_button",
+            style: "primary",
+          },
+        ],
+      },
+    ],
+  });
+  return new Response(null, { status: 200 });
+});
+
 // Helper function to validate Slack request and get integration
 async function processRequest(formData: FormData) {
-  console.log("formdata", formData, formData.entries());
-  const payload = Object.fromEntries(
-    formData.entries(),
-  ) as unknown as SlackPayload;
-  const { team_id, channel_id, user_id } = payload;
+  const payload = JSON.parse(formData.get("payload") as string) as SlackPayload;
+  console.log("form data", payload);
+
+  const team_id = payload.team?.id;
+  const channel_id = payload.channel?.id;
+  const user_id = payload.user?.id;
 
   if (!team_id || !channel_id || !user_id) {
     throw new Error("Missing required fields");
@@ -52,10 +125,10 @@ async function handleCreateRetroForm({
   slackClient,
   payload,
 }: ProcessRequestResult) {
-  await slackClient.chat.update({
-    channel: payload.channel_id,
+  await slackClient.chat.postEphemeral({
+    channel: payload.channel!.id || "",
+    user: payload.user!.id || "",
     text: "Create a retrospective",
-    ts: payload.message.ts,
     blocks: [
       {
         type: "input",
@@ -101,13 +174,6 @@ async function handleCreateRetroSubmit({
   integration,
 }: ProcessRequestResult) {
   try {
-    if (!payload.text) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 },
-      );
-    }
-
     const retroName = payload.text.match(/name=['"]([^'"]+)['"]/);
 
     if (!retroName) {
@@ -137,8 +203,8 @@ async function handleCreateRetroSubmit({
 
     // Respond in Slack using the correct organization's bot token
     await slackClient.chat.postMessage({
-      channel: payload.channel_id,
-      text: `✅ Document *${document.name}* created by <@${payload.user_id}>`,
+      channel: payload.channel?.id || "",
+      text: `✅ Document *${document.name}* created by <@${payload.user?.id}>`,
     });
 
     return new Response(null, { status: 200 });
@@ -150,12 +216,11 @@ async function handleCreateRetroSubmit({
 }
 
 slack.post("/interactions", async (c) => {
-  console.log("c req", c);
   const formData = await c.req.formData();
-  console.log("c req", c);
-  const { slackClient, payload, integration } = await processRequest(formData);
-
+  console.log("form data", formData, c.req.json(), c.req);
+  const { slackClient, integration, payload } = await processRequest(formData);
   console.log("payload", payload);
+
   if (
     payload.type &&
     payload.type === "block_actions" &&
@@ -165,24 +230,6 @@ slack.post("/interactions", async (c) => {
       slackClient,
       payload,
       integration,
-    });
-  } else {
-    await slackClient.chat.postEphemeral({
-      channel: payload.channel_id,
-      user: payload.user_id,
-      blocks: [
-        {
-          type: "actions",
-          elements: [
-            {
-              type: "button",
-              text: { type: "plain_text", text: "Create Retro" },
-              action_id: "create_retro_button",
-              style: "primary",
-            },
-          ],
-        },
-      ],
     });
   }
 
