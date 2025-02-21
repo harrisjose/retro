@@ -1,11 +1,143 @@
 import type { HttpBindings } from "@hono/node-server";
 import { WebClient } from "@slack/web-api";
+
 import { type Context, Hono } from "hono";
 import { getInitialYDoc } from "../collab/utils.js";
+
 import { db } from "../db/index.js";
 
 // Create a new Hono instance for Slack routes
 const slack = new Hono<{ Bindings: HttpBindings }>();
+
+const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID!;
+const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET!;
+// const SLACK_REDIRECT_URI = `${config.api.baseUrl}/api/slack/oauth/callback`;
+const SLACK_REDIRECT_URI = `https://bbb2-121-200-54-151.ngrok-free.app/api/slack/oauth/callback`;
+const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
+
+slack.get("/oauth", async (c) => {
+  const organizationId = c.req.query("organization_id");
+  const userId = c.req.query("user_id");
+
+  if (!organizationId || !userId) {
+    return c.json({ error: "organization_id and user_id are required" }, 400);
+  }
+
+  const member = await db
+    .selectFrom("member")
+    .selectAll()
+    .where("member.organizationId", "=", organizationId)
+    .where("member.userId", "=", userId)
+    .executeTakeFirst();
+
+  if (!member) {
+    return c.json({ error: "Member not found" }, 400);
+  }
+
+  // Store the organization_id & user_id in state (encoded)
+  const state = Buffer.from(
+    JSON.stringify({
+      organization_id: organizationId,
+      user_id: userId,
+    }),
+  ).toString("base64");
+
+  const scopes = [
+    "channels:join",
+    "channels:read",
+    "chat:write",
+    "chat:write.public",
+    "commands",
+  ];
+  const scopeParam = scopes.join(",");
+  const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}&state=${state}`;
+
+  console.log("auth url", authUrl);
+  return c.redirect(authUrl, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+});
+
+// 🔹 2️⃣ Step 2: Handle OAuth Callback
+slack.get("/oauth/callback", async (c) => {
+  const code = c.req.query("code");
+  const state = c.req.query("state");
+
+  if (!code || !state) {
+    return c.json({ error: "Missing authorization code or state" }, 400);
+  }
+
+  // Decode state to get organization_id and user_id
+  const decodedState = JSON.parse(Buffer.from(state, "base64").toString());
+  const { organization_id, user_id } = decodedState;
+
+  const existingIntegration = await db
+    .selectFrom("integration")
+    .where("organizationId", "=", organization_id)
+    .where("integration", "=", "slack")
+    .executeTakeFirst();
+
+  if (existingIntegration) {
+    return c.json(
+      {
+        error: "Slack integration already exists for this organization",
+      },
+      400,
+    );
+  }
+
+  try {
+    const response = await fetch("https://slack.com/api/oauth.v2.access", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: SLACK_CLIENT_ID,
+        client_secret: SLACK_CLIENT_SECRET,
+        code,
+        redirect_uri: SLACK_REDIRECT_URI,
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Slack OAuth Response:", data);
+
+    if (!data.ok) {
+      return c.json({ error: data.error }, 400);
+    }
+
+    const bot_token = data.access_token;
+    const team_id = data.team.id;
+    const team_name = data.team.name;
+
+    await db
+      .insertInto("integration")
+      .values({
+        organizationId: organization_id,
+        integration: "slack",
+        teamId: team_id,
+        teamName: team_name,
+        botToken: bot_token,
+        createdBy: user_id,
+      })
+      .execute();
+
+    return c.json({
+      success: true,
+      message: "Slack integration successful",
+      team_id,
+      team_name,
+      organization_id,
+      user_id,
+    });
+  } catch (error) {
+    console.error("Slack OAuth Error:", error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
 
 interface SlackPayload {
   type: string;
@@ -106,8 +238,37 @@ slack.post("/command", async (c) => {
 // Helper function to validate Slack request and get integration
 async function processRequest(c: Context) {
   const formData = await c.req.formData();
+  const timestamp = c.req.header("X-Slack-Request-Timestamp");
+  const slackSignature = c.req.header("X-Slack-Signature");
+  if (!timestamp || !slackSignature) {
+    throw new Error("Missing Slack signature or timestamp");
+  }
+
+  const currentTime = Math.floor(Date.now() / 1000);
+
+  if (Math.abs(currentTime - Number(timestamp)) > 60 * 5) {
+    console.error("⏳ Request timestamp too old, possible replay attack!");
+    throw new Error("Request is too old");
+  }
+
   const payload = JSON.parse(formData.get("payload") as string) as SlackPayload;
-  console.log("payload", payload);
+
+  // TODO - add the signature check
+  // const basestring = `v0:${timestamp}:${await c.req.text()}`;
+  // const hmac = createHmac("sha256", SLACK_SIGNING_SECRET)
+  //   .update(basestring)
+  //   .digest("hex");
+  // const expectedSignature = `v0=${hmac}`;
+
+  // // Compare signatures securely
+  // if (
+  //   !timingSafeEqual(
+  //     Buffer.from(expectedSignature),
+  //     Buffer.from(slackSignature),
+  //   )
+  // ) {
+  //   throw new Error("Invalid signature");
+  // }
 
   const team_id = payload.team?.id;
   const channel_id = payload.channel?.id;

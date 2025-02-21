@@ -7,8 +7,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("integration", "text", (col) => col.notNull())
     .addColumn("teamId", "text", (col) => col.notNull())
     .addColumn("teamName", "text", (col) => col.notNull())
-    .addColumn("channelId", "text", (col) => col.notNull())
-    .addColumn("channelName", "text", (col) => col.notNull())
+    .addColumn("channelId", "text")
+    .addColumn("channelName", "text")
     .addColumn("botToken", "text", (col) => col.notNull())
     .addColumn("createdBy", "text", (col) => col.notNull())
     .addColumn("createdAt", "timestamp", (col) =>

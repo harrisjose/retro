@@ -56,8 +56,8 @@ export interface DocumentTimer {
 
 export interface Integration {
   botToken: string;
-  channelId: string;
-  channelName: string;
+  channelId: string | null;
+  channelName: string | null;
   createdAt: Generated<Timestamp>;
   createdBy: string;
   integration: string;
