@@ -40,6 +40,7 @@ export const InviteEmail = ({
   orgImage = `${staticUrl}/mail/mellow-team.png`,
   inviteLink,
 }: InviteEmailProps) => {
+  // TODO: @aki check with @harris on this copy
   const previewText = `Join ${invitedByUsername} on Mellow`;
 
   return (

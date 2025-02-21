@@ -1,6 +1,6 @@
 import { authClient } from "@retro/sdk";
 import { isEmpty, isNil } from "lodash-es";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Await, Navigate } from "react-router";
 import { match } from "ts-pattern";
 import type { Route } from "./+types/callback";
@@ -26,7 +26,7 @@ type LoaderResponse =
       errorCode?: string;
     };
 
-export async function clientLoader() {
+export function clientLoader() {
   return new Promise<LoaderResponse>(async (resolve) => {
     try {
       const { data: activeOrganization } =
@@ -62,11 +62,12 @@ export async function clientLoader() {
   });
 }
 
-export default function LoginCallback({ loaderData }: Route.ComponentProps) {
+export default function LoginCallback() {
+  const loaderData = useMemo(() => clientLoader(), []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
-      {/* TODO @harris: Investigate why suspense doesnt work as expected - fallback doesnt show at all, whole component seems suspended */}
-      <Suspense fallback={<div className="text-center">Loading...</div>}>
+      <Suspense fallback={<div className="text-center">Auth Loading...</div>}>
         <Await resolve={loaderData}>
           {(value) => {
             return match(value.status)

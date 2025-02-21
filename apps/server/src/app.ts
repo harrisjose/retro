@@ -44,6 +44,7 @@ app.get("/api/document/:id/binary", async (c) => {
   }
 });
 
+// All auth related routes will be handled by the auth middleware (BetterAuth)
 app.on(
   ["POST", "GET"],
   "/api/auth/**",
