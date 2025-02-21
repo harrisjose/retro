@@ -9,6 +9,12 @@ import {
 import type { Route } from "./+types/root";
 import stylesheet from "./index.css?url";
 
+// Only run on client in dev mode
+if (typeof window !== "undefined" && import.meta.env.DEV) {
+  const { scan } = await import("react-scan");
+  scan();
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   { rel: "stylesheet", href: stylesheet },
@@ -18,8 +24,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* uncomment when needed */}
-        {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script> */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />

@@ -31,7 +31,7 @@ type LoaderResponse =
       errorCode?: string;
     };
 
-export async function clientLoader() {
+export function clientLoader() {
   return new Promise<LoaderResponse>(async (resolve) => {
     try {
       const { data: organizations, error } =
@@ -56,7 +56,8 @@ export async function clientLoader() {
     }
   });
 }
-export default function Dashboard({ loaderData }: Route.ComponentProps) {
+export default function Dashboard() {
+  const loaderData = useMemo(() => clientLoader(), []);
   const { activeFilter, setFilter } = useDocumentList();
 
   const filters = useMemo(() => {
@@ -68,7 +69,13 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="w-screen h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
-      <Suspense fallback={<div className="text-center">Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="bg-app-gradient h-screen w-full flex items-center justify-center">
+            Dashboard Loading...
+          </div>
+        }
+      >
         <Await resolve={loaderData}>
           {(value) => {
             return match(value.status)
