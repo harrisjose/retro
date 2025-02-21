@@ -6,6 +6,7 @@
   "scripts": {
     "format": "biome format --write .",
     "cleanup": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
+    "pkg:build": "pnpm --parallel --filter \"./packages/**\" build",
     "build:server": "docker build --platform=linux/amd64 . --target server --tag retro-server:latest",
     "build:web": "docker build --platform=linux/amd64 . --target web --tag retro-web:latest"
   },
