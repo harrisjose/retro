@@ -19,4 +19,10 @@ export const ErrorCodesMap = {
     description:
       "Please contact the administrator and ask them to send you a new invitation.",
   },
+
+  // Integration
+  SLACK_INTEGRATION_SETUP_ERROR: {
+    title: "Error while setting up slack integration",
+    description: "Please try reaching out to our support team for assistance",
+  },
 } as const;

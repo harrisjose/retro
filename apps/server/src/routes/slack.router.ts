@@ -12,80 +12,82 @@ const slack = new Hono<{ Bindings: HttpBindings }>();
 
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID!;
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET!;
-// const SLACK_REDIRECT_URI = `${config.api.baseUrl}/api/slack/oauth/callback`;
-const SLACK_REDIRECT_URI = `https://bbb2-121-200-54-151.ngrok-free.app/api/slack/oauth/callback`;
-const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
+const SLACK_REDIRECT_URI = `${config.app.url}/api/slack/oauth/callback`;
+// const SLACK_REDIRECT_URI = `https://bbb2-121-200-54-151.ngrok-free.app/api/slack/oauth/callback`;
+// const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 
 slack.get("/oauth", async (c) => {
-  const organizationId = c.req.query("organization_id");
-  const userId = c.req.query("user_id");
+  try {
+    const organizationId = c.req.query("organization_id");
+    const userId = c.req.query("user_id");
 
-  if (!organizationId || !userId) {
-    return c.json({ error: "organization_id and user_id are required" }, 400);
+    if (!organizationId || !userId) {
+      throw new Error("organization_id and user_id are required");
+    }
+
+    const member = await db
+      .selectFrom("member")
+      .selectAll()
+      .where("member.organizationId", "=", organizationId)
+      .where("member.userId", "=", userId)
+      .executeTakeFirst();
+
+    if (!member) {
+      throw new Error(
+        "The user is not a member of the organization to setup this integration",
+      );
+    }
+
+    // Store the organization_id & user_id in state (encoded)
+    const state = Buffer.from(
+      JSON.stringify({
+        organization_id: organizationId,
+        user_id: userId,
+      }),
+    ).toString("base64");
+
+    const scopes = [
+      "channels:read",
+      "chat:write",
+      "chat:write.public",
+      "commands",
+    ];
+    const scopeParam = scopes.join(",");
+    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}&state=${state}`;
+
+    return c.redirect(authUrl);
+  } catch (error) {
+    console.error("Slack OAuth Error:", error);
+    return c.redirect(
+      `${config.app.url}/error?code=SLACK_INTEGRATION_SETUP_ERROR`,
+    );
   }
-
-  const member = await db
-    .selectFrom("member")
-    .selectAll()
-    .where("member.organizationId", "=", organizationId)
-    .where("member.userId", "=", userId)
-    .executeTakeFirst();
-
-  if (!member) {
-    return c.json({ error: "Member not found" }, 400);
-  }
-
-  // Store the organization_id & user_id in state (encoded)
-  const state = Buffer.from(
-    JSON.stringify({
-      organization_id: organizationId,
-      user_id: userId,
-    }),
-  ).toString("base64");
-
-  const scopes = [
-    "channels:join",
-    "channels:read",
-    "chat:write",
-    "chat:write.public",
-    "commands",
-  ];
-  const scopeParam = scopes.join(",");
-  const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}&state=${state}`;
-
-  console.log("authUrl", authUrl);
-  return c.redirect(authUrl);
 });
 
 // 🔹 2️⃣ Step 2: Handle OAuth Callback
 slack.get("/oauth/callback", async (c) => {
-  const code = c.req.query("code");
-  const state = c.req.query("state");
-
-  if (!code || !state) {
-    return c.json({ error: "Missing authorization code or state" }, 400);
-  }
-
-  // Decode state to get organization_id and user_id
-  const decodedState = JSON.parse(Buffer.from(state, "base64").toString());
-  const { organization_id, user_id } = decodedState;
-
-  const existingIntegration = await db
-    .selectFrom("integration")
-    .where("organizationId", "=", organization_id)
-    .where("integration", "=", "slack")
-    .executeTakeFirst();
-
-  if (existingIntegration) {
-    return c.json(
-      {
-        error: "Slack integration already exists for this organization",
-      },
-      400,
-    );
-  }
-
   try {
+    const code = c.req.query("code");
+    const state = c.req.query("state");
+
+    if (!code || !state) {
+      throw new Error("Missing authorization code or state");
+    }
+
+    // Decode state to get organization_id and user_id
+    const decodedState = JSON.parse(Buffer.from(state, "base64").toString());
+    const { organization_id, user_id } = decodedState;
+
+    const existingIntegration = await db
+      .selectFrom("integration")
+      .where("organizationId", "=", organization_id)
+      .where("integration", "=", "slack")
+      .executeTakeFirst();
+
+    if (existingIntegration) {
+      throw new Error("Slack integration already exists for this organization");
+    }
+
     const response = await fetch("https://slack.com/api/oauth.v2.access", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -98,10 +100,9 @@ slack.get("/oauth/callback", async (c) => {
     });
 
     const data = await response.json();
-    console.log("Slack OAuth Response:", data);
 
     if (!data.ok) {
-      return c.json({ error: data.error }, 400);
+      throw new Error(data.error);
     }
 
     const bot_token = data.access_token;
@@ -115,11 +116,8 @@ slack.get("/oauth/callback", async (c) => {
       .executeTakeFirst();
 
     if (existingTeamIntegration) {
-      return c.json(
-        {
-          error: "Slack workspace is already connected to another organization",
-        },
-        400,
+      throw new Error(
+        "Slack workspace is already connected to another organization",
       );
     }
 
@@ -137,8 +135,10 @@ slack.get("/oauth/callback", async (c) => {
 
     return c.redirect(`${config.app.url}/dashboard`);
   } catch (error) {
-    console.error("Slack OAuth Error:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    console.error("Slack OAuth Callback Error:", error);
+    return c.redirect(
+      `${config.app.url}/error?code=SLACK_INTEGRATION_SETUP_ERROR`,
+    );
   }
 });
 
