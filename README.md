@@ -15,6 +15,13 @@
 pnpm install
 ```
 
+### Setup local dependency pre-builds
+
+```bash
+# In root directory
+pnpm run -w pkg:build
+```
+
 ### Setup environment variables
 
 ```bash
@@ -22,6 +29,7 @@ pnpm install
 doppler login
 cd apps/server
 doppler setup
+# Press Y and enter
 ```
 
 ### Setup database
@@ -54,6 +62,8 @@ NodeEnv: development
 ```bash
 pnpm install
 cd apps/web
+doppler setup
+# select `retro-web`, then select `dev`
 pnpm run dev
 ```
 
