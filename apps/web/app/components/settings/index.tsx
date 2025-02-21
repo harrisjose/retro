@@ -10,6 +10,7 @@ import {
 } from "../ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { General } from "./general";
+import { Integrations } from "./integrations";
 import { People } from "./people";
 import { Profile } from "./profile";
 
@@ -28,6 +29,11 @@ const settingsTabs = [
     label: "Manage people",
     value: "manage-people",
     component: <People />,
+  },
+  {
+    label: "Integrations",
+    value: "integrations",
+    component: <Integrations />,
   },
 ];
 

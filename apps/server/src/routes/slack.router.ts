@@ -5,6 +5,7 @@ import { type Context, Hono } from "hono";
 import { getInitialYDoc } from "../collab/utils.js";
 
 import { db } from "../db/index.js";
+import config from "../lib/config.js";
 
 // Create a new Hono instance for Slack routes
 const slack = new Hono<{ Bindings: HttpBindings }>();
@@ -52,14 +53,8 @@ slack.get("/oauth", async (c) => {
   const scopeParam = scopes.join(",");
   const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}&state=${state}`;
 
-  console.log("auth url", authUrl);
-  return c.redirect(authUrl, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  });
+  console.log("authUrl", authUrl);
+  return c.redirect(authUrl);
 });
 
 // 🔹 2️⃣ Step 2: Handle OAuth Callback
@@ -113,6 +108,21 @@ slack.get("/oauth/callback", async (c) => {
     const team_id = data.team.id;
     const team_name = data.team.name;
 
+    const existingTeamIntegration = await db
+      .selectFrom("integration")
+      .where("teamId", "=", team_id)
+      .where("integration", "=", "slack")
+      .executeTakeFirst();
+
+    if (existingTeamIntegration) {
+      return c.json(
+        {
+          error: "Slack workspace is already connected to another organization",
+        },
+        400,
+      );
+    }
+
     await db
       .insertInto("integration")
       .values({
@@ -125,14 +135,7 @@ slack.get("/oauth/callback", async (c) => {
       })
       .execute();
 
-    return c.json({
-      success: true,
-      message: "Slack integration successful",
-      team_id,
-      team_name,
-      organization_id,
-      user_id,
-    });
+    return c.redirect(`${config.app.url}/dashboard`);
   } catch (error) {
     console.error("Slack OAuth Error:", error);
     return c.json({ error: "Internal server error" }, 500);
