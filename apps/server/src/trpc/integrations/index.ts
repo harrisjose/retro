@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { db } from "../../db/index.js";
 import { publicProcedure, router } from "../config.js";
+import { revokeSlackIntegration } from "./slack.js";
 
 const integrationsRouter = router({
   list: publicProcedure
@@ -42,8 +43,10 @@ const integrationsRouter = router({
       z.object({
         organizationId: z.string(),
         integration: z.string(),
-        channelId: z.string(),
-        channelName: z.string(),
+        data: z.object({
+          channelId: z.string(),
+          channelName: z.string(),
+        }),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -55,8 +58,8 @@ const integrationsRouter = router({
         await db
           .updateTable("integration")
           .set({
-            channelId: input.channelId,
-            channelName: input.channelName,
+            channelId: input.data.channelId,
+            channelName: input.data.channelName,
           })
           .where("organizationId", "=", input.organizationId)
           .where("integration", "=", input.integration)
@@ -80,6 +83,20 @@ const integrationsRouter = router({
       try {
         if (!ctx.user) {
           throw new Error("Unauthorized");
+        }
+
+        const integration = await db
+          .selectFrom("integration")
+          .selectAll()
+          .where("organizationId", "=", input.organizationId)
+          .executeTakeFirst();
+
+        if (!integration) {
+          throw new Error("No Slack integration found for this organization");
+        }
+
+        if (integration.integration === "slack") {
+          await revokeSlackIntegration(integration.botToken);
         }
 
         await db

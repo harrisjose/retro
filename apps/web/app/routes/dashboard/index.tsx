@@ -1,5 +1,5 @@
 import { DocumentListFilter } from "@retro/common";
-import { authClient, useDocumentList } from "@retro/sdk";
+import { IntegrationsProvider, authClient, useDocumentList } from "@retro/sdk";
 import { Suspense, useMemo } from "react";
 import { Await, Navigate } from "react-router";
 import { match } from "ts-pattern";
@@ -93,7 +93,7 @@ export default function Dashboard() {
               ))
               .with("continue", () => {
                 return (
-                  <>
+                  <IntegrationsProvider>
                     <WorkspacePanel />
                     <UserGreetings />
                     <FilterPanel
@@ -104,7 +104,7 @@ export default function Dashboard() {
                       <RetroList />
                     </FilterPanel>
                     <FooterPanel />
-                  </>
+                  </IntegrationsProvider>
                 );
               })
               .exhaustive();

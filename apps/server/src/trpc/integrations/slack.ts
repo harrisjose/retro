@@ -37,11 +37,10 @@ const slackRouter = router({
         });
 
         return {
-          channels:
-            result.channels?.map((channel) => ({
-              id: channel.id,
-              name: channel.name,
-            })) || [],
+          channels: (result.channels || [])?.map((channel) => ({
+            id: channel.id!,
+            name: channel.name!,
+          })),
         };
       } catch (error) {
         console.error("Error fetching Slack channels:", error);
@@ -49,5 +48,15 @@ const slackRouter = router({
       }
     }),
 });
+
+export const revokeSlackIntegration = async (botToken: string) => {
+  const slackClient = new WebClient(botToken);
+  try {
+    await slackClient.auth.revoke();
+    console.log("✅ Slack Bot Token Revoked");
+  } catch (error) {
+    console.error("⚠️ Failed to revoke Slack bot token:", error);
+  }
+};
 
 export default slackRouter;
