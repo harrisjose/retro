@@ -6,6 +6,7 @@ import { updateLiveYDoc } from "../collab/index.js";
 import { getInitialYDoc, patchFragmentWithSummary } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
+import { postRetroSummaryToSlack } from "./integrations/slack.js";
 
 const documentRouter = router({
   list: publicProcedure
@@ -64,7 +65,16 @@ const documentRouter = router({
         }
         const document = await db
           .selectFrom("document")
-          .select(["id", "name", "createdBy", "createdAt", "updatedAt"])
+          .select([
+            "id",
+            "name",
+            "createdBy",
+            "createdAt",
+            "updatedAt",
+            "startDate",
+            "endDate",
+            "yDocUpdatedAt",
+          ])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
           .executeTakeFirst();
@@ -150,6 +160,12 @@ const documentRouter = router({
 
           patchFragmentWithSummary(contentFragment, result);
         });
+
+        try {
+          await postRetroSummaryToSlack(input.id, result);
+        } catch (error) {
+          console.error(`Failed to post summary to Slack`, error);
+        }
       } catch (error) {
         console.error(error);
         throw new Error("Failed to generate summary");

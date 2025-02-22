@@ -15,13 +15,16 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     throw new Error("Document ID is required");
   }
   try {
-    const response = await fetch(`${config.apiUrl}/api/document/${id}/binary`);
+    const [response, document] = await Promise.all([
+      fetch(`${config.apiUrl}/api/document/${id}/binary`),
+      apiClient.document.get.query({ id }),
+    ]);
+
     if (!response.ok) {
       throw new Error("Failed to fetch document binary data");
     }
     const binaryBuffer = await response.arrayBuffer();
     const binary = Array.from(new Uint8Array(binaryBuffer));
-    const document = await apiClient.document.get.query({ id });
 
     return { document, binary };
   } catch (error) {

@@ -24,6 +24,13 @@ const config = {
         ? "http://localhost:5175"
         : process.env.APP_URL!,
   },
+  integrations: {
+    slack: {
+      clientId: process.env.SLACK_CLIENT_ID!,
+      clientSecret: process.env.SLACK_CLIENT_SECRET!,
+      redirectUri: `api/slack/oauth/callback`,
+    },
+  },
 };
 
 export default config;

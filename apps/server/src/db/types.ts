@@ -54,6 +54,18 @@ export interface DocumentTimer {
   startTime: Timestamp;
 }
 
+export interface Integration {
+  botToken: string;
+  channelId: string | null;
+  channelName: string | null;
+  createdAt: Generated<Timestamp>;
+  createdBy: string;
+  integration: string;
+  organizationId: string;
+  teamId: string;
+  teamName: string;
+}
+
 export interface Invitation {
   email: string;
   expiresAt: Timestamp;
@@ -117,6 +129,7 @@ export interface DB {
   document: Document;
   documentMusic: DocumentMusic;
   documentTimer: DocumentTimer;
+  integration: Integration;
   invitation: Invitation;
   member: Member;
   organization: Organization;
