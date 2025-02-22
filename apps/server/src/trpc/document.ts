@@ -65,7 +65,16 @@ const documentRouter = router({
         }
         const document = await db
           .selectFrom("document")
-          .select(["id", "name", "createdBy", "createdAt", "updatedAt"])
+          .select([
+            "id",
+            "name",
+            "createdBy",
+            "createdAt",
+            "updatedAt",
+            "startDate",
+            "endDate",
+            "yDocUpdatedAt",
+          ])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
           .executeTakeFirst();
