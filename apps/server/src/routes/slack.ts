@@ -46,7 +46,8 @@ slack.get("/oauth", async (c) => {
       "commands",
     ];
     const scopeParam = scopes.join(",");
-    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}&state=${state}`;
+    const redirectUri = `${config.app.url}/${config.integrations.slack.redirectUri}`;
+    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${config.integrations.slack.clientId}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
     return c.redirect(authUrl);
   } catch (error) {

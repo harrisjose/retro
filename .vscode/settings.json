@@ -32,5 +32,11 @@
   "editor.formatOnSaveMode": "file",
   "[jsonc]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "editor.rulers": [
+    {
+      "column": 120
+    }
+  ],
+  "editor.wordWrap": "on"
 }
