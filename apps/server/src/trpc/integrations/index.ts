@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { db } from "../../db/index.js";
 import { publicProcedure, router } from "../config.js";
-import { revokeSlackIntegration } from "./slack.js";
+import { revokeSlackIntegration, slackRouter } from "./slack.js";
 
 const integrationsRouter = router({
   list: publicProcedure
@@ -111,6 +111,9 @@ const integrationsRouter = router({
         throw new Error("Failed to delete integration");
       }
     }),
+
+  // Intergration specific routes
+  slack: slackRouter,
 });
 
 export default integrationsRouter;

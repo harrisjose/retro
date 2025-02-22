@@ -47,3 +47,4 @@ export const t = initTRPC.context<HonoTrpcContext>().create({
 
 export const publicProcedure = t.procedure;
 export const router = t.router;
+export const mergeRouters = t.mergeRouters;
