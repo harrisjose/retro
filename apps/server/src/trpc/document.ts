@@ -6,6 +6,7 @@ import { updateLiveYDoc } from "../collab/index.js";
 import { getInitialYDoc, patchFragmentWithSummary } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
+import { postRetroSummaryToSlack } from "./integrations/slack.js";
 
 const documentRouter = router({
   list: publicProcedure
@@ -141,6 +142,8 @@ const documentRouter = router({
         if (!result.ok) {
           throw new Error(result.error);
         }
+
+        await postRetroSummaryToSlack(input.id, result);
 
         await updateLiveYDoc(input.id, (yDoc) => {
           const summarySection = yDoc.getMap("summary");
