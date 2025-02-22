@@ -1,18 +1,11 @@
-import type { HttpBindings } from "@hono/node-server";
 import { WebClient } from "@slack/web-api";
-
 import { type Context, Hono } from "hono";
 import { getInitialYDoc } from "../collab/utils.js";
-
 import { db } from "../db/index.js";
 import config from "../lib/config.js";
 
-// Create a new Hono instance for Slack routes
-const slack = new Hono<{ Bindings: HttpBindings }>();
+const slack = new Hono();
 
-const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID!;
-const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET!;
-const SLACK_REDIRECT_URI = `${config.app.url}/api/slack/oauth/callback`;
 // const SLACK_REDIRECT_URI = `https://bbb2-121-200-54-151.ngrok-free.app/api/slack/oauth/callback`;
 // const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 
@@ -92,10 +85,10 @@ slack.get("/oauth/callback", async (c) => {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_id: SLACK_CLIENT_ID,
-        client_secret: SLACK_CLIENT_SECRET,
+        client_id: config.integrations.slack.clientId,
+        client_secret: config.integrations.slack.clientSecret,
         code,
-        redirect_uri: SLACK_REDIRECT_URI,
+        redirect_uri: `${config.app.url}/${config.integrations.slack.redirectUri}`,
       }),
     });
 

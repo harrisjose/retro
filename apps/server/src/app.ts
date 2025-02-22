@@ -3,11 +3,10 @@ import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { collabHandler } from "./collab/index.js";
-import { db, dbUtil } from "./db/index.js";
 import { auth } from "./lib/auth.js";
 import config from "./lib/config.js";
-
-import slackRoutes from "./routes/slack.router.js";
+import documentRoutes from "./routes/document.js";
+import slackRoutes from "./routes/slack.js";
 import { createHonoTrpcContext } from "./trpc/config.js";
 import { appRouter } from "./trpc/index.js";
 
@@ -25,27 +24,6 @@ app.get("/api/ping", (c) => {
   return c.text("pong");
 });
 
-app.get("/api/document/:id/binary", async (c) => {
-  try {
-    const document = await db
-      .selectFrom("document")
-      .select(["yDoc", "yDocUpdatedAt"])
-      .where("id", "=", dbUtil.asUuid(c.req.param("id")))
-      .executeTakeFirstOrThrow();
-
-    if (!document.yDoc) {
-      throw new Error("Document binary not found");
-    }
-
-    return c.body(document.yDoc as unknown as ArrayBuffer, 200, {
-      "Content-Type": "application/octet-stream",
-    });
-  } catch (error) {
-    console.error(error);
-    return c.json({ error: "Failed to fetch yDoc" });
-  }
-});
-
 // All auth related routes will be handled by the auth middleware (BetterAuth)
 app.on(
   ["POST", "GET"],
@@ -59,6 +37,13 @@ app.on(
   (c) => auth.handler(c.req.raw),
 );
 
+// Create a Slack routes middleware
+app.route("/api/document", documentRoutes);
+app.route("/api/slack", slackRoutes);
+
+// Create hocusfocus routes middleware
+app.get("/collab", cors(corsOptions), collabHandler);
+
 app.use(
   "/trpc/*",
   cors(corsOptions),
@@ -67,10 +52,5 @@ app.use(
     createContext: createHonoTrpcContext,
   }),
 );
-
-app.get("/collab", cors(corsOptions), collabHandler);
-
-// Create a Slack routes middleware
-app.route("/api/slack", slackRoutes);
 
 export default app;
