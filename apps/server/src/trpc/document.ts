@@ -152,8 +152,6 @@ const documentRouter = router({
           throw new Error(result.error);
         }
 
-        await postRetroSummaryToSlack(input.id, result);
-
         await updateLiveYDoc(input.id, (yDoc) => {
           const summarySection = yDoc.getMap("summary");
           const contentFragment = summarySection.get(
@@ -162,6 +160,12 @@ const documentRouter = router({
 
           patchFragmentWithSummary(contentFragment, result);
         });
+
+        try {
+          await postRetroSummaryToSlack(input.id, result);
+        } catch (error) {
+          console.error(`Failed to post summary to Slack`, error);
+        }
       } catch (error) {
         console.error(error);
         throw new Error("Failed to generate summary");
