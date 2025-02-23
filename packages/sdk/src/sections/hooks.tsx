@@ -1,6 +1,7 @@
-import type { Section, SectionMap } from "@retro/common";
+import type { Section, SectionMap, YSectionBase } from "@retro/common";
 import { useContext } from "react";
 import { useSnapshot } from "valtio";
+import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
 import { DocContext, useYDoc } from "../document/document.js";
 
@@ -13,7 +14,19 @@ export const useSectionMap = () => {
 export const useSection = (sectionId: string) => {
   const { sections } = useContext(DocContext);
   const snapshot = useSnapshot(sections[sectionId]);
-  return snapshot as Section;
+  const yDoc = useYDoc();
+
+  const setName = (name: string) => {
+    const ySectionMap = yDoc.getMap("sections");
+    const ySectionBase = ySectionMap.get(sectionId) as YSectionBase;
+    const ySection = new YKeyValue(ySectionBase);
+
+    yDoc.transact(() => {
+      ySection.set("name", name);
+    });
+  };
+
+  return { section: snapshot as Section, setName };
 };
 
 export const useRawIntroContent = () => {
