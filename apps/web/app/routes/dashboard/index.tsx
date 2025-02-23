@@ -1,13 +1,14 @@
+import FilterPanel from "@/components/dashboard/filter-panel";
+import FooterPanel from "@/components/dashboard/footer-panel";
+import RetroList from "@/components/dashboard/retro-list";
+import UserGreetings from "@/components/dashboard/user-greeting";
+import WorkspacePanel from "@/components/dashboard/workspace-panel";
+import RetroListSkeleton from "@/components/ui/loaders/retro-list-skeleton";
 import { DocumentListFilter } from "@retro/common";
 import { IntegrationsProvider, authClient, useDocumentList } from "@retro/sdk";
 import { Suspense, useMemo } from "react";
 import { Await, Navigate } from "react-router";
 import { match } from "ts-pattern";
-import FilterPanel from "../../components/dashboard/filter-panel";
-import FooterPanel from "../../components/dashboard/footer-panel";
-import RetroList from "../../components/dashboard/retro-list";
-import UserGreetings from "../../components/dashboard/user-greeting";
-import WorkspacePanel from "../../components/dashboard/workspace-panel";
 import type { Route } from "./+types";
 
 export const meta: Route.MetaFunction = () => {
@@ -69,48 +70,40 @@ export default function Dashboard() {
 
   return (
     <div className="w-screen h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
-      <Suspense
-        fallback={
-          <div className="bg-app-gradient h-screen w-full flex items-center justify-center">
-            Dashboard Loading...
-          </div>
-        }
-      >
-        <Await resolve={loaderData}>
-          {(value) => {
-            return match(value.status)
-              .with("setup-org", () => <Navigate to="/setup-org" />)
-              .with("error", () => (
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold">
-                    Oops, something went wrong.
-                  </h1>
-                  <p>
-                    Please try reloading the page or contact support if the
-                    issue persists.
-                  </p>
-                </div>
-              ))
-              .with("continue", () => {
-                return (
-                  <IntegrationsProvider>
-                    <WorkspacePanel />
-                    <UserGreetings />
-                    <FilterPanel
-                      filters={filters}
-                      activeFilter={activeFilter}
-                      onFilterChange={setFilter}
-                    >
-                      <RetroList />
-                    </FilterPanel>
-                    <FooterPanel />
-                  </IntegrationsProvider>
-                );
-              })
-              .exhaustive();
-          }}
-        </Await>
-      </Suspense>
+      <IntegrationsProvider>
+        <WorkspacePanel />
+        <UserGreetings />
+        <FilterPanel
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={setFilter}
+        >
+          <Suspense fallback={<RetroListSkeleton />}>
+            <Await resolve={loaderData}>
+              {(value) => {
+                return match(value.status)
+                  .with("setup-org", () => <Navigate to="/setup-org" />)
+                  .with("error", () => (
+                    <div className="text-center">
+                      <h1 className="text-2xl font-bold">
+                        Oops, something went wrong.
+                      </h1>
+                      <p>
+                        Please try reloading the page or contact support if the
+                        issue persists.
+                      </p>
+                    </div>
+                  ))
+                  .with("continue", () => {
+                    return <RetroList />;
+                  })
+                  .exhaustive();
+              }}
+            </Await>
+          </Suspense>
+        </FilterPanel>
+        <FooterPanel />
+      </IntegrationsProvider>
     </div>
   );
 }

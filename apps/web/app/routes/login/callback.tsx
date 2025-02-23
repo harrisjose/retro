@@ -1,3 +1,4 @@
+import Spinner from "@/components/svg/spinner";
 import { authClient } from "@retro/sdk";
 import { isEmpty, isNil } from "lodash-es";
 import { Suspense, useMemo } from "react";
@@ -67,7 +68,13 @@ export default function LoginCallback() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-app-gradient p-6 md:p-10">
-      <Suspense fallback={<div className="text-center">Auth Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="w-full flex items-center justify-center">
+            <Spinner className="size-10 animate-spin" />
+          </div>
+        }
+      >
         <Await resolve={loaderData}>
           {(value) => {
             return match(value.status)
