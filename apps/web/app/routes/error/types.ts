@@ -25,4 +25,10 @@ export const ErrorCodesMap = {
     title: "Error while setting up slack integration",
     description: "Please try reaching out to our support team for assistance",
   },
+
+  DOCUMENT_NOT_FOUND: {
+    title: "Document not found",
+    description:
+      "The document you are trying to access has been deleted or your access has been revoked.",
+  },
 } as const;

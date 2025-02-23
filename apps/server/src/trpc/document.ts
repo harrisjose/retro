@@ -33,6 +33,7 @@ const documentRouter = router({
             "startDate",
             "endDate",
             "yDocUpdatedAt",
+            "organizationId",
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
@@ -74,6 +75,7 @@ const documentRouter = router({
             "startDate",
             "endDate",
             "yDocUpdatedAt",
+            "organizationId",
           ])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)

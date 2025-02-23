@@ -1,6 +1,7 @@
 import { DocProvider, apiClient, authClient, config } from "@retro/sdk";
 import { Outlet, redirect, useLoaderData, useParams } from "react-router";
 import * as Y from "yjs";
+import { ErrorCodesMap } from "../error/types";
 import type { Route } from "./+types";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -23,13 +24,29 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     if (!response.ok) {
       throw new Error("Failed to fetch document binary data");
     }
+    if (!document) {
+      throw new Error("Document not found");
+    }
+
     const binaryBuffer = await response.arrayBuffer();
     const binary = Array.from(new Uint8Array(binaryBuffer));
+
+    const { data: activeOrganization } =
+      await authClient.organization.getFullOrganization();
+
+    if (
+      !activeOrganization ||
+      document.organizationId !== activeOrganization.id
+    ) {
+      await authClient.organization.setActive({
+        organizationId: document.organizationId,
+      });
+    }
 
     return { document, binary };
   } catch (error) {
     console.error(error);
-    throw new Error("Error while fetching document");
+    return redirect(`/error?code=${ErrorCodesMap.DOCUMENT_NOT_FOUND}`);
   }
 }
 
