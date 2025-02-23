@@ -9,7 +9,6 @@ import {
 import { getFormattedEndDate, getFormattedStartDate } from "@retro/common";
 import { authClient, useCreateDocument } from "@retro/sdk";
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router";
 
 const FooterPanel = () => {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
@@ -25,12 +24,9 @@ const FooterPanel = () => {
     endDate: "",
   });
   const [open, setOpen] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  const navigate = useNavigate();
   const { data: activeOrganization } = authClient.useActiveOrganization();
-  const onLogout = () => {
-    authClient.signOut({ fetchOptions: { onSuccess: () => navigate("/") } });
-  };
   const { createDocument } = useCreateDocument();
   const validate = useCallback(() => {
     if (!name) {
@@ -49,18 +45,41 @@ const FooterPanel = () => {
     return true;
   }, [startDate, endDate, name]);
 
-  const onCreateBoard = async () => {
-    if (!validate()) return;
+  const onCreateBoard = useCallback(async () => {
+    if (!validate() || isCreating) return;
+    setIsCreating(true);
     setError({ name: "", startDate: "", endDate: "" });
-    const documentId = await createDocument({
-      organizationId: activeOrganization!.id,
-      name,
-      startDate: getFormattedStartDate(startDate!),
-      endDate: getFormattedEndDate(endDate!),
-    });
-    console.log(`Created document with id: ${documentId}`);
-    setOpen(false);
-  };
+
+    try {
+      const documentId = await createDocument({
+        organizationId: activeOrganization!.id,
+        name,
+        startDate: getFormattedStartDate(startDate!),
+        endDate: getFormattedEndDate(endDate!),
+      });
+      console.log(`Created document with id: ${documentId}`);
+    } catch (error) {
+      console.error("Error creating board:", error);
+    } finally {
+      setOpen(false);
+      resetForm();
+    }
+  }, [isCreating, name, startDate, endDate]);
+
+  const resetForm = useCallback(() => {
+    setName("");
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setError({ name: "", startDate: "", endDate: "" });
+    setIsCreating(false);
+  }, []);
+
+  const onOpenChange = useCallback((open: boolean) => {
+    setOpen(open);
+    if (!open) {
+      resetForm();
+    }
+  }, []);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -69,10 +88,11 @@ const FooterPanel = () => {
 
   return (
     <footer className="flex justify-center gap-2 fixed bottom-4 left-0 right-0">
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           {open ? (
             <Button
+              isLoading={isCreating}
               onClick={(event) => {
                 event.preventDefault();
                 onCreateBoard();
@@ -132,8 +152,6 @@ const FooterPanel = () => {
           </div>
         </PopoverContent>
       </Popover>
-
-      {/* <Button onClick={onLogout}>Log out</Button> */}
     </footer>
   );
 };
