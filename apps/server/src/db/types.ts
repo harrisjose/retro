@@ -112,6 +112,7 @@ export interface User {
   id: string;
   image: string | null;
   name: string;
+  timezone: Generated<string>;
   updatedAt: Timestamp;
 }
 

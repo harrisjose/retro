@@ -9,6 +9,7 @@ const profileStore = proxy<Profile>({
   email: "",
   name: "",
   image: "",
+  timezone: "",
 });
 
 const ProfileContext = createContext({
@@ -46,6 +47,7 @@ const useProfileSync = async () => {
       profileStore.email = data.user.email;
       profileStore.name = data.user.name;
       profileStore.image = data.user.image;
+      profileStore.timezone = data.user.timezone;
     }
   }, [data, error]);
 };

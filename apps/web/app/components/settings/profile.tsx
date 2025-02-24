@@ -56,6 +56,24 @@ const Profile = () => {
             disabled
           />
         </div>
+        <div className="flex flex-col gap-1">
+          <Label
+            htmlFor="userEmail"
+            className="font-normal text-black opacity-50 text-[12px]"
+          >
+            Timezone
+          </Label>
+          <Input
+            id="userTimezone"
+            className={cn(
+              `w-[280px] h-8 rounded-md px-[10px] py-2 text-black text-[14px] font-normal`,
+              `disabled:opacity-100 disabled:cursor-not-allowed`,
+            )}
+            value={profile.timezone}
+            type="text"
+            disabled
+          />
+        </div>
       </div>
     </div>
   );

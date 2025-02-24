@@ -32,6 +32,15 @@ export const auth = betterAuth({
       clientSecret: config.google.clientSecret,
     },
   },
+  user: {
+    additionalFields: {
+      timezone: {
+        type: "string",
+        required: true,
+        defaultValue: "UTC",
+      },
+    },
+  },
   plugins: [
     organization({
       ac: ac,

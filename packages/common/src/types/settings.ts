@@ -3,4 +3,5 @@ export type Profile = {
   email: string;
   name: string;
   image?: string | null;
+  timezone: string;
 };
