@@ -4,7 +4,7 @@ import ProfileDropdown from "./profile-dropdown";
 
 const WorkspacePanel = () => {
   return (
-    <header className="flex p-4 gap-[10px] justify-end w-full items-center">
+    <header className="flex p-4 gap-[10px] justify-end w-full items-center h-[52px]">
       <OrgSwitch />
       <Settings />
       <ProfileDropdown />

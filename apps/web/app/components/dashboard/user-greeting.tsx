@@ -17,7 +17,9 @@ const UserGreetings = () => {
         )}
       </div>
       <div className="opacity-30">Good morning,</div>
-      <div className="text-[48px] font-bold leading-[52px]">{profile.name}</div>
+      <div className="text-[48px] font-bold leading-[52px] h-[52px]">
+        {profile.name}
+      </div>
     </div>
   );
 };
