@@ -3,7 +3,7 @@ import FooterPanel from "@/components/dashboard/footer-panel";
 import RetroList from "@/components/dashboard/retro-list";
 import UserGreetings from "@/components/dashboard/user-greeting";
 import WorkspacePanel from "@/components/dashboard/workspace-panel";
-import RetroListSkeleton from "@/components/ui/loaders/retro-list-skeleton";
+import RetroListSkeleton from "@/components/loaders/retro-list-skeleton";
 import { DocumentListFilter } from "@retro/common";
 import { IntegrationsProvider, authClient, useDocumentList } from "@retro/sdk";
 import { Suspense, useMemo } from "react";

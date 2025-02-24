@@ -1,6 +1,6 @@
+import RetroListSkeleton from "@/components/loaders/retro-list-skeleton";
 import DueDate from "@/components/svg/duedate";
 import Retro from "@/components/svg/retro";
-import RetroListSkeleton from "@/components/ui/loaders/retro-list-skeleton";
 import { getRelativeTime, getRemainingTime } from "@retro/common";
 import { useDocumentList } from "@retro/sdk";
 import { orderBy } from "lodash-es";
