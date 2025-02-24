@@ -58,5 +58,10 @@ export const useProfile = () => {
   const { profile } = useContext(ProfileContext);
   const snap = useSnapshot(profile);
 
-  return { profile: snap, isLoading: isPending };
+  const updateTimezone = async (timezone: string) => {
+    // @ts-expect-error - TODO: fix this
+    await authClient.updateUser({ timezone });
+  };
+
+  return { profile: snap, isLoading: isPending, updateTimezone };
 };

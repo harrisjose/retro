@@ -2,9 +2,10 @@ import { cn } from "@/lib/utils";
 import { useProfile } from "@retro/sdk/src/profile";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { TimezoneInput } from "./timezone-input";
 
 const Profile = () => {
-  const { profile } = useProfile();
+  const { profile, updateTimezone } = useProfile();
 
   return (
     <div className="flex flex-col">
@@ -63,15 +64,9 @@ const Profile = () => {
           >
             Timezone
           </Label>
-          <Input
-            id="userTimezone"
-            className={cn(
-              `w-[280px] h-8 rounded-md px-[10px] py-2 text-black text-[14px] font-normal`,
-              `disabled:opacity-100 disabled:cursor-not-allowed`,
-            )}
+          <TimezoneInput
             value={profile.timezone}
-            type="text"
-            disabled
+            setValue={(tz) => updateTimezone(tz)}
           />
         </div>
       </div>
