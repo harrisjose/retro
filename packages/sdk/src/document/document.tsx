@@ -5,6 +5,7 @@ import type {
   Collaborator,
   CollaboratorSelection,
   Document,
+  Pointer,
   Properties,
   Section,
   YBlockBase,
@@ -16,8 +17,10 @@ import type {
 } from "@retro/common";
 import {
   CanvasTransactionOrigin,
+  CollaboratorColors,
   bindProxyToKVRef,
   bindProxyToRef,
+  collaboratorsColorMap,
   observeKeysInMapRef,
   updateProxyState,
 } from "@retro/common";
@@ -28,6 +31,7 @@ import {
 } from "@retro/pm";
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
+import { useProfile } from "src/profile.js";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
@@ -90,6 +94,9 @@ const usePresenceSync = (state: DocumentState) => {
           .map((s) => s.selection)
           .filter((s) => !isNil(s));
         state.presence.selections = uniqBy(selections, "id");
+
+        const pointers = states.map((s) => s.pointers).filter((p) => !isNil(p));
+        state.presence.pointers = uniqBy(pointers, "id");
       },
     );
   }, []);
@@ -209,6 +216,7 @@ export const DocProvider = ({
       presence: {
         collaborators: [],
         selections: [],
+        pointers: [],
       },
       isReady: false,
     }),
@@ -239,8 +247,34 @@ export const useCollaborators = () => {
   return snapshot.collaborators ?? [];
 };
 
+const idToColor = (id: string) => {
+  return collaboratorsColorMap[
+    Object.values(CollaboratorColors)[
+      id.charCodeAt(0) % Object.values(CollaboratorColors).length
+    ]
+  ];
+};
+
+export const usePointers = () => {
+  const { presence } = useContext(DocContext);
+  const snapshot = useSnapshot(presence); // pointers is reassigned so dont snapshot on that
+  const { data } = authClient.useSession();
+  return (
+    snapshot.pointers
+      .filter((p) => p.id !== data?.user.id)
+      .map((p) => ({
+        id: p.id,
+        x: p.x,
+        y: p.y,
+        color: idToColor(p.id),
+      })) ?? []
+  );
+};
+
 export const useAwarenessActions = () => {
   const state = useContext(DocContext);
+  const { profile } = useProfile();
+
   return {
     updateSelectionAwareness: async (selected: string[]) => {
       const { data } = await authClient.getSession();
@@ -250,6 +284,17 @@ export const useAwarenessActions = () => {
           selected,
         } satisfies CollaboratorSelection);
       }
+    },
+
+    updatePointersAwareness: async (pointer: {
+      x: number;
+      y: number;
+    }) => {
+      state.syncProvider.setAwarenessField("pointers", {
+        id: profile.id,
+        x: pointer.x,
+        y: pointer.y,
+      } satisfies Pointer);
     },
   };
 };

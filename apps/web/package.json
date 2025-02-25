@@ -41,7 +41,7 @@
     "date-fns": "^4.1.0",
     "isbot": "^5.1.17",
     "lucide-react": "^0.469.0",
-    "motion": "^11.15.0",
+    "motion": "^11.18.2",
     "rbush": "^4.0.1",
     "react": "^19.0.0",
     "react-day-picker": "8.10.1",
