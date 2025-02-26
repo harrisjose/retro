@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import type { SpringOptions } from "motion/react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, useSpring } from "motion/react";
 import { useEffect } from "react";
 
 type CursorProps = {
@@ -12,25 +12,29 @@ type CursorProps = {
     background: string;
     text: string;
   };
+  userName: string;
 };
 
 const springConfig: SpringOptions = {
-  stiffness: 0,
-  damping: 15,
-  mass: 1,
+  stiffness: 100,
+  damping: 12,
+  mass: 0.5,
 };
 
-export function CollaboratorCursor({ className, x, y, color }: CursorProps) {
-  const cursorX = useMotionValue(x);
-  const cursorY = useMotionValue(y);
+export function CollaboratorCursor({
+  className,
+  x,
+  y,
+  color,
+  userName,
+}: CursorProps) {
+  const cursorXSpring = useSpring(x, springConfig);
+  const cursorYSpring = useSpring(y, springConfig);
 
   useEffect(() => {
-    cursorX.set(x);
-    cursorY.set(y);
-  }, [x, y, cursorX, cursorY]);
-
-  const cursorXSpring = useSpring(cursorX, springConfig || { duration: 0 });
-  const cursorYSpring = useSpring(cursorY, springConfig || { duration: 0 });
+    cursorXSpring.set(x);
+    cursorYSpring.set(y);
+  }, [x, y, cursorXSpring, cursorYSpring]);
 
   return (
     <motion.div
@@ -40,11 +44,11 @@ export function CollaboratorCursor({ className, x, y, color }: CursorProps) {
         y: cursorYSpring,
       }}
     >
-      <span className={cn("pointer-events-none relative select-none")}>
+      <span className="pointer-events-none relative select-none">
         <svg
           aria-hidden="true"
           focusable="false"
-          className={cn("size-3.5")}
+          className="size-3.5"
           xmlns="http://www.w3.org/2000/svg"
           width="20"
           height="20"
@@ -56,15 +60,13 @@ export function CollaboratorCursor({ className, x, y, color }: CursorProps) {
           />
         </svg>
         <span
-          className={cn(
-            "relative ml-3.5 flex flex-col whitespace-nowrap rounded-xl py-1 pr-3 pl-2.5 text-xs",
-          )}
+          className="relative ml-3.5 flex flex-col whitespace-nowrap rounded-xl py-1 pr-3 pl-2.5 text-xs"
           style={{
             backgroundColor: color.background,
             color: color.text,
           }}
         >
-          <span>Praveen kumar</span>
+          <span>{userName}</span>
         </span>
       </span>
     </motion.div>

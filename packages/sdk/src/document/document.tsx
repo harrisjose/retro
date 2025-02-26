@@ -31,7 +31,6 @@ import {
 } from "@retro/pm";
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useRef } from "react";
-import { useProfile } from "src/profile.js";
 import { useInterval } from "usehooks-ts";
 import { proxy, ref, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
@@ -256,11 +255,13 @@ const idToColor = (id: string) => {
 };
 
 export const usePointers = () => {
-  const { presence } = useContext(DocContext);
-  const snapshot = useSnapshot(presence); // pointers is reassigned so dont snapshot on that
+  const state = useContext(DocContext);
+  const snapshot = useSnapshot(state.presence);
+  const { pointers } = snapshot;
   const { data } = authClient.useSession();
+
   return (
-    snapshot.pointers
+    pointers
       .filter((p) => p.id !== data?.user.id)
       .map((p) => ({
         id: p.id,
@@ -273,7 +274,7 @@ export const usePointers = () => {
 
 export const useAwarenessActions = () => {
   const state = useContext(DocContext);
-  const { profile } = useProfile();
+  const { data } = authClient.useSession();
 
   return {
     updateSelectionAwareness: async (selected: string[]) => {
@@ -290,11 +291,13 @@ export const useAwarenessActions = () => {
       x: number;
       y: number;
     }) => {
-      state.syncProvider.setAwarenessField("pointers", {
-        id: profile.id,
-        x: pointer.x,
-        y: pointer.y,
-      } satisfies Pointer);
+      if (data?.user.id) {
+        state.syncProvider.setAwarenessField("pointers", {
+          id: data.user.id,
+          x: pointer.x,
+          y: pointer.y,
+        } satisfies Pointer);
+      }
     },
   };
 };
