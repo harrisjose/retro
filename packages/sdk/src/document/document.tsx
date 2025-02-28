@@ -5,6 +5,7 @@ import type {
   Collaborator,
   CollaboratorSelection,
   Document,
+  Pointer,
   Properties,
   Section,
   YBlockBase,
@@ -16,8 +17,10 @@ import type {
 } from "@retro/common";
 import {
   CanvasTransactionOrigin,
+  CollaboratorColors,
   bindProxyToKVRef,
   bindProxyToRef,
+  collaboratorsColorMap,
   observeKeysInMapRef,
   updateProxyState,
 } from "@retro/common";
@@ -90,6 +93,9 @@ const usePresenceSync = (state: DocumentState) => {
           .map((s) => s.selection)
           .filter((s) => !isNil(s));
         state.presence.selections = uniqBy(selections, "id");
+
+        const pointers = states.map((s) => s.pointers).filter((p) => !isNil(p));
+        state.presence.pointers = uniqBy(pointers, "id");
       },
     );
   }, []);
@@ -209,6 +215,7 @@ export const DocProvider = ({
       presence: {
         collaborators: [],
         selections: [],
+        pointers: [],
       },
       isReady: false,
     }),
@@ -239,8 +246,36 @@ export const useCollaborators = () => {
   return snapshot.collaborators ?? [];
 };
 
+const idToColor = (id: string) => {
+  return collaboratorsColorMap[
+    Object.values(CollaboratorColors)[
+      id.charCodeAt(0) % Object.values(CollaboratorColors).length
+    ]
+  ];
+};
+
+export const usePointers = () => {
+  const state = useContext(DocContext);
+  const snapshot = useSnapshot(state.presence);
+  const { pointers } = snapshot;
+  const { data } = authClient.useSession();
+
+  return (
+    pointers
+      .filter((p) => p.id !== data?.user.id)
+      .map((p) => ({
+        id: p.id,
+        x: p.x,
+        y: p.y,
+        color: idToColor(p.id),
+      })) ?? []
+  );
+};
+
 export const useAwarenessActions = () => {
   const state = useContext(DocContext);
+  const { data } = authClient.useSession();
+
   return {
     updateSelectionAwareness: async (selected: string[]) => {
       const { data } = await authClient.getSession();
@@ -249,6 +284,19 @@ export const useAwarenessActions = () => {
           id: data.user.id,
           selected,
         } satisfies CollaboratorSelection);
+      }
+    },
+
+    updatePointersAwareness: async (pointer: {
+      x: number;
+      y: number;
+    }) => {
+      if (data?.user.id) {
+        state.syncProvider.setAwarenessField("pointers", {
+          id: data.user.id,
+          x: pointer.x,
+          y: pointer.y,
+        } satisfies Pointer);
       }
     },
   };

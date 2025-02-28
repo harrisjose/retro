@@ -4,6 +4,7 @@ import { useSectionMap } from "@retro/sdk";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
+import { UserCursor } from "./cursors/user-cursor";
 import { CanvasControllerContext, CanvasEventType } from "./machine";
 import IntroSection from "./sections/intro";
 import SectionRenderer from "./sections/section";
@@ -110,8 +111,10 @@ export default function Canvas() {
             <SectionRenderer key={sectionId} id={sectionId} />
           ))}
           <BlocksRenderer />
+
           <SummarySection />
         </div>
+        <UserCursor />
         <CanvasCursor />
         <SelectionRectangle />
       </div>
