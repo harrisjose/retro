@@ -196,3 +196,10 @@ export type NotifySelectionActionParams = [
 ];
 export type UndoActionParams = [any];
 export type RedoActionParams = [any];
+
+export type RecalculateSectionHeightAfterBlockDragActionParams = [
+  any,
+  {
+    widgets: string[];
+  },
+];

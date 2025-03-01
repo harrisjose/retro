@@ -8,7 +8,24 @@ import { DocContext, useYDoc } from "../document/document.js";
 export const useSectionMap = () => {
   const state = useContext(DocContext);
   const snapshot = useSnapshot(state.sections);
-  return snapshot as SectionMap;
+  const yDoc = useYDoc();
+
+  const setSectionHeight = (sectionId: string, height: number) => {
+    const ySectionMap = yDoc.getMap("sections");
+    const ySectionBase = ySectionMap.get(sectionId) as YSectionBase;
+    const ySection = new YKeyValue(ySectionBase);
+
+    console.log("setSectionHeight", sectionId, height);
+
+    yDoc.transact(() => {
+      ySection.set("height", height);
+    });
+  };
+
+  return {
+    sections: snapshot as SectionMap,
+    setSectionHeight,
+  };
 };
 
 export const useSection = (sectionId: string) => {

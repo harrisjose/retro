@@ -178,6 +178,29 @@ export const computeSectionCenters = (
   return positions;
 };
 
+export const getSectionBounds = (
+  sectionMap: SectionMap,
+): Record<string, Rectangle> => {
+  let xPosition =
+    CanvasConstants.PaddingAround +
+    CanvasConstants.IntroSectionWidth +
+    CanvasConstants.PaddingBetween;
+  const sectionBounds: Record<string, Rectangle> = {};
+
+  // Compute positions for all regular sections
+  Object.entries(sectionMap).forEach(([sectionId, section]) => {
+    sectionBounds[sectionId] = {
+      x: xPosition,
+      y: 0,
+      width: section.width,
+      height: section.height,
+    };
+    xPosition += section.width + CanvasConstants.PaddingBetween;
+  });
+
+  return sectionBounds;
+};
+
 export const getActiveSectionOnScreen = (
   camera: Camera,
   sectionPosMap: Record<string, Camera>,

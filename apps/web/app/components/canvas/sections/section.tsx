@@ -56,6 +56,7 @@ export default function SectionRenderer({ id }: { id: string }) {
   return (
     <div
       key={id}
+      id={`section-${id}`}
       ref={sectionRef}
       className="shrink-0 bg-white rounded-2xl border border-[#0000000F] relative"
       data-clear-selection

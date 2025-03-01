@@ -3,12 +3,17 @@ import {
   useAwarenessActions,
   useHistory,
   useMultiBlockActions,
+  useSectionMap,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
 import { type PropsWithChildren, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { assertEvent, assign, enqueueActions } from "xstate";
-import { getRectangleFromPoints, useCanvasSearch } from "../store";
+import {
+  getRectangleFromPoints,
+  getSectionBounds,
+  useCanvasSearch,
+} from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -25,6 +30,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const { redo, undo, onPop, onPush } = useHistory();
   //
   const { updateSelectionAwareness } = useAwarenessActions();
+  const { sections, setSectionHeight } = useSectionMap();
 
   const historyEventListenerLogic = useMemo(
     () => createHistoryEventListenerLogic(onPop, onPush),
@@ -126,6 +132,44 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               } as NotifySelectionActionParams[1],
             });
           }),
+          recalculateSectionHeightAfterBlockDrag: (_, params) => {
+            const sectionBounds = getSectionBounds(sections);
+
+            const blocks = getBlocks(params.widgets);
+            // Track sections that need height adjustment
+            const heightAdjustments = new Map<string, number>();
+
+            // Check each block against section bounds
+            blocks.forEach((block) => {
+              // Find which section this block belongs to (horizontally)
+              const section = Object.entries(sectionBounds).find(
+                ([_, bounds]) =>
+                  block.x >= bounds.x && block.x <= bounds.x + bounds.width,
+              );
+
+              if (section) {
+                const [sectionId, bounds] = section;
+                const blockBottom = block.y + block.height;
+
+                // Only adjust if block extends beyond current section height
+                // and is within max height limit
+                if (blockBottom > bounds.height && blockBottom <= 2500) {
+                  const currentMaxHeight =
+                    heightAdjustments.get(sectionId) || bounds.height;
+                  heightAdjustments.set(
+                    sectionId,
+                    Math.max(currentMaxHeight, blockBottom),
+                  );
+                }
+              }
+            });
+
+            console.log("heightAdjustments", heightAdjustments);
+
+            heightAdjustments.forEach((height, sectionId) => {
+              setSectionHeight(sectionId, height);
+            });
+          },
           undo,
           redo,
         },

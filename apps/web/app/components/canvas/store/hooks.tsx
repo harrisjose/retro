@@ -36,7 +36,7 @@ export const useCanvas = () => {
 };
 
 export const useCamera = () => {
-  const sections = useSectionMap();
+  const { sections } = useSectionMap();
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
 
@@ -64,7 +64,7 @@ export const useCamera = () => {
 
 export const useSectionNavigation = () => {
   const shouldReduceMotion = useReducedMotion();
-  const sections = useSectionMap();
+  const { sections } = useSectionMap();
   const state = useContext(CanvasContext);
   const viewport = useWindowSize();
   const { z: defaultZoom } = computeDefaultCamera(viewport);
