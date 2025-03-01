@@ -16,10 +16,16 @@
     "migrate-down": "pnpm run kysely migrate down",
     "db:setup": "pnpm run setup-better-auth && pnpm run migrate-latest",
     "db:generate": "doppler run -- tsx src/db/scripts/generate.ts",
+    "api:dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "api:start": "doppler run -- tsx src/index.ts",
+    "worker:summary:dev": "doppler run -- tsx watch --inspect src/queue/summary/worker.ts",
+    "worker:summary": "doppler run -- tsx src/queue/summary/worker.ts",
+    "worker:slack:dev": "doppler run -- tsx watch --inspect src/queue/slack/worker.ts",
+    "worker:slack": "doppler run -- tsx src/queue/slack/worker.ts",
     "predev": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
-    "dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "dev": "pm2 start ecosystem.dev.config.cjs",
     "prestart": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
-    "start": "doppler run -- tsx src/index.ts"
+    "start": "pm2 start ecosystem.prod.config.cjs"
   },
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
@@ -34,6 +40,7 @@
     "@retro/pm": "workspace:*",
     "@slack/web-api": "^7.8.0",
     "@trpc/server": "11.0.0-rc.682",
+    "bullmq": "^5.41.7",
     "hono": "^4.6.14",
     "kysely": "^0.27.5",
     "kysely-ctl": "^0.11.1",

@@ -6,7 +6,6 @@ import { Logger } from "@hocuspocus/extension-logger";
 import { Hocuspocus } from "@hocuspocus/server";
 import type { HttpBindings } from "@hono/node-server";
 import type { Context, Hono, Next } from "hono";
-import type { WebSocket } from "ws";
 import { WebSocketServer } from "ws";
 import * as Y from "yjs";
 import { db, dbUtil } from "../db/index.js";
