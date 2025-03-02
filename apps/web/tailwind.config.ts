@@ -50,6 +50,7 @@ export default {
           hover: "hsl(var(--destructive-hover))",
         },
         border: "hsl(var(--border))",
+        selection: "hsl(var(--selection))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {

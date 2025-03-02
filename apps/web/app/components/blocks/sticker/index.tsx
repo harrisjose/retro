@@ -93,7 +93,7 @@ const StickerRenderer = ({
         width: "64px",
         height: "64px",
         border: isActive
-          ? "2px solid rgba(0, 0, 0, 0.2)"
+          ? "2px solid hsl(var(--selection))"
           : "2px solid transparent",
         borderRadius: "12px",
       }}

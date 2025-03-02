@@ -3,6 +3,7 @@ import {
   CardConstants,
   type CardProperties,
   type StickerProperties,
+  cardColorsMap,
   raw,
 } from "@retro/common";
 import { useCreateBlock, useProfile } from "@retro/sdk";
@@ -107,7 +108,16 @@ export const CanvasCursor = () => {
       className="w-screen h-screen absolute top-0 left-0 z-10"
     >
       {match(blockToInsert.type)
-        .with(BlockType.Card, () => <CardCursor />)
+        .with(BlockType.Card, () => (
+          <CardCursor
+            width={CardConstants.Width}
+            height={CardConstants.Height}
+            cardColor={
+              cardColorsMap[(blockToInsert.properties as CardProperties).color]
+            }
+            cameraZ={camera.z}
+          />
+        ))
         .with(BlockType.Sticker, () => (
           <StickerCursor
             stickerType={

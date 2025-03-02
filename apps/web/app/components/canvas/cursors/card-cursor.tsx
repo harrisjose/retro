@@ -1,11 +1,29 @@
 import type { SVGProps } from "react";
 import { Cursor } from "../../ui/cursor";
 
-export default function CardCursor() {
+export default function CardCursor({
+  width,
+  height,
+  cardColor,
+  cameraZ,
+}: {
+  width: number;
+  height: number;
+  cardColor: string;
+  cameraZ: number;
+}) {
   return (
     <Cursor attachToParent className="flex items-center gap-2">
       <PlusIcon className="w-6 h-6" />
-      <CardIcon className="w-6 h-6 absolute -bottom-4 -right-4" />
+      <div
+        className="absolute left-[20px]"
+        style={{
+          width: width * cameraZ,
+          height: height * cameraZ,
+          backgroundColor: cardColor,
+          borderRadius: "10px",
+        }}
+      ></div>
     </Cursor>
   );
 }
