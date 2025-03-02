@@ -103,7 +103,6 @@ export default function Canvas() {
             transform: `scale(${camera.z}) translate(${camera.x}px, ${camera.y}px)`,
             transformOrigin: "0 0",
             gap: CanvasConstants.PaddingBetween,
-            padding: CanvasConstants.PaddingAround,
           }}
         >
           <IntroSection />

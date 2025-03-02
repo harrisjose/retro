@@ -1,6 +1,7 @@
-import { BlockType } from "@retro/common";
+import { BlockType, SectionMaxHeight, SectionMinHeight } from "@retro/common";
 import {
   useAwarenessActions,
+  useBlockMap,
   useHistory,
   useMultiBlockActions,
   useSectionMap,
@@ -36,6 +37,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     () => createHistoryEventListenerLogic(onPop, onPush),
     [],
   );
+  const blocks = useBlockMap();
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
 
   return (
@@ -135,34 +137,48 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
           recalculateSectionHeightAfterBlockDrag: (_, params) => {
             const sectionBounds = getSectionBounds(sections);
 
-            const blocks = getBlocks(params.widgets);
-            // Track sections that need height adjustment
+            // Group blocks by section
+            const blocksBySection = Object.values(blocks).reduce(
+              (acc, block) => {
+                const section = Object.entries(sectionBounds).find(
+                  ([_, bounds]) =>
+                    block.x >= bounds.x && block.x <= bounds.x + bounds.width,
+                );
+
+                if (section) {
+                  const [sectionId] = section;
+                  if (!acc[sectionId]) {
+                    acc[sectionId] = [];
+                  }
+                  acc[sectionId].push(block);
+                }
+                return acc;
+              },
+              {} as Record<string, (typeof blocks)[string][]>,
+            );
+
+            // Calculate max height for each section
             const heightAdjustments = new Map<string, number>();
 
-            // Check each block against section bounds
-            blocks.forEach((block) => {
-              // Find which section this block belongs to (horizontally)
-              const section = Object.entries(sectionBounds).find(
-                ([_, bounds]) =>
-                  block.x >= bounds.x && block.x <= bounds.x + bounds.width,
-              );
+            Object.entries(blocksBySection).forEach(
+              ([sectionId, sectionBlocks]) => {
+                const maxBlockHeight = Math.max(
+                  ...sectionBlocks.map((block) => block.y + block.height),
+                );
 
-              if (section) {
-                const [sectionId, bounds] = section;
-                const blockBottom = block.y + block.height;
+                // Clamp height between min and max values
+                const newHeight = Math.max(
+                  Math.min(maxBlockHeight, SectionMaxHeight),
+                  SectionMinHeight,
+                );
 
-                // Only adjust if block extends beyond current section height
-                // and is within max height limit
-                if (blockBottom > bounds.height && blockBottom <= 2500) {
-                  const currentMaxHeight =
-                    heightAdjustments.get(sectionId) || bounds.height;
-                  heightAdjustments.set(
-                    sectionId,
-                    Math.max(currentMaxHeight, blockBottom),
-                  );
+                // Only add to adjustments if height changed
+                const currentBounds = sectionBounds[sectionId];
+                if (newHeight !== currentBounds.height) {
+                  heightAdjustments.set(sectionId, newHeight);
                 }
-              }
-            });
+              },
+            );
 
             console.log("heightAdjustments", heightAdjustments);
 

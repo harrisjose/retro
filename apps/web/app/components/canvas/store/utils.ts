@@ -80,14 +80,14 @@ export const computeDefaultCamera = (viewport?: {
 
   // Get the total height needed for the section
   const totalSectionHeight = CanvasConstants.SectionHeight; // Height of one section
-  const totalHPadding = CanvasConstants.PaddingAround * 2; // Padding above and below
+  const totalHPadding = 200; // Padding above and below to position the section at center of the viewport
 
   // Calculate the scale needed to fit the section vertically in the viewport
   // Formula: viewportHeight / contentHeight
   // This ensures the entire height (including padding) fits in the viewport
   const zoom = viewport.height / (totalSectionHeight + totalHPadding);
 
-  return { x: 0, y: 0, z: zoom };
+  return { x: totalHPadding / 2, y: totalHPadding / 2, z: zoom };
 };
 
 export const computeZoomBounds = (sections: SectionMap): Bounds => {
@@ -97,9 +97,7 @@ export const computeZoomBounds = (sections: SectionMap): Bounds => {
   };
 
   const sectionCount = Object.keys(sections).length;
-  const totalWPadding =
-    CanvasConstants.PaddingAround * 2 +
-    CanvasConstants.PaddingBetween * (sectionCount - 1);
+  const totalWPadding = CanvasConstants.PaddingBetween * (sectionCount - 1);
 
   const totalSectionWidth =
     Object.values(sections).reduce((acc, section) => acc + section.width, 0) +
@@ -127,8 +125,7 @@ export const computeSectionCenters = (
   const computeSectionPosition = (x: number, width: number): Camera => {
     const centerPoint = {
       x: x + width / 2,
-      y:
-        (CanvasConstants.SectionHeight + CanvasConstants.PaddingAround * 2) / 2,
+      y: CanvasConstants.SectionHeight / 2,
     };
 
     const screenCenter = {
@@ -151,17 +148,12 @@ export const computeSectionCenters = (
 
   // Initialize result map with intro position
   const positions: Record<string, Camera> = {
-    intro: computeSectionPosition(
-      CanvasConstants.PaddingAround,
-      CanvasConstants.IntroSectionWidth,
-    ),
+    intro: computeSectionPosition(0, CanvasConstants.IntroSectionWidth),
   };
 
   // Track cumulative x position as we go
   let xPosition =
-    CanvasConstants.PaddingAround +
-    CanvasConstants.IntroSectionWidth +
-    CanvasConstants.PaddingBetween;
+    CanvasConstants.IntroSectionWidth + CanvasConstants.PaddingBetween;
 
   // Compute positions for all regular sections
   Object.entries(sections).forEach(([sectionId, section]) => {
@@ -182,9 +174,7 @@ export const getSectionBounds = (
   sectionMap: SectionMap,
 ): Record<string, Rectangle> => {
   let xPosition =
-    CanvasConstants.PaddingAround +
-    CanvasConstants.IntroSectionWidth +
-    CanvasConstants.PaddingBetween;
+    CanvasConstants.IntroSectionWidth + CanvasConstants.PaddingBetween;
   const sectionBounds: Record<string, Rectangle> = {};
 
   // Compute positions for all regular sections
