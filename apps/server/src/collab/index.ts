@@ -1,11 +1,10 @@
-import type { IncomingMessage } from "http";
-import type { Server } from "node:http";
-import type { Http2SecureServer, Http2Server } from "node:http2";
+import type { IncomingMessage, Server } from "http";
 import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Hocuspocus } from "@hocuspocus/server";
 import type { HttpBindings } from "@hono/node-server";
 import type { Context, Hono, Next } from "hono";
+import type { WebSocket } from "ws";
 import { WebSocketServer } from "ws";
 import * as Y from "yjs";
 import { db, dbUtil } from "../db/index.js";
@@ -86,7 +85,7 @@ export const collabHandler = async (c: Context, next: Next) => {
   return new Response();
 };
 
-export function withCollab<T extends Server | Http2Server | Http2SecureServer>(
+export function withCollab<T extends Server>(
   server: T,
   config: { app: Hono<{ Bindings: HttpBindings }>; baseUrl: string },
 ): T {
