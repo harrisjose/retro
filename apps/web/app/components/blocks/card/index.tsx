@@ -188,7 +188,12 @@ export default function CardBlock({ id }: { id: string }) {
         )}
         <div className="mt-auto h-7">
           {properties.createdBy && (
-            <div className="text-xs shrink-0 text-black opacity-60 ">
+            <div
+              className="text-xs shrink-0 text-black opacity-60"
+              style={{
+                fontFamily: "Caveat",
+              }}
+            >
               {properties.createdBy.name}
             </div>
           )}
