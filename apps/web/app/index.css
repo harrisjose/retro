@@ -7,7 +7,6 @@
   src: url("/SNPro-Variable.woff2") format("woff2");
   font-weight: 100 900;
   font-display: swap;
-  size-adjust: 100%;
 }
 
 @layer base {
@@ -31,6 +30,7 @@
     --destructive-hover: 0 84.2% 60.2%;
     --border: 0 0% 89.8%;
     --selection: 271 100% 55%;
+    --insertion-hover: 0 0% 97%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --chart-1: 12 76% 61%;
