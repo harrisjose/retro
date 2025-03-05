@@ -27,18 +27,18 @@ const documentRouter = router({
             "createdBy",
             "createdAt",
             "updatedAt",
-            "startDate",
-            "endDate",
+            "endDateTime",
+            "duration",
             "yDocUpdatedAt",
             "organizationId",
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .$if(input.filter === DocumentListFilter.ACTIVE, (b) =>
-            b.where("endDate", ">=", now),
+            b.where("endDateTime", ">=", now),
           )
           .$if(input.filter === DocumentListFilter.PAST, (b) =>
-            b.where("endDate", "<", now),
+            b.where("endDateTime", "<", now),
           )
           .orderBy("createdAt", "desc")
           .limit(20)
@@ -69,8 +69,8 @@ const documentRouter = router({
             "createdBy",
             "createdAt",
             "updatedAt",
-            "startDate",
-            "endDate",
+            "endDateTime",
+            "duration",
             "yDocUpdatedAt",
             "organizationId",
           ])
@@ -89,8 +89,8 @@ const documentRouter = router({
       z.object({
         name: z.string(),
         organizationId: z.string(),
-        startDate: z.string(),
-        endDate: z.string(),
+        endDateTime: z.string(),
+        duration: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -106,8 +106,8 @@ const documentRouter = router({
             createdBy: ctx.user.id,
             yDoc: getInitialYDoc(),
             yDocUpdatedAt: new Date(),
-            startDate: new Date(input.startDate),
-            endDate: new Date(input.endDate),
+            endDateTime: new Date(input.endDateTime),
+            duration: input.duration,
           })
           .returningAll()
           .executeTakeFirstOrThrow();

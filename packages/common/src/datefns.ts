@@ -30,13 +30,3 @@ export const getRemainingTime = (date: Date): string => {
   const minutesRemaining = differenceInMinutes(date, now);
   return `${minutesRemaining} mins`;
 };
-
-export const getFormattedStartDate = (date: Date): Date => {
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-export const getFormattedEndDate = (date: Date): Date => {
-  date.setHours(23, 59, 59, 999);
-  return date;
-};
