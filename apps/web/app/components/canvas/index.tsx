@@ -4,6 +4,7 @@ import { useSectionMap } from "@retro/sdk";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
+import { InsertDragCursor } from "./cursors/insert-drag-cursor";
 import { UserCursor } from "./cursors/user-cursor";
 import { CanvasControllerContext, CanvasEventType } from "./machine";
 import IntroSection from "./sections/intro";
@@ -115,6 +116,7 @@ export default function Canvas() {
         </div>
         <UserCursor />
         <CanvasCursor />
+        <InsertDragCursor />
         <SelectionRectangle />
       </div>
       <Zoom current={camera.z} onChange={zoomBy} />

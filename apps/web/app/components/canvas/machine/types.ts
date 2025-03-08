@@ -6,6 +6,7 @@ export enum CanvasMode {
   Selecting = "SELECTING",
   Selected = "SELECTED",
   Inserting = "INSERTING",
+  InsertDragging = "INSERT_DRAGGING",
 }
 
 export enum SelectionMode {
@@ -34,6 +35,10 @@ export enum CanvasEventType {
   InsertStart = "START_INSERTION",
   InsertDone = "COMPLETE_INSERTION",
   InsertCancel = "CANCEL_INSERTION",
+  InsertDragStart = "START_DRAG_INSERTION",
+  InsertDragMove = "MOVE_DRAG_INSERTION",
+  InsertDragEnd = "END_DRAG_INSERTION",
+  InsertDragCancel = "CANCEL_DRAG_INSERTION",
 }
 
 export enum BlockEventType {
@@ -144,13 +149,30 @@ export type Events =
     }
   | EditorEvents
   | KeyboardEvents
-  | HistoryEvents;
+  | HistoryEvents
+  | {
+      type: CanvasEventType.InsertDragStart;
+      blockToInsert: BlockToInsert;
+      payload: PointerEventPayload;
+    }
+  | {
+      type: CanvasEventType.InsertDragMove;
+      payload: PointerEventPayload;
+    }
+  | {
+      type: CanvasEventType.InsertDragEnd;
+      payload: PointerEventPayload;
+    }
+  | {
+      type: CanvasEventType.InsertDragCancel;
+    };
 
 export type CanvasContext = {
   selection: string[];
   insertion: {
     selectedBlock: BlockToInsert | null;
     lastInsertedId: string | null;
+    dragPosition: PointerEventPayload | null;
   };
 
   // To handle drag-to-select
@@ -201,5 +223,13 @@ export type RecalculateSectionHeightAfterBlockDragActionParams = [
   any,
   {
     widgets: string[];
+  },
+];
+
+export type InsertDragEndActionParams = [
+  any,
+  {
+    point: PointerEventPayload;
+    blockToInsert: BlockToInsert;
   },
 ];

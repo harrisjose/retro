@@ -19,7 +19,8 @@ import ArrowDown from "../svg/arrow-down";
 import CardCreatePlus from "../svg/card-create-plus";
 import { DocumentTimerWrapper } from "../timer";
 import { Separator } from "../ui/separator";
-import { CanvasControllerContext, CanvasEventType } from "./machine";
+import { useInsertDrag } from "./hooks/use-insert-drag";
+import { CanvasControllerContext } from "./machine";
 
 const getRandomCardColor = () => {
   return Object.values(CardColor)[
@@ -31,17 +32,17 @@ const StickerMenu = () => {
   const [open, setOpen] = useState(false);
 
   const controllerRef = CanvasControllerContext.useActorRef();
+  const { handleInsertInteraction } = useInsertDrag();
 
-  const handleClick = (stickType: StickerType) => {
-    controllerRef.send({
-      type: CanvasEventType.InsertStart,
-      blockToInsert: {
-        type: BlockType.Sticker,
-        properties: {
-          stickerType: stickType,
-        },
-      },
-    });
+  const createStickerBlockToInsert = (stickerType: StickerType) => ({
+    type: BlockType.Sticker,
+    properties: {
+      stickerType,
+    },
+  });
+
+  const handleInteraction = (e: React.MouseEvent, stickerType: StickerType) => {
+    handleInsertInteraction(e, createStickerBlockToInsert(stickerType));
     setOpen(false);
   };
 
@@ -90,7 +91,7 @@ const StickerMenu = () => {
           <div
             key={key}
             className="hover:scale-[1.2] transition-all hover:rotate-[4deg] cursor-pointer"
-            onClick={() => handleClick(key as StickerType)}
+            onMouseDown={(e) => handleInteraction(e, key as StickerType)}
           >
             <img src={`/stickers/${key}.png`} className="w-10 h-10" />
           </div>
@@ -101,29 +102,28 @@ const StickerMenu = () => {
 };
 
 const CardMenu = () => {
-  const controllerRef = CanvasControllerContext.useActorRef();
   const { profile } = useProfile();
+  const { handleInsertInteraction } = useInsertDrag();
 
-  const insertCard = () => {
-    controllerRef.send({
-      type: CanvasEventType.InsertStart,
-      blockToInsert: {
-        type: BlockType.Card,
-        properties: {
-          color: getRandomCardColor(),
-          content: raw(new Y.XmlFragment()),
-          createdBy: {
-            id: profile.id,
-            name: profile.name,
-          },
-        },
+  const createCardBlockToInsert = () => ({
+    type: BlockType.Card,
+    properties: {
+      color: getRandomCardColor(),
+      content: raw(new Y.XmlFragment()),
+      createdBy: {
+        id: profile.id,
+        name: profile.name,
       },
-    });
+    },
+  });
+
+  const handleInteraction = (e: React.MouseEvent) => {
+    handleInsertInteraction(e, createCardBlockToInsert());
   };
 
   return (
     <button
-      onClick={insertCard}
+      onMouseDown={handleInteraction}
       className="overflow-hidden px-[20px] relative w-[90px] h-full hover:bg-insertionHover group"
     >
       <div

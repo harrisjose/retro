@@ -15,6 +15,7 @@ import {
 } from "./actors";
 import {
   BlockEventType,
+  type BlockToInsert,
   type BringBlockToFrontActionParams,
   type CanvasContext,
   CanvasEventType,
@@ -26,6 +27,7 @@ import {
   type EditorEvents,
   type Events,
   HistoryEventType,
+  type InsertDragEndActionParams,
   type NotifySelectionActionParams,
   type OnBlockDragActionParams,
   type OnCanvasDragActionParams,
@@ -83,6 +85,9 @@ export const canvasController = setup({
     ) => {
       console.log("Default recalculateSectionHeightAfterBlockDrag action");
     },
+    handleInsertDragEnd: (...args: InsertDragEndActionParams) => {
+      console.log("Default insertDragEnd action", args);
+    },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
       assertEvent(event, Object.values(BlockEventType));
@@ -108,6 +113,7 @@ export const canvasController = setup({
         insertion: {
           selectedBlock: null,
           lastInsertedId: event.blockId,
+          dragPosition: null,
         },
         selection: selected,
       });
@@ -115,6 +121,13 @@ export const canvasController = setup({
         type: "notifySelection",
         params: { selected } as NotifySelectionActionParams[1],
       });
+    }),
+    clearInsertion: assign({
+      insertion: {
+        selectedBlock: null,
+        lastInsertedId: null,
+        dragPosition: null,
+      },
     }),
     // Emit the event so that editors subscribed to it can handle
     // the focus/blur event.
@@ -144,6 +157,7 @@ export const canvasController = setup({
     insertion: {
       selectedBlock: null,
       lastInsertedId: null,
+      dragPosition: null,
     },
     dragSelection: {
       start: null,
@@ -170,6 +184,21 @@ export const canvasController = setup({
           insertion: {
             selectedBlock: event.blockToInsert,
             lastInsertedId: null,
+            dragPosition: null,
+          },
+        })),
+        "clearSelection",
+      ],
+    },
+
+    [CanvasEventType.InsertDragStart]: {
+      target: `#${CanvasMode.InsertDragging}`,
+      actions: [
+        assign(({ event }) => ({
+          insertion: {
+            selectedBlock: event.blockToInsert,
+            lastInsertedId: null,
+            dragPosition: event.payload,
           },
         })),
         "clearSelection",
@@ -505,16 +534,51 @@ export const canvasController = setup({
           },
         ],
         [CanvasEventType.InsertCancel]: {
-          actions: [
-            assign({
-              insertion: { selectedBlock: null, lastInsertedId: null },
-            }),
-          ],
+          actions: ["clearInsertion"],
           target: CanvasMode.None,
         },
         keydown: {
           guard: ({ event }) => event.key === "Escape",
           actions: [raise({ type: CanvasEventType.InsertCancel })],
+        },
+      },
+    },
+    [CanvasMode.InsertDragging]: {
+      id: CanvasMode.InsertDragging,
+      on: {
+        [CanvasEventType.InsertDragMove]: {
+          actions: assign({
+            insertion: ({ context, event }) => {
+              return {
+                selectedBlock: context.insertion.selectedBlock,
+                lastInsertedId: context.insertion.lastInsertedId,
+                dragPosition: event.payload,
+              };
+            },
+          }),
+        },
+        [CanvasEventType.InsertDragEnd]: {
+          actions: [
+            {
+              type: "handleInsertDragEnd",
+              params: ({ context, event }) => ({
+                point: event.payload,
+                blockToInsert: context.insertion.selectedBlock as BlockToInsert,
+              }),
+            },
+          ],
+          target: CanvasMode.None,
+        },
+        [CanvasEventType.InsertDragCancel]: {
+          actions: ["clearInsertion"],
+          target: CanvasMode.None,
+        },
+        keydown: {
+          guard: ({ event }) => {
+            const keyEvent = event as KeyboardEvent;
+            return keyEvent.key === "Escape";
+          },
+          actions: [raise({ type: CanvasEventType.InsertDragCancel })],
         },
       },
     },
