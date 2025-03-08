@@ -36,7 +36,6 @@ export enum CanvasEventType {
   InsertDone = "COMPLETE_INSERTION",
   InsertCancel = "CANCEL_INSERTION",
   InsertDragStart = "START_DRAG_INSERTION",
-  InsertDragMove = "MOVE_DRAG_INSERTION",
   InsertDragEnd = "END_DRAG_INSERTION",
   InsertDragCancel = "CANCEL_DRAG_INSERTION",
 }
@@ -156,10 +155,6 @@ export type Events =
       payload: PointerEventPayload;
     }
   | {
-      type: CanvasEventType.InsertDragMove;
-      payload: PointerEventPayload;
-    }
-  | {
       type: CanvasEventType.InsertDragEnd;
       payload: PointerEventPayload;
     }
@@ -172,7 +167,6 @@ export type CanvasContext = {
   insertion: {
     selectedBlock: BlockToInsert | null;
     lastInsertedId: string | null;
-    dragPosition: PointerEventPayload | null;
   };
 
   // To handle drag-to-select

@@ -35,19 +35,6 @@ export const InsertDragCursor = () => {
   useEffect(() => {
     if (!isInsertDragging) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const point = screenToCanvas({ x: e.clientX, y: e.clientY }, camera);
-
-      controllerRef.send({
-        type: CanvasEventType.InsertDragMove,
-        payload: {
-          x: point.x,
-          y: point.y,
-          shiftKey: e.shiftKey,
-        },
-      });
-    };
-
     const handleMouseUp = (e: MouseEvent) => {
       const point = screenToCanvas({ x: e.clientX, y: e.clientY }, camera);
 
@@ -69,12 +56,10 @@ export const InsertDragCursor = () => {
       }
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -93,6 +78,7 @@ export const InsertDragCursor = () => {
               cardColorsMap[(blockToInsert.properties as CardProperties).color]
             }
             cameraZ={camera.z}
+            cursorType="grabbing"
           />
         ))
         .with(BlockType.Sticker, () => (
@@ -103,6 +89,7 @@ export const InsertDragCursor = () => {
               (blockToInsert.properties as StickerProperties).stickerType
             }
             cameraZ={camera.z}
+            cursorType="grabbing"
           />
         ))
         .otherwise(() => null)}

@@ -73,6 +73,7 @@ export const CanvasCursor = () => {
               cardColorsMap[(blockToInsert.properties as CardProperties).color]
             }
             cameraZ={camera.z}
+            cursorType="auto"
           />
         ))
         .with(BlockType.Sticker, () => (
@@ -83,6 +84,7 @@ export const CanvasCursor = () => {
               (blockToInsert.properties as StickerProperties).stickerType
             }
             cameraZ={camera.z}
+            cursorType="auto"
           />
         ))
         .exhaustive()}

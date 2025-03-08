@@ -196,7 +196,6 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
             const point = params.point;
             const blockToInsert = params.blockToInsert;
 
-            // Access createBlock and profile from the machine's context or actions
             const blockId = createBlockAtPosition({
               blockToInsert,
               point,

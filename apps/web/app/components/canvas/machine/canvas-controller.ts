@@ -113,7 +113,6 @@ export const canvasController = setup({
         insertion: {
           selectedBlock: null,
           lastInsertedId: event.blockId,
-          dragPosition: null,
         },
         selection: selected,
       });
@@ -126,7 +125,6 @@ export const canvasController = setup({
       insertion: {
         selectedBlock: null,
         lastInsertedId: null,
-        dragPosition: null,
       },
     }),
     // Emit the event so that editors subscribed to it can handle
@@ -157,7 +155,6 @@ export const canvasController = setup({
     insertion: {
       selectedBlock: null,
       lastInsertedId: null,
-      dragPosition: null,
     },
     dragSelection: {
       start: null,
@@ -184,7 +181,6 @@ export const canvasController = setup({
           insertion: {
             selectedBlock: event.blockToInsert,
             lastInsertedId: null,
-            dragPosition: null,
           },
         })),
         "clearSelection",
@@ -198,7 +194,6 @@ export const canvasController = setup({
           insertion: {
             selectedBlock: event.blockToInsert,
             lastInsertedId: null,
-            dragPosition: event.payload,
           },
         })),
         "clearSelection",
@@ -546,17 +541,6 @@ export const canvasController = setup({
     [CanvasMode.InsertDragging]: {
       id: CanvasMode.InsertDragging,
       on: {
-        [CanvasEventType.InsertDragMove]: {
-          actions: assign({
-            insertion: ({ context, event }) => {
-              return {
-                selectedBlock: context.insertion.selectedBlock,
-                lastInsertedId: context.insertion.lastInsertedId,
-                dragPosition: event.payload,
-              };
-            },
-          }),
-        },
         [CanvasEventType.InsertDragEnd]: {
           actions: [
             {
@@ -567,8 +551,18 @@ export const canvasController = setup({
               }),
             },
           ],
-          target: CanvasMode.None,
         },
+        [CanvasEventType.InsertDone]: [
+          {
+            guard: "isEditableBlock",
+            actions: ["afterInsert"],
+            target: `${CanvasMode.Selected}.${SelectionMode.Editing}`,
+          },
+          {
+            actions: ["afterInsert"],
+            target: `${CanvasMode.Selected}.${SelectionMode.Idle}`,
+          },
+        ],
         [CanvasEventType.InsertDragCancel]: {
           actions: ["clearInsertion"],
           target: CanvasMode.None,

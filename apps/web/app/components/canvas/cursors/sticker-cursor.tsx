@@ -6,14 +6,16 @@ export default function StickerCursor({
   height,
   stickerType,
   cameraZ,
+  cursorType,
 }: {
   width: number;
   height: number;
   stickerType: StickerType;
   cameraZ: number;
+  cursorType: "grabbing" | "auto";
 }) {
   return (
-    <Cursor attachToParent>
+    <Cursor attachToParent cursorType={cursorType}>
       <div
         className="relative"
         style={{
