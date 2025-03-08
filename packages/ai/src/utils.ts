@@ -78,9 +78,8 @@ function getSectionBounds(sections: YSectionMap, sectionId: string): Bounds {
       }
       return acc;
     },
-    CanvasConstants.PaddingAround +
-      CanvasConstants.IntroSectionWidth +
-      CanvasConstants.PaddingBetween / 2,
+
+    CanvasConstants.IntroSectionWidth + CanvasConstants.PaddingBetween / 2,
   );
   const sectionEnd =
     sectionStart +
@@ -91,7 +90,7 @@ function getSectionBounds(sections: YSectionMap, sectionId: string): Bounds {
     left: sectionStart,
     right: sectionEnd,
     top: 0,
-    bottom: CanvasConstants.PaddingAround * 2 + sectionKV.get("height")!,
+    bottom: sectionKV.get("height")!,
   };
 }
 
@@ -99,11 +98,9 @@ function getIntroSectionBounds(): Bounds {
   return {
     left: 0,
     right:
-      CanvasConstants.IntroSectionWidth +
-      CanvasConstants.PaddingAround +
-      CanvasConstants.PaddingBetween / 2,
+      CanvasConstants.IntroSectionWidth + CanvasConstants.PaddingBetween / 2,
     top: 0,
-    bottom: CanvasConstants.PaddingAround * 2 + CanvasConstants.SectionHeight,
+    bottom: CanvasConstants.SectionHeight,
   };
 }
 

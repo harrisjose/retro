@@ -1,14 +1,20 @@
-import { BlockType } from "@retro/common";
+import { BlockType, SectionMaxHeight, SectionMinHeight } from "@retro/common";
 import {
   useAwarenessActions,
+  useBlockMap,
   useHistory,
   useMultiBlockActions,
+  useSectionMap,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
 import { type PropsWithChildren, useMemo } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import { assertEvent, assign, enqueueActions } from "xstate";
-import { getRectangleFromPoints, useCanvasSearch } from "../store";
+import {
+  getRectangleFromPoints,
+  getSectionBounds,
+  useCanvasSearch,
+} from "../store";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -25,11 +31,13 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const { redo, undo, onPop, onPush } = useHistory();
   //
   const { updateSelectionAwareness } = useAwarenessActions();
+  const { sections, setSectionHeight } = useSectionMap();
 
   const historyEventListenerLogic = useMemo(
     () => createHistoryEventListenerLogic(onPop, onPush),
     [],
   );
+  const blocks = useBlockMap();
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
 
   return (
@@ -126,6 +134,58 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               } as NotifySelectionActionParams[1],
             });
           }),
+          recalculateSectionHeightAfterBlockDrag: (_, params) => {
+            const sectionBounds = getSectionBounds(sections);
+
+            // Group blocks by section
+            const blocksBySection = Object.values(blocks).reduce(
+              (acc, block) => {
+                const section = Object.entries(sectionBounds).find(
+                  ([_, bounds]) =>
+                    block.x >= bounds.x && block.x <= bounds.x + bounds.width,
+                );
+
+                if (section) {
+                  const [sectionId] = section;
+                  if (!acc[sectionId]) {
+                    acc[sectionId] = [];
+                  }
+                  acc[sectionId].push(block);
+                }
+                return acc;
+              },
+              {} as Record<string, (typeof blocks)[string][]>,
+            );
+
+            // Calculate max height for each section
+            const heightAdjustments = new Map<string, number>();
+
+            Object.entries(blocksBySection).forEach(
+              ([sectionId, sectionBlocks]) => {
+                const maxBlockHeight = Math.max(
+                  ...sectionBlocks.map((block) => block.y + block.height),
+                );
+
+                // Clamp height between min and max values
+                const newHeight = Math.max(
+                  Math.min(maxBlockHeight, SectionMaxHeight),
+                  SectionMinHeight,
+                );
+
+                // Only add to adjustments if height changed
+                const currentBounds = sectionBounds[sectionId];
+                if (newHeight !== currentBounds.height) {
+                  heightAdjustments.set(sectionId, newHeight);
+                }
+              },
+            );
+
+            console.log("heightAdjustments", heightAdjustments);
+
+            heightAdjustments.forEach((height, sectionId) => {
+              setSectionHeight(sectionId, height);
+            });
+          },
           undo,
           redo,
         },

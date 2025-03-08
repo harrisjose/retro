@@ -29,6 +29,7 @@ import {
   type NotifySelectionActionParams,
   type OnBlockDragActionParams,
   type OnCanvasDragActionParams,
+  type RecalculateSectionHeightAfterBlockDragActionParams,
   type RedoActionParams,
   SelectionMode,
   type UndoActionParams,
@@ -76,6 +77,11 @@ export const canvasController = setup({
     },
     memoizeSelectionPosition: () => {
       console.log("Default memoizeSelectionPosition action");
+    },
+    recalculateSectionHeightAfterBlockDrag: (
+      ...args: RecalculateSectionHeightAfterBlockDragActionParams
+    ) => {
+      console.log("Default recalculateSectionHeightAfterBlockDrag action");
     },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
@@ -416,6 +422,12 @@ export const canvasController = setup({
                 assign({
                   selectionPositions: {},
                 }),
+                {
+                  type: "recalculateSectionHeightAfterBlockDrag",
+                  params: ({ event }) => ({
+                    widgets: [event.blockId],
+                  }),
+                },
               ],
               target: SelectionMode.Idle,
             },

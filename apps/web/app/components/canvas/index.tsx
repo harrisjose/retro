@@ -14,7 +14,7 @@ import { screenToCanvas, useCamera, useCanvasGestures } from "./store";
 import Zoom from "./zoom-menu";
 
 export default function Canvas() {
-  const sections = useSectionMap();
+  const { sections } = useSectionMap();
   const { camera, zoomBy, moveBy } = useCamera();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
@@ -103,7 +103,6 @@ export default function Canvas() {
             transform: `scale(${camera.z}) translate(${camera.x}px, ${camera.y}px)`,
             transformOrigin: "0 0",
             gap: CanvasConstants.PaddingBetween,
-            padding: CanvasConstants.PaddingAround,
           }}
         >
           <IntroSection />

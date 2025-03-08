@@ -51,7 +51,7 @@ export default function IntroSection() {
   const content = useRawIntroContent();
 
   const { moveToSection } = useSectionNavigation();
-  const sectionMap = useSectionMap();
+  const { sections: sectionMap } = useSectionMap();
 
   const onClick = () => {
     const firstSection = find(

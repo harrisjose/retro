@@ -39,7 +39,7 @@ const SectionButton = ({
 export default function Topbar() {
   const { id: documentId } = useDocument();
   const collaborators = useCollaborators();
-  const sectionMap = useSectionMap();
+  const { sections: sectionMap } = useSectionMap();
 
   const { activeSection, moveToSection } = useSectionNavigation();
 

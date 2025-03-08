@@ -1,7 +1,6 @@
 export const CanvasConstants = {
   SectionWidth: 1660,
   SectionHeight: 1024,
-  PaddingAround: 100,
   PaddingBetween: 24,
   IntroSectionWidth: 822,
 };
@@ -12,3 +11,6 @@ export const CardConstants = {
 };
 
 export const CanvasTransactionOrigin = "canvas";
+
+export const SectionMinHeight = 1024;
+export const SectionMaxHeight = 4500;
