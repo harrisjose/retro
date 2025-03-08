@@ -3,6 +3,7 @@ import {
   CardColor,
   CardConstants,
   type CardProperties,
+  cardColorsMap,
   cn,
 } from "@retro/common";
 import {
@@ -31,15 +32,6 @@ import { useDebounceCallback, useResizeObserver } from "usehooks-ts";
 import * as Y from "yjs";
 import { CanvasControllerContext, CanvasMode } from "../../canvas/machine";
 import { buildDefaultKeymap } from "../../editor/keymap";
-
-const colors = {
-  [CardColor.Pink]: "#F3BDFF",
-  [CardColor.Blue]: "#ABF7FF",
-  [CardColor.Green]: "#BCFFD7",
-  [CardColor.Yellow]: "#FFE893",
-  [CardColor.Red]: "#FFA9A9",
-  [CardColor.Purple]: "#CBBFFF",
-} as const;
 
 function createEditorState(fragment: Y.XmlFragment) {
   const state = EditorState.create({
@@ -83,7 +75,7 @@ const CardColorPicker = ({ id }: { id: string }) => {
           <div
             key={color}
             className="w-4 h-4 rounded-full cursor-pointer p-[5px] pointer-events-auto"
-            style={{ backgroundColor: colors[color] }}
+            style={{ backgroundColor: cardColorsMap[color] }}
             onClickCapture={() => onColorClick(color)}
           >
             {color === properties.color && (
@@ -161,14 +153,14 @@ export default function CardBlock({ id }: { id: string }) {
   return (
     <div
       className={cn(
-        "w-full h-full rounded-xl flex flex-col border-2 border-transparent relative",
+        "w-full h-full rounded-[10px] flex flex-col border-2 border-transparent relative",
         isSelected
-          ? "border-opacity-20 border-black border-2 pointer-events-auto"
+          ? "border-2 border-selection pointer-events-auto"
           : "pointer-events-none",
       )}
       style={{
         height: block.height,
-        backgroundColor: colors[properties.color],
+        backgroundColor: cardColorsMap[properties.color],
         zIndex: properties.zIndex ?? 0,
       }}
     >
@@ -196,7 +188,12 @@ export default function CardBlock({ id }: { id: string }) {
         )}
         <div className="mt-auto h-7">
           {properties.createdBy && (
-            <div className="text-xs shrink-0 text-black opacity-60 ">
+            <div
+              className="text-xs shrink-0 text-black opacity-60"
+              style={{
+                fontFamily: "Caveat",
+              }}
+            >
               {properties.createdBy.name}
             </div>
           )}

@@ -86,8 +86,8 @@ export function SelectionRectangle() {
         top: rectangle.y,
         width: rectangle.width,
         height: rectangle.height,
-        backgroundColor: "rgba(35, 131, 226, 0.1)",
-        border: "1px solid rgb(35, 131, 226)",
+        backgroundColor: "rgba(0, 0, 0, 0.04)",
+        border: "1px solid rgba(0, 0, 0, 0.5)",
         borderRadius: 2,
         pointerEvents: "none",
       }}

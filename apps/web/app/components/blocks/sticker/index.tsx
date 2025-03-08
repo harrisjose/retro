@@ -1,7 +1,7 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { type StickerProperties, StickerType } from "@retro/common";
-import { StickerJsonMap, useBlockProperties } from "@retro/sdk";
+import { StickerJsonMap, useBlock, useBlockProperties } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import { useEffect, useState } from "react";
 import {
@@ -16,6 +16,8 @@ const StickerRenderer = ({
   id,
   isActive,
   isDragging,
+  width,
+  height,
 }: { src: string; id: string; isActive: boolean; isDragging: boolean }) => {
   const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
   const [animationInProgress, setAnimationInProgress] = useState(false);
@@ -90,10 +92,10 @@ const StickerRenderer = ({
         }
       }}
       style={{
-        width: "64px",
-        height: "64px",
+        width,
+        height,
         border: isActive
-          ? "2px solid rgba(0, 0, 0, 0.2)"
+          ? "2px solid hsl(var(--selection))"
           : "2px solid transparent",
         borderRadius: "12px",
       }}
@@ -109,6 +111,7 @@ const StickerRenderer = ({
 };
 
 export default function StickerBlock({ id }: { id: string }) {
+  const { block } = useBlock(id);
   const properties = useBlockProperties<StickerProperties>(id).properties;
   const stickerType = (properties as { stickerType: StickerType }).stickerType;
 
@@ -122,6 +125,8 @@ export default function StickerBlock({ id }: { id: string }) {
   return (
     <div className="relative z-[100] select-none">
       <StickerRenderer
+        width={block.width}
+        height={block.height}
         src={StickerJsonMap[stickerType].json}
         id={id}
         isActive={isSelected}

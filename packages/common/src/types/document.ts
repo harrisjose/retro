@@ -159,6 +159,15 @@ export enum CardColor {
   Purple = "purple",
 }
 
+export const cardColorsMap = {
+  [CardColor.Pink]: "#F3BDFF",
+  [CardColor.Blue]: "#ABF7FF",
+  [CardColor.Green]: "#BCFFD7",
+  [CardColor.Yellow]: "#FFE893",
+  [CardColor.Red]: "#FFA9A9",
+  [CardColor.Purple]: "#CBBFFF",
+} as const;
+
 export type CardProperties = {
   content: string;
   color: CardColor;

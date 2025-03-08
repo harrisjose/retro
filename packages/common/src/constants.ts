@@ -10,6 +10,11 @@ export const CardConstants = {
   Width: 200,
 };
 
+export const StickerConstants = {
+  Width: 64,
+  Height: 64,
+};
+
 export const CanvasTransactionOrigin = "canvas";
 
 export const SectionMinHeight = 1024;

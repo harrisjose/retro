@@ -1,24 +1,28 @@
 import type { SVGProps } from "react";
 
 const Timer = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    fill="none"
-    {...props}
-  >
-    <g clipPath="url(#timer-svg)" opacity=".5">
-      <path
-        fill="#000"
-        d="M8 1.333a6.666 6.666 0 1 1 .001 13.333 6.666 6.666 0 0 1 0-13.333Zm0 1.333a5.333 5.333 0 1 0 0 10.667A5.333 5.333 0 0 0 8 2.666ZM8 4a.667.667 0 0 1 .663.588l.004.078v3.058l1.805 1.804a.667.667 0 0 1-.88.998l-.063-.055-2-2a.667.667 0 0 1-.189-.384L7.334 8V4.666A.667.667 0 0 1 8.001 4Z"
-      />
-    </g>
-    <defs>
-      <clipPath id="timer-svg">
-        <path fill="#fff" d="M0 0h16v16H0z" />
-      </clipPath>
-    </defs>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
+    <path
+      d="M10 2H14"
+      stroke="black"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M12 14L15 11"
+      stroke="black"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M12 22C16.4183 22 20 18.4183 20 14C20 9.58172 16.4183 6 12 6C7.58172 6 4 9.58172 4 14C4 18.4183 7.58172 22 12 22Z"
+      stroke="black"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
   </svg>
 );
 

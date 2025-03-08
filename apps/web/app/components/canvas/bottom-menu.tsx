@@ -4,13 +4,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BlockType, CardColor, StickerType, cn, raw } from "@retro/common";
-import { StickerJsonMap, useDocument, useProfile } from "@retro/sdk";
+import {
+  StickerJsonMap,
+  TimerProvider,
+  useDocument,
+  useProfile,
+} from "@retro/sdk";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as Y from "yjs";
-import Back from "../svg/back";
-import Card from "../svg/card";
-import Sticker from "../svg/sticker";
+import { DocumentMusic } from "../music";
+
+import ArrowDown from "../svg/arrow-down";
+import CardCreatePlus from "../svg/card-create-plus";
+import { DocumentTimerWrapper } from "../timer";
 import { Separator } from "../ui/separator";
 import { CanvasControllerContext, CanvasEventType } from "./machine";
 
@@ -41,11 +48,38 @@ const StickerMenu = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className={`cursor-pointer hover:bg-black/[0.04] outline-none p-1 rounded-sm ${
-          open && "bg-black/[0.04]"
-        }`}
+        className={`cursor-pointer relative  w-[105px] h-full hover:bg-insertionHover px-[12px]`}
       >
-        <Sticker className="w-4 h-4" />
+        <div className="flex items-center justify-center gap-1 cursor-pointer relative w-full h-full">
+          <div className="flex-1">
+            <img
+              src="/insertion-menu/thinking-face.png"
+              alt="emoji-picker-1"
+              className="absolute top-[7px] left-0 w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+            />
+            <img
+              src="/insertion-menu/fire.png"
+              alt="emoji-picker-2"
+              className="absolute top-[7px] left-[23px] w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+            />
+            <img
+              src="/insertion-menu/joy.png"
+              alt="emoji-picker-3"
+              className="absolute top-[7px] left-[45px] w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+            />
+            <img
+              src="/insertion-menu/red-heart.png"
+              alt="emoji-picker-1"
+              className="absolute top-[27px] left-0 w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+            />
+            <img
+              src="/insertion-menu/osm.png"
+              alt="emoji-picker-1"
+              className="absolute top-[25px] left-[23px] w-[34px] h-4 object-cover hover:scale-150 transition-transform duration-200"
+            />
+          </div>
+          <ArrowDown />
+        </div>
       </PopoverTrigger>
       <PopoverContent
         sideOffset={10}
@@ -89,10 +123,24 @@ const CardMenu = () => {
 
   return (
     <button
-      className="hover:bg-black/[0.04] rounded-sm p-1"
       onClick={insertCard}
+      className="overflow-hidden px-[20px] relative w-[90px] h-full hover:bg-insertionHover group"
     >
-      <Card className="w-4 h-4" />
+      <div
+        className="w-[50px] h-[50px] rounded-sm -rotate-[21deg] top-[14px] absolute group-hover:scale-[120%] transition-transform duration-200"
+        style={{
+          background: "rgba(203, 191, 255, 1)",
+          boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",
+        }}
+      ></div>
+      <div
+        className="w-[50px] h-[50px] rounded-sm top-[14px] absolute group-hover:scale-[120%] transition-transform duration-200"
+        style={{
+          background: "rgba(255, 232, 147, 1)",
+          boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",
+        }}
+      ></div>
+      <CardCreatePlus className="absolute left-[44%] top-[50%] w-[9px] h-[16px]" />
     </button>
   );
 };
@@ -109,23 +157,18 @@ export const InsertionMenu = () => {
       className={cn(
         "absolute bottom-[16px] left-[50%] translate-x-[-50%]",
         "bg-white rounded-[8px] shadow-[0px_8px_20px_0px_#0000001A]",
-        "flex gap-1 p-[6px] items-center justify-center grow h-[36px]",
+        "flex items-center justify-center grow h-[50px]",
       )}
     >
-      <button onClick={onBack} className="hover:bg-black/[0.04] p-1 rounded-sm">
-        <Back className="w-4 h-4" />
-      </button>
-      <Separator
-        orientation="vertical"
-        className="bg-black opacity-5 rounded-sm"
-      />
-      <div className="text-sm">{document.name}</div>
-      <Separator
-        orientation="vertical"
-        className="bg-black opacity-5 rounded-sm"
-      />
-      <StickerMenu />
-      <CardMenu />
+      <TimerProvider documentId={document.id}>
+        <DocumentTimerWrapper />
+        <Separator orientation="vertical" className="bg-black opacity-5" />
+        <CardMenu />
+        <Separator orientation="vertical" className="bg-black opacity-5" />
+        <StickerMenu />
+        <Separator orientation="vertical" className="bg-black opacity-5" />
+        <DocumentMusic />
+      </TimerProvider>
     </div>
   );
 };

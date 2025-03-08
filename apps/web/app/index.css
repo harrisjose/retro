@@ -9,6 +9,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Caveat";
+  src: url("/Caveat-Regular.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -29,6 +36,8 @@
     --destructive-foreground: 0 0% 98%;
     --destructive-hover: 0 84.2% 60.2%;
     --border: 0 0% 89.8%;
+    --selection: 271 100% 55%;
+    --insertion-hover: 0 0% 97%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --chart-1: 12 76% 61%;
@@ -94,8 +103,6 @@
     scrollbar-width: none; /* Firefox */
   }
 }
-
-
 
 @layer base {
   * {

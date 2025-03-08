@@ -2,7 +2,9 @@ import {
   BlockType,
   CardConstants,
   type CardProperties,
+  StickerConstants,
   type StickerProperties,
+  cardColorsMap,
   raw,
 } from "@retro/common";
 import { useCreateBlock, useProfile } from "@retro/sdk";
@@ -46,15 +48,16 @@ export const CanvasCursor = () => {
       case BlockType.Sticker: {
         const properties = blockToInsert.properties as StickerProperties;
         const stickerId = random.uuidv4();
-
+        const xOffset = point.x - StickerConstants.Width / 2;
+        const yOffset = point.y - StickerConstants.Height / 2;
         createBlock(
           {
             id: stickerId,
             type: BlockType.Sticker,
-            x: point.x,
-            y: point.y,
-            width: 50,
-            height: 50,
+            x: xOffset,
+            y: yOffset,
+            width: StickerConstants.Width,
+            height: StickerConstants.Height,
           },
           {
             stickerType: properties.stickerType,
@@ -69,13 +72,15 @@ export const CanvasCursor = () => {
       case BlockType.Card: {
         const properties = blockToInsert.properties as CardProperties;
         const cardId = random.uuidv4();
+        const xOffset = point.x - CardConstants.Width / 2;
+        const yOffset = point.y - CardConstants.Height / 2;
 
         createBlock(
           {
             id: cardId,
             type: BlockType.Card,
-            x: point.x,
-            y: point.y,
+            x: xOffset,
+            y: yOffset,
             width: CardConstants.Width,
             height: CardConstants.Height,
           },
@@ -100,19 +105,30 @@ export const CanvasCursor = () => {
 
   if (!isInsertionActive || !blockToInsert) return null;
 
-  console.log("blockToInsert", blockToInsert);
   return (
     <div
       onClick={handleClick}
       className="w-screen h-screen absolute top-0 left-0 z-10"
     >
       {match(blockToInsert.type)
-        .with(BlockType.Card, () => <CardCursor />)
+        .with(BlockType.Card, () => (
+          <CardCursor
+            width={CardConstants.Width}
+            height={CardConstants.Height}
+            cardColor={
+              cardColorsMap[(blockToInsert.properties as CardProperties).color]
+            }
+            cameraZ={camera.z}
+          />
+        ))
         .with(BlockType.Sticker, () => (
           <StickerCursor
+            width={StickerConstants.Width}
+            height={StickerConstants.Height}
             stickerType={
               (blockToInsert.properties as StickerProperties).stickerType
             }
+            cameraZ={camera.z}
           />
         ))
         .exhaustive()}
