@@ -1,8 +1,8 @@
 export const CanvasConstants = {
-  SectionWidth: 1660,
-  SectionHeight: 1024,
+  SectionWidth: 1440,
+  SectionHeight: 748,
   PaddingBetween: 24,
-  IntroSectionWidth: 822,
+  IntroSectionWidth: 600,
 };
 
 export const CardConstants = {
@@ -17,5 +17,5 @@ export const StickerConstants = {
 
 export const CanvasTransactionOrigin = "canvas";
 
-export const SectionMinHeight = 1024;
+export const SectionMinHeight = CanvasConstants.SectionHeight;
 export const SectionMaxHeight = 4500;

@@ -80,7 +80,7 @@ export const computeDefaultCamera = (viewport?: {
 
   // Get the total height needed for the section
   const totalSectionHeight = CanvasConstants.SectionHeight; // Height of one section
-  const totalHPadding = 200; // Padding above and below to position the section at center of the viewport
+  const totalHPadding = 120; // Padding above and below to position the section at center of the viewport
 
   // Calculate the scale needed to fit the section vertically in the viewport
   // Formula: viewportHeight / contentHeight
@@ -106,7 +106,7 @@ export const computeZoomBounds = (sections: SectionMap): Bounds => {
   const totalContainerWidth = totalSectionWidth + totalWPadding;
 
   const min = viewport.width / totalContainerWidth;
-  const max = 1;
+  const max = 1.7;
 
   return { min, max };
 };
