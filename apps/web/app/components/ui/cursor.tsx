@@ -6,9 +6,15 @@ type CursorProps = {
   children: React.ReactNode;
   className?: string;
   attachToParent?: boolean;
+  cursorType: "grabbing" | "auto";
 };
 
-export function Cursor({ children, className, attachToParent }: CursorProps) {
+export function Cursor({
+  children,
+  className,
+  attachToParent,
+  cursorType,
+}: CursorProps) {
   const [position, setPosition] = useState({
     x: typeof window !== "undefined" ? window.innerWidth / 2 : 0,
     y: typeof window !== "undefined" ? window.innerHeight / 2 : 0,
@@ -47,11 +53,11 @@ export function Cursor({ children, className, attachToParent }: CursorProps) {
       const parent = cursorRef.current.parentElement;
       if (parent) {
         parent.addEventListener("mouseenter", () => {
-          parent.style.cursor = "auto";
+          parent.style.cursor = cursorType;
           handleVisibilityChange(true);
         });
         parent.addEventListener("mouseleave", () => {
-          parent.style.cursor = "auto";
+          parent.style.cursor = cursorType;
           handleVisibilityChange(false);
         });
       }
@@ -62,11 +68,11 @@ export function Cursor({ children, className, attachToParent }: CursorProps) {
         const parent = cursorRef.current.parentElement;
         if (parent) {
           parent.removeEventListener("mouseenter", () => {
-            parent.style.cursor = "auto";
+            parent.style.cursor = cursorType;
             handleVisibilityChange(true);
           });
           parent.removeEventListener("mouseleave", () => {
-            parent.style.cursor = "auto";
+            parent.style.cursor = cursorType;
             handleVisibilityChange(false);
           });
         }
@@ -77,7 +83,7 @@ export function Cursor({ children, className, attachToParent }: CursorProps) {
   return (
     <div
       ref={cursorRef}
-      className={cn("pointer-events-none fixed left-0 top-0 z-50", className)}
+      className={cn("pointer-events-none fixed left-0 top-0 z-50 ", className)}
       style={{
         transform: `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`,
       }}

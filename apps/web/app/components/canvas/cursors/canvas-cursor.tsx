@@ -5,18 +5,16 @@ import {
   StickerConstants,
   type StickerProperties,
   cardColorsMap,
-  raw,
 } from "@retro/common";
 import { useCreateBlock, useProfile } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
-import * as random from "lib0/random";
 import { match } from "ts-pattern";
-import * as Y from "yjs";
 import {
   CanvasControllerContext,
   CanvasEventType,
   CanvasMode,
 } from "../machine";
+import { createBlockAtPosition } from "../machine/actions";
 import { screenToCanvas, useCamera } from "../store";
 import CardCursor from "./card-cursor";
 import StickerCursor from "./sticker-cursor";
@@ -44,62 +42,18 @@ export const CanvasCursor = () => {
       camera,
     );
 
-    switch (blockToInsert.type) {
-      case BlockType.Sticker: {
-        const properties = blockToInsert.properties as StickerProperties;
-        const stickerId = random.uuidv4();
-        const xOffset = point.x - StickerConstants.Width / 2;
-        const yOffset = point.y - StickerConstants.Height / 2;
-        createBlock(
-          {
-            id: stickerId,
-            type: BlockType.Sticker,
-            x: xOffset,
-            y: yOffset,
-            width: StickerConstants.Width,
-            height: StickerConstants.Height,
-          },
-          {
-            stickerType: properties.stickerType,
-          },
-        );
-        controllerRef.send({
-          type: CanvasEventType.InsertDone,
-          blockId: stickerId,
-        });
-        break;
-      }
-      case BlockType.Card: {
-        const properties = blockToInsert.properties as CardProperties;
-        const cardId = random.uuidv4();
-        const xOffset = point.x - CardConstants.Width / 2;
-        const yOffset = point.y - CardConstants.Height / 2;
+    const blockId = createBlockAtPosition({
+      blockToInsert,
+      point,
+      profile,
+      createBlock,
+    });
 
-        createBlock(
-          {
-            id: cardId,
-            type: BlockType.Card,
-            x: xOffset,
-            y: yOffset,
-            width: CardConstants.Width,
-            height: CardConstants.Height,
-          },
-          {
-            color: properties.color,
-            content: raw(new Y.XmlFragment()),
-            createdBy: {
-              id: profile.id,
-              name: profile.name,
-            },
-          },
-        );
-
-        controllerRef.send({
-          type: CanvasEventType.InsertDone,
-          blockId: cardId,
-        });
-        break;
-      }
+    if (blockId) {
+      controllerRef.send({
+        type: CanvasEventType.InsertDone,
+        blockId: blockId,
+      });
     }
   };
 
@@ -119,6 +73,7 @@ export const CanvasCursor = () => {
               cardColorsMap[(blockToInsert.properties as CardProperties).color]
             }
             cameraZ={camera.z}
+            cursorType="auto"
           />
         ))
         .with(BlockType.Sticker, () => (
@@ -129,6 +84,7 @@ export const CanvasCursor = () => {
               (blockToInsert.properties as StickerProperties).stickerType
             }
             cameraZ={camera.z}
+            cursorType="auto"
           />
         ))
         .exhaustive()}

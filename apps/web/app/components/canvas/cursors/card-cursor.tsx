@@ -5,14 +5,16 @@ export default function CardCursor({
   height,
   cardColor,
   cameraZ,
+  cursorType,
 }: {
   width: number;
   height: number;
   cardColor: string;
   cameraZ: number;
+  cursorType: "grabbing" | "auto";
 }) {
   return (
-    <Cursor attachToParent>
+    <Cursor attachToParent cursorType={cursorType}>
       <div
         className="relative"
         style={{
