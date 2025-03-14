@@ -1,6 +1,7 @@
 FROM node:20-alpine AS base
 # Install necessary Alpine packages and build dependencies
-RUN apk add --no-cache libc6-compat gcompat python3 make g++ && \
+RUN apk add --no-cache libc6-compat gcompat python3 make g++ bash && \
+    ln -sf /bin/bash /usr/bin/bash && \
     wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
     echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
     apk add doppler
