@@ -1,12 +1,9 @@
-import { aiService, serializeDocForLlm } from "@retro/ai";
 import { DocumentListFilter } from "@retro/common";
-import * as Y from "yjs";
 import { z } from "zod";
-import { updateLiveYDoc } from "../collab/index.js";
-import { getInitialYDoc, patchFragmentWithSummary } from "../collab/utils.js";
+import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
+import { summaryQueue } from "../queue/summary/queue.js";
 import { publicProcedure, router } from "./config.js";
-import { postRetroSummaryToSlack } from "./integrations/slack.js";
 
 const documentRouter = router({
   list: publicProcedure
@@ -132,45 +129,12 @@ const documentRouter = router({
         if (!ctx.user) {
           throw new Error("Unauthorized");
         }
-        const document = await db
-          .selectFrom("document")
-          .select(["yDoc", "yDocUpdatedAt"])
-          .where("id", "=", dbUtil.asUuid(input.id))
-          .executeTakeFirstOrThrow();
-
-        if (!document.yDoc) {
-          throw new Error("Document binary not found");
-        }
-        const yDoc = new Y.Doc();
-        Y.applyUpdate(yDoc, new Uint8Array(document.yDoc));
-
-        const serializedDocument = serializeDocForLlm(yDoc);
-
-        console.time(`Generating summary for document ${input.id}`);
-        const result = await aiService.generateSummary(serializedDocument);
-        console.timeEnd(`Generating summary for document ${input.id}`);
-
-        if (!result.ok) {
-          throw new Error(result.error);
-        }
-
-        await updateLiveYDoc(input.id, (yDoc) => {
-          const summarySection = yDoc.getMap("summary");
-          const contentFragment = summarySection.get(
-            "content",
-          ) as Y.XmlFragment;
-
-          patchFragmentWithSummary(contentFragment, result);
+        await summaryQueue.add(`${input.id}-generate-summary`, {
+          retroId: input.id,
         });
-
-        try {
-          await postRetroSummaryToSlack(input.id, result);
-        } catch (error) {
-          console.error(`Failed to post summary to Slack`, error);
-        }
       } catch (error) {
         console.error(error);
-        throw new Error("Failed to generate summary");
+        throw new Error("Failed to queue summary generation");
       }
     }),
 });

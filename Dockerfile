@@ -5,10 +5,10 @@ RUN apk add --no-cache libc6-compat gcompat python3 make g++ && \
     echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
     apk add doppler
 
-# Setup pnpm
+# Setup pnpm and pm2
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN npm install -g corepack
+RUN npm install -g corepack pm2
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 FROM base AS build
@@ -33,4 +33,4 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=build --chown=hono:nodejs /prod/server /app
 USER hono
 
-CMD ["pnpm", "run", "start"]
+CMD ["pm2-runtime", "ecosystem.prod.config.cjs"]

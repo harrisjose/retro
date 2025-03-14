@@ -20,6 +20,12 @@ export const postRetroSummaryToSlack = async (
   response: SummaryResponse,
 ) => {
   try {
+    if (!response.ok) {
+      throw new Error("Invalid summary response");
+    }
+
+    console.time(`Posting summary to Slack for document ${documentId}`);
+
     const document = await db
       .selectFrom("document")
       .selectAll()
@@ -33,23 +39,15 @@ export const postRetroSummaryToSlack = async (
       .where("integration.integration", "=", "slack")
       .executeTakeFirstOrThrow();
 
-    if (!integration) {
-      throw new Error("Slack integration not found");
+    if (!integration || !document) {
+      return;
     }
 
     if (!integration.channelId) {
       return;
     }
 
-    if (!document) {
-      throw new Error("Document not found");
-    }
-
     const slackClient = new WebClient(integration.botToken);
-
-    if (!response.ok) {
-      throw new Error("Invalid input in summary generation");
-    }
 
     const actionableItems = [
       {
@@ -110,6 +108,8 @@ export const postRetroSummaryToSlack = async (
       text: `📢 Retro Summary for ${document.name}`,
       blocks,
     });
+
+    console.timeEnd(`Posting summary to Slack for document ${documentId}`);
   } catch (error) {
     console.error("Error posting retro summary to Slack:", error);
     throw new Error("Failed to post retro summary to Slack");
