@@ -23,7 +23,7 @@
     "worker:slack:dev": "doppler run -- tsx watch --inspect src/queue/slack/worker.ts",
     "worker:slack": "doppler run -- tsx src/queue/slack/worker.ts",
     "predev": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
-    "dev": "pm2 start ecosystem.dev.config.cjs",
+    "dev": "pm2 start --no-daemon ecosystem.dev.config.cjs",
     "prestart": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
     "start": "pm2 start ecosystem.prod.config.cjs"
   },
