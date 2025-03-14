@@ -32,7 +32,10 @@ export function Footer() {
         <Link to="https://instagram.com/mellow_app">
           <BrandIcons.Instagram />
         </Link> */}
-        <Link to="https://www.linkedin.com/company/mellow-dot-team">
+        <Link
+          to="https://www.linkedin.com/company/mellow-dot-team"
+          target="_blank"
+        >
           <BrandIcons.LinkedIn />
         </Link>
       </div>
