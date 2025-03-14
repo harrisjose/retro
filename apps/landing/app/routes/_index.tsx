@@ -4,7 +4,6 @@ import { Footer } from "../components/custom/footer";
 import { FooterCta } from "../components/custom/footer-cta";
 import { Hero } from "../components/custom/hero";
 import { Navbar } from "../components/custom/navbar";
-import { Pricing } from "../components/custom/pricing";
 import { Whys } from "../components/custom/whys";
 import type { Route } from "./+types/_index";
 
@@ -23,7 +22,7 @@ export default function Home({}: Route.ComponentProps) {
         <Hero />
         <Whys />
         <Features />
-        <Pricing />
+        {/* <Pricing /> */}
         <FAQ />
         <FooterCta />
         <Footer />

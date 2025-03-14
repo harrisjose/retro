@@ -26,16 +26,9 @@ export function Hero() {
           className="py-2 px-6 font-[500] mt-2"
           onClick={() => (window.location.href = "/join-waitlist")}
         >
-          Get Started<span className="opacity-40">- 60 day free trail</span>
+          Get Started
         </Button>
       </div>
-      <h3
-        className={cn(
-          "text-[14px] leading-[16px] tracking-[-0.02em] opacity-50 -mt-3",
-        )}
-      >
-        No credit card required!
-      </h3>
       <div className="overflow-visible relative mt-8 w-full h-auto aspect-[4/3] sm:bg-white rounded-[28px] sm:shadow-[0_0_84px_rgba(0,0,0,0.04),0_0_1px_rgba(0,0,0,0.4)]">
         <img
           src="/hero-image.svg"

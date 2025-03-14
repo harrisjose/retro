@@ -30,14 +30,15 @@ export function FAQ() {
           <AccordionTrigger
             className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
           >
-            Is there a free trial?
+            Who is Mellow built for?
           </AccordionTrigger>
           <AccordionContent
             className={cn(
               "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
-            Yes! You can try Mellow free for 60 days, no credit card required.
+            Teams looking to enhance their retrospectives by capturing ideas,
+            tracking actionables, and driving improvements.
           </AccordionContent>
         </AccordionItem>
 
@@ -45,15 +46,15 @@ export function FAQ() {
           <AccordionTrigger
             className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
           >
-            How do I contact support?
+            How is Mellow different from other tools?
           </AccordionTrigger>
           <AccordionContent
             className={cn(
               "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
-            You can reach us at support@mellow.team or through the in-app chat
-            for quick assistance.
+            It offers an all-in-one retro solution with AI insights, automation,
+            an intuitive UI, engaging features, and progress tracking.
           </AccordionContent>
         </AccordionItem>
 
@@ -61,37 +62,6 @@ export function FAQ() {
           <AccordionTrigger
             className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
           >
-            Does Mellow support integrations with tools we already use?
-          </AccordionTrigger>
-          <AccordionContent
-            className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
-            )}
-          >
-            Yes, Mellow integrates with Slack, Microsoft Teams, and other
-            workplace tools to make feedback and collaboration seamless.
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-4">
-          <AccordionTrigger
-            className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
-          >
-            Is there a free trial?
-          </AccordionTrigger>
-          <AccordionContent
-            className={cn(
-              "flex text-left text-[18px] leading-[24px] opacity-60 tracking-[-0.02em]",
-            )}
-          >
-            Yes! You can try Mellow free for 60 days, no credit card required.
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-5">
-          <AccordionTrigger
-            className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
-          >
             How do I contact support?
           </AccordionTrigger>
           <AccordionContent
@@ -99,12 +69,11 @@ export function FAQ() {
               "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
-            You can reach us at support@mellow.team or through the in-app chat
-            for quick assistance.
+            You can reach us at support@mellow.team for quick assistance.
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="item-6">
+        <AccordionItem value="item-4">
           <AccordionTrigger
             className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
           >
@@ -115,40 +84,26 @@ export function FAQ() {
               "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
-            Yes, Mellow integrates with Slack, Microsoft Teams, and other
-            workplace tools to make feedback and collaboration seamless.
+            Yes, Mellow integrates with Slack to make collaboration seamless.
+            You will get actionables from the retro right inside your slack.
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="item-7">
+        <AccordionItem value="item-5">
           <AccordionTrigger
             className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
           >
-            Does Mellow support integrations with tools we already use?
+            Is our data safe with Mellow?
           </AccordionTrigger>
           <AccordionContent
             className={cn(
               "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
             )}
           >
-            Yes, Mellow integrates with Slack, Microsoft Teams, and other
-            workplace tools to make feedback and collaboration seamless.
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-8">
-          <AccordionTrigger
-            className={cn("text-[18px] leading-[24px] tracking-[-0.02em]")}
-          >
-            Does Mellow support integrations with tools we already use?
-          </AccordionTrigger>
-          <AccordionContent
-            className={cn(
-              "flex text-[18px] text-left leading-[24px] opacity-60 tracking-[-0.02em]",
-            )}
-          >
-            Yes, Mellow integrates with Slack, Microsoft Teams, and other
-            workplace tools to make feedback and collaboration seamless.
+            Yes, Mellow follows industry-standard security guidelines to ensure
+            your data is safe and protected. We do not share your data with any
+            third-party tools or services, ensuring complete privacy and
+            confidentiality.
           </AccordionContent>
         </AccordionItem>
       </Accordion>

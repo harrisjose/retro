@@ -26,13 +26,13 @@ export function Footer() {
         </span>
       </div>
       <div className="flex items-center gap-1">
-        <Link to="https://x.com/mellow_app">
+        {/* <Link to="https://x.com/mellow_app">
           <BrandIcons.X />
         </Link>
         <Link to="https://instagram.com/mellow_app">
           <BrandIcons.Instagram />
-        </Link>
-        <Link to="https://instagram.com/mellow_app">
+        </Link> */}
+        <Link to="https://www.linkedin.com/company/mellow-dot-team">
           <BrandIcons.LinkedIn />
         </Link>
       </div>
