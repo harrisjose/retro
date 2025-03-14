@@ -1,6 +1,3 @@
-import BoardSvg from "@/components/svg/board-view";
-import List from "@/components/svg/list";
-import Search from "@/components/svg/search";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { DocumentListFilter } from "@retro/common";
 
@@ -48,11 +45,11 @@ const FilterPanel = ({
         >
           {children}
         </TabsContent>
-        <div className="absolute top-0 right-0 flex gap-3 items-end">
+        {/* <div className="absolute top-0 right-0 flex gap-3 items-end">
           <Search className="cursor-pointer" />
           <List className="cursor-pointer" />
           <BoardSvg className="cursor-pointer" />
-        </div>
+        </div> */}
       </Tabs>
     </div>
   );

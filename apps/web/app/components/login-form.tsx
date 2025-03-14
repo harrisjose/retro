@@ -78,9 +78,24 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4">
+        By clicking continue, you agree to our
+        <a
+          href="https://shy-apricot-c06.notion.site/Terms-and-Conditions-1b639047ce9e8008be74ec47adf490e1"
+          target="_blank"
+          className="hover:text-primary px-1"
+        >
+          Terms of Service
+        </a>
+        and
+        <a
+          href="https://shy-apricot-c06.notion.site/Privacy-policy-1b639047ce9e80679023d3a6d07a5c2f"
+          target="_blank"
+          className="hover:text-primary px-1"
+        >
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );
