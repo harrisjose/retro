@@ -139,7 +139,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               } as NotifySelectionActionParams[1],
             });
           }),
-          recalculateSectionHeightAfterBlockDrag: (_, params) => {
+          recalculateSectionHeightAfterBlockDrag: (_) => {
             const sectionBounds = getSectionBounds(sections);
 
             // Group blocks by section

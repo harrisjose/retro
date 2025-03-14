@@ -13,11 +13,9 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as Y from "yjs";
-import { DocumentMusic } from "../music";
 
 import ArrowDown from "../svg/arrow-down";
 import CardCreatePlus from "../svg/card-create-plus";
-import { DocumentTimerWrapper } from "../timer";
 import { Separator } from "../ui/separator";
 import { useInsertDrag } from "./hooks/use-insert-drag";
 import { CanvasControllerContext } from "./machine";
@@ -56,27 +54,27 @@ const StickerMenu = () => {
             <img
               src="/insertion-menu/thinking-face.png"
               alt="emoji-picker-1"
-              className="absolute top-[7px] left-0 w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+              className="absolute top-[7px] left-0 w-4 h-4 object-cover"
             />
             <img
               src="/insertion-menu/fire.png"
               alt="emoji-picker-2"
-              className="absolute top-[7px] left-[23px] w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+              className="absolute top-[7px] left-[23px] w-4 h-4 object-cover"
             />
             <img
               src="/insertion-menu/joy.png"
               alt="emoji-picker-3"
-              className="absolute top-[7px] left-[45px] w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+              className="absolute top-[7px] left-[45px] w-4 h-4 object-cover"
             />
             <img
               src="/insertion-menu/red-heart.png"
               alt="emoji-picker-1"
-              className="absolute top-[27px] left-0 w-4 h-4 object-cover hover:scale-150 transition-transform duration-200"
+              className="absolute top-[27px] left-0 w-4 h-4 object-cover"
             />
             <img
               src="/insertion-menu/osm.png"
               alt="emoji-picker-1"
-              className="absolute top-[25px] left-[23px] w-[34px] h-4 object-cover hover:scale-150 transition-transform duration-200"
+              className="absolute top-[25px] left-[23px] w-[34px] h-4 object-cover"
             />
           </div>
           <ArrowDown />
@@ -161,13 +159,13 @@ export const InsertionMenu = () => {
       )}
     >
       <TimerProvider documentId={document.id}>
-        <DocumentTimerWrapper />
-        <Separator orientation="vertical" className="bg-black opacity-5" />
+        {/* <DocumentTimerWrapper />
+        <Separator orientation="vertical" className="bg-black opacity-5" /> */}
         <CardMenu />
         <Separator orientation="vertical" className="bg-black opacity-5" />
         <StickerMenu />
-        <Separator orientation="vertical" className="bg-black opacity-5" />
-        <DocumentMusic />
+        {/* <Separator orientation="vertical" className="bg-black opacity-5" /> */}
+        {/* <DocumentMusic /> */}
       </TimerProvider>
     </div>
   );

@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import Back from "../svg/back";
 import Link from "../svg/link";
+import Tick from "../svg/tick";
 import { Button } from "../ui/button";
 import { CollaboratorAvatars } from "../ui/collaborator-avatars";
 import { Separator } from "../ui/separator";
@@ -64,17 +65,17 @@ const CopyLinkButton = () => {
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
-    }, 3000);
+    }, 5000);
   }, []);
 
   return (
     <Button
       variant="outline"
-      className="rounded-full flex gap-1 h-[28px] px-[14px]"
+      className={`rounded-full flex gap-1 h-[28px] px-[14px] ${copied ? "bg-buttonHighlight text-primary-foreground hover:bg-buttonHighlightHover hover:text-primary-foreground" : ""}`}
       onClick={handleCopy}
     >
       {copied ? "Copied!" : "Copy Link"}
-      <Link className="w-4 h-4" />
+      {copied ? <Tick className="w-4 h-4" /> : <Link className="w-4 h-4" />}
     </Button>
   );
 };

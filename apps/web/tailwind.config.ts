@@ -52,6 +52,8 @@ export default {
         border: "hsl(var(--border))",
         selection: "hsl(var(--selection))",
         insertionHover: "hsl(var(--insertion-hover))",
+        buttonHighlight: "hsl(var(--button-highlight))",
+        buttonHighlightHover: "hsl(var(--button-highlight-hover))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {
