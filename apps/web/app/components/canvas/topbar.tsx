@@ -74,7 +74,7 @@ const CopyLinkButton = () => {
   return (
     <Button
       variant="outline"
-      className={`rounded-full flex gap-1 h-[28px] px-[14px] ${copied ? "bg-buttonHighlight text-primary-foreground hover:bg-buttonHighlightHover hover:text-primary-foreground" : ""}`}
+      className={`rounded-full flex gap-1 h-[32px] px-[14px] ${copied ? "bg-[#A618FF] text-primary-foreground hover:bg-[#A618FF] hover:text-primary-foreground" : ""}`}
       onClick={handleCopy}
     >
       {copied ? "Copied!" : "Copy Link"}

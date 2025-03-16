@@ -8,7 +8,7 @@ interface CollaboratorAvatarsProps {
 
 const CollaboratorAvatars = ({
   avatarUrls,
-  avatarSize = 22,
+  avatarSize = 24,
 }: CollaboratorAvatarsProps) => {
   const visibleAvatars = avatarUrls.slice(0, 5);
   const remainingCount = avatarUrls.length - 5;
@@ -21,7 +21,7 @@ const CollaboratorAvatars = ({
     >
       {visibleAvatars.map((url, index) => (
         <div
-          className="p-[2px] bg-white rounded-full border-2 border-white"
+          className="p-[0.5px] bg-white rounded-full border-2 border-white"
           style={{
             boxShadow: "0px 0px 1px 0px #00000080",
           }}
