@@ -47,14 +47,14 @@ const StickerMenu = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className={`cursor-pointer relative  w-[128px] h-full hover:bg-insertionHover px-[12px]`}
+        className={`cursor-pointer relative  w-[128px] h-full group hover:bg-insertionHover px-[12px]`}
       >
         <div className="flex items-center justify-center gap-1 cursor-pointer relative w-full h-full">
-          <div className="flex-1 hover:scale-[1.1] hover:rotate-[-4deg] transition-all ">
+          <div className="flex-1 group-hover:scale-[1.1] group-hover:rotate-[-4deg] transition-all duration-200">
             <img
               src="/insertion-menu/emoji.png"
               alt="emoji-picker-1"
-              className="left-[23px] w-[81px] h-[49px] object-cover"
+              className="left-[23px] w-[76px] h-[46px] object-cover"
             />
           </div>
           <ArrowDown />
@@ -105,14 +105,14 @@ const CardMenu = () => {
       className="flex overflow-hidden scroll-pb-3 relative w-[128px] h-full hover:bg-insertionHover group justify-around"
     >
       <div
-        className="w-[50px] h-[70px] rounded-sm -rotate-[21deg] top-[14px] absolute group-hover:scale-[120%] group-hover:-rotate-6 transition-all duration-200"
+        className="w-[50px] h-[70px] rounded-sm -rotate-[21deg] top-[20px] absolute group-hover:scale-[120%] group-hover:-rotate-6 transition-all duration-200"
         style={{
           background: "rgba(203, 191, 255, 1)",
           boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",
         }}
       ></div>
       <div
-        className="w-[50px] h-[70px] rounded-sm top-[14px] absolute group-hover:scale-[120%] group-hover:rotate-2 transition-all duration-200"
+        className="w-[50px] h-[70px] rounded-sm top-[20px] absolute group-hover:scale-[120%] group-hover:rotate-2 transition-all duration-200"
         style={{
           background: "rgba(255, 232, 147, 1)",
           boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",

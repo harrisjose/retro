@@ -29,7 +29,7 @@ function SectionNameEditor({
 
   return (
     <div
-      className="absolute left-[10px] top-[10px] border rounded-2xl border-gray-200 p-3"
+      className="absolute left-[10px] top-[10px] border rounded-full border-gray-200 font-normal px-3 py-1"
       onDoubleClick={onEdit}
     >
       {isEditing ? (

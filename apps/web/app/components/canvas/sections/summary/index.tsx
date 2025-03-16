@@ -61,7 +61,7 @@ export default function SummarySection() {
     <div
       key={`summary-section`}
       ref={sectionRef}
-      className="shrink-0 bg-white rounded-2xl border border-dashed border-[#0000000F] p-20 flex flex-col justify-center items-center"
+      className="shrink-0 bg-white rounded-2xl border overflow-hidden border-[#0000000F] p-20 flex flex-col justify-center items-center"
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
@@ -83,6 +83,13 @@ export default function SummarySection() {
           {isLoading ? "Generating summary..." : "Generate summary"}
         </Button>
       </div>
+      <div className="absolute top-0 repeat-3 rounded-2xl overflow-hidden">
+            <img
+              src="/insertion-menu/gradient-ai.png"
+              alt="emoji-picker-1"
+              className="left-[23px] w-full object-cover"
+            />
+          </div>
     </div>
   );
 }
