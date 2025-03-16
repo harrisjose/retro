@@ -47,34 +47,14 @@ const StickerMenu = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className={`cursor-pointer relative  w-[105px] h-full hover:bg-insertionHover px-[12px]`}
+        className={`cursor-pointer relative  w-[128px] h-full hover:bg-insertionHover px-[12px]`}
       >
         <div className="flex items-center justify-center gap-1 cursor-pointer relative w-full h-full">
-          <div className="flex-1">
+          <div className="flex-1 hover:scale-[1.1] hover:rotate-[-4deg] transition-all ">
             <img
-              src="/insertion-menu/thinking-face.png"
+              src="/insertion-menu/emoji.png"
               alt="emoji-picker-1"
-              className="absolute top-[7px] left-0 w-4 h-4 object-cover"
-            />
-            <img
-              src="/insertion-menu/fire.png"
-              alt="emoji-picker-2"
-              className="absolute top-[7px] left-[23px] w-4 h-4 object-cover"
-            />
-            <img
-              src="/insertion-menu/joy.png"
-              alt="emoji-picker-3"
-              className="absolute top-[7px] left-[45px] w-4 h-4 object-cover"
-            />
-            <img
-              src="/insertion-menu/red-heart.png"
-              alt="emoji-picker-1"
-              className="absolute top-[27px] left-0 w-4 h-4 object-cover"
-            />
-            <img
-              src="/insertion-menu/osm.png"
-              alt="emoji-picker-1"
-              className="absolute top-[25px] left-[23px] w-[34px] h-4 object-cover"
+              className="left-[23px] w-[81px] h-[49px] object-cover"
             />
           </div>
           <ArrowDown />
@@ -88,7 +68,7 @@ const StickerMenu = () => {
         {Object.entries(StickerJsonMap).map(([key, value]) => (
           <div
             key={key}
-            className="hover:scale-[1.2] transition-all hover:rotate-[4deg] cursor-pointer"
+            className="hover:scale-[1.2] transition-all duration-20 hover:rotate-[4deg] cursor-pointer"
             onMouseDown={(e) => handleInteraction(e, key as StickerType)}
           >
             <img src={`/stickers/${key}.png`} className="w-10 h-10" />
@@ -122,23 +102,23 @@ const CardMenu = () => {
   return (
     <button
       onMouseDown={handleInteraction}
-      className="overflow-hidden px-[20px] relative w-[90px] h-full hover:bg-insertionHover group"
+      className="flex overflow-hidden scroll-pb-3 relative w-[128px] h-full hover:bg-insertionHover group justify-around"
     >
       <div
-        className="w-[50px] h-[50px] rounded-sm -rotate-[21deg] top-[14px] absolute group-hover:scale-[120%] transition-transform duration-200"
+        className="w-[50px] h-[70px] rounded-sm -rotate-[21deg] top-[14px] absolute group-hover:scale-[120%] group-hover:-rotate-6 transition-all duration-200"
         style={{
           background: "rgba(203, 191, 255, 1)",
           boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",
         }}
       ></div>
       <div
-        className="w-[50px] h-[50px] rounded-sm top-[14px] absolute group-hover:scale-[120%] transition-transform duration-200"
+        className="w-[50px] h-[70px] rounded-sm top-[14px] absolute group-hover:scale-[120%] group-hover:rotate-2 transition-all duration-200"
         style={{
           background: "rgba(255, 232, 147, 1)",
           boxShadow: "0px 0px 1px 0px rgba(0, 0, 0, 0.5)",
         }}
       ></div>
-      <CardCreatePlus className="absolute left-[44%] top-[50%] w-[9px] h-[16px]" />
+      <CardCreatePlus className="absolute left-[46%] top-[50%] w-[9px] h-[16px]" />
     </button>
   );
 };
@@ -155,7 +135,7 @@ export const InsertionMenu = () => {
       className={cn(
         "absolute bottom-[16px] left-[50%] translate-x-[-50%]",
         "bg-white rounded-[8px] shadow-[0px_8px_20px_0px_#0000001A]",
-        "flex items-center justify-center grow h-[50px]",
+        "flex items-center justify-center grow h-[68px] overflow-hidden",
       )}
     >
       <TimerProvider documentId={document.id}>
