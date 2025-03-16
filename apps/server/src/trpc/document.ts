@@ -12,7 +12,7 @@ const documentRouter = router({
       z.object({
         organizationId: z.string(),
         filter: z.nativeEnum(DocumentListFilter),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -41,15 +41,15 @@ const documentRouter = router({
               // The '::interval' is PostgreSQL type casting that converts the string 'X minutes' to an interval data type
               sql`"endDateTime" + (duration || ' minutes')::interval`,
               ">=",
-              now
-            )
+              now,
+            ),
           )
           .$if(input.filter === DocumentListFilter.PAST, (b) =>
             b.where(
               sql`"endDateTime" + (duration || ' minutes')::interval`,
               "<",
-              now
-            )
+              now,
+            ),
           )
           .orderBy("createdAt", "desc")
           .limit(50)
@@ -65,7 +65,7 @@ const documentRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       try {
@@ -102,7 +102,7 @@ const documentRouter = router({
         organizationId: z.string(),
         endDateTime: z.string(),
         duration: z.number(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -133,7 +133,7 @@ const documentRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       try {
