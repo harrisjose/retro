@@ -162,14 +162,13 @@ const FooterPanel = () => {
               width: open ? 336 : "auto",
             }}
             transition={{
-              duration: 0.125,
+              duration: 0.2,
             }}
           >
             <Button
-              className={cn(
-                "w-full",
-                open && "bg-white text-black hover:bg-white hover:text-black",
-              )}
+              variant={"brand"}
+              size={"brand"}
+              className={cn("w-full")}
               formId={formId}
               isLoading={isCreationInProgress}
               onClick={(event) => {
@@ -178,6 +177,7 @@ const FooterPanel = () => {
               }}
             >
               Create new retro
+              <span className=" opacity-50 text-xs">⌘+N</span>
             </Button>
           </motion.div>
         </PopoverTrigger>

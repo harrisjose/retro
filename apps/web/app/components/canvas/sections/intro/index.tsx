@@ -2,6 +2,8 @@ import "./index.css";
 
 import { ProsemirrorEditor } from "@/components/editor/editor";
 import { EditorContextProvider } from "@/components/editor/editor-provider";
+import StartHere from "@/components/svg/start-here";
+import StartHereArrow from "@/components/svg/start-here-arrow";
 import { Button } from "@/components/ui/button";
 import { CanvasConstants } from "@retro/common";
 import {
@@ -66,25 +68,50 @@ export default function IntroSection() {
     <div
       key={`intro-section`}
       ref={sectionRef}
-      className="shrink-0 bg-white rounded-2xl border border-dashed border-[#0000000F] p-20 flex flex-col justify-center items-center"
+      className="relative shrink-0 bg-white rounded-2xl border border-[#0000000F] p-12 flex flex-col justify-between"
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
-        height: CanvasConstants.SectionHeight,
       }}
     >
-      <div className="overflow-y-scroll">
-        {content && (
-          <EditorContextProvider
-            id={`intro-section`}
-            createEditorState={createEditorState}
-          >
-            <ProsemirrorEditor fragment={content} className="intro-pm" />
-          </EditorContextProvider>
-        )}
+      <div className="absolute top-0 right-0 repeat-3 rounded-2xl overflow-hidden">
+        <img
+          src="/insertion-menu/intro-cover.png"
+          alt="emoji-picker-1"
+          className="right-0 w-[321px] object-cover"
+        />
       </div>
+
+      <div>
+        <div className="flex">
+          <div>
+            <StartHere className="w-7 h-auto" />
+          </div>
+          <div className="animate-bounce">
+            <StartHereArrow></StartHereArrow>
+          </div>
+        </div>
+        <div className=" text-xs text-secondary-foreground w-72 mt-2 mb-10 opacity-50">
+          You can write an introduction on how to engage in this retro meeting
+          below
+        </div>
+
+        <div>
+          {content && (
+            <EditorContextProvider
+              id={`intro-section`}
+              createEditorState={createEditorState}
+            >
+              <ProsemirrorEditor fragment={content} className="intro-pm" />
+            </EditorContextProvider>
+          )}
+        </div>
+      </div>
+
       <div className="pt-[25px] w-full flex justify-start">
-        <Button onClick={onClick}>Start</Button>
+        <Button variant={"brand"} size={"brand"} onClick={onClick}>
+          Let’s go →
+        </Button>
       </div>
     </div>
   );

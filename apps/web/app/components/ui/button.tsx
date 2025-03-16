@@ -19,12 +19,15 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        brand:
+          "bg-[#A618FF] hover:bg-[#B642FF] rounded-[10px] text-white shadow-[inset_0_-4px_0_rgba(0,0,0,0.4)] active:shadow-[inset_0_-1px_0_rgba(0,0,0,0.4)] ",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "px-4 py-[6px]",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        brand: "px-4 pt-[8px] pb-[12px] active:pt-[10px] active:pb-[10px]",
       },
     },
     defaultVariants: {
@@ -66,7 +69,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
       >
         {isLoading && (
-          <Spinner className="size-5 animate-spin ..." viewBox="0 0 24 24" />
+          <Spinner className="size-5 animate-spin  ..." viewBox="0 0 24 24" />
         )}
         {props.children}
       </Comp>
