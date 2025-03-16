@@ -126,20 +126,20 @@ export const useCreateDocument = () => {
   const createDocument = async ({
     organizationId,
     name,
-    startDate,
-    endDate,
+    endDateTime,
+    duration,
   }: {
     organizationId: string;
     name: string;
-    startDate: Date;
-    endDate: Date;
+    endDateTime: Date;
+    duration: number;
   }) => {
     try {
       const document = await apiClient.document.create.mutate({
         name,
         organizationId,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+        endDateTime: endDateTime.toISOString(),
+        duration,
       });
       documents[document.id] = { ...document };
       return document.id;

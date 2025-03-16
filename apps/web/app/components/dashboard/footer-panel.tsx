@@ -1,155 +1,210 @@
 import { Button } from "@/components/ui/button";
-import DatePicker from "@/components/ui/date-picker";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
+  PopoverClose,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getFormattedEndDate, getFormattedStartDate } from "@retro/common";
-import { authClient, useCreateDocument } from "@retro/sdk";
-import { useCallback, useState } from "react";
+import {
+  cn,
+  getDuration,
+  getStartAndEndTime,
+  toDate,
+  toZonedTime,
+} from "@retro/common";
+import { authClient, useCreateDocument, useProfile } from "@retro/sdk";
+import { format } from "date-fns";
+import { X } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useState } from "react";
+import type { RetroFormData, RetroFormError } from "./retro-form";
+import RetroForm from "./retro-form";
+import { RetroGcalIntegration } from "./retro-gcal-integration";
 
 const FooterPanel = () => {
-  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
-  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
-  const [name, setName] = useState<string>("");
-  const [error, setError] = useState<{
-    name: string;
-    startDate: string;
-    endDate: string;
-  }>({
-    name: "",
-    startDate: "",
-    endDate: "",
-  });
-  const [open, setOpen] = useState<boolean>(false);
-  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const { profile } = useProfile();
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
   const { createDocument } = useCreateDocument();
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [isCreationInProgress, setIsCreationInProgress] =
+    useState<boolean>(false);
+  const [showGcalIntegration, setShowGcalIntegration] =
+    useState<boolean>(false);
+
+  const formId = "create-retro-form";
+
+  const [retroData, setRetroData] = useState<RetroFormData>({
+    name: "",
+    endDate: new Date(),
+    startTime: "",
+    endTime: "",
+  });
+  const [error, setError] = useState<RetroFormError>({
+    name: "",
+    endDate: "",
+  });
+
+  const onOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      resetForm();
+    } else if (showGcalIntegration) {
+      setShowGcalIntegration(false);
+    }
+    setOpen(open);
+  }, []);
+
+  const resetForm = useCallback(() => {
+    setRetroData({
+      name: "",
+      endDate: new Date(),
+      startTime: getStartAndEndTime(profile!.timezone).startTime,
+      endTime: getStartAndEndTime(profile!.timezone).endTime,
+    });
+    setError({ name: "", endDate: "" });
+  }, [profile!.timezone]);
+
+  useEffect(() => {
+    if (!profile?.timezone) return;
+    setRetroData((prev) => ({
+      ...prev,
+      endDate: toZonedTime(new Date(), profile.timezone),
+      startTime: getStartAndEndTime(profile!.timezone).startTime,
+      endTime: getStartAndEndTime(profile!.timezone).endTime,
+    }));
+  }, [profile!.timezone]);
+
   const validate = useCallback(() => {
-    if (!name) {
+    if (!retroData.name) {
       setError((prev) => ({ ...prev, name: "Please enter a name" }));
       return false;
     }
-    if (!startDate) {
-      setError((prev) => ({ ...prev, startDate: "Please pick a start date" }));
-      return false;
-    }
-    if (!endDate) {
+    if (!retroData.endDate) {
       setError((prev) => ({ ...prev, endDate: "Please pick an end date" }));
       return false;
     }
 
     return true;
-  }, [startDate, endDate, name]);
+  }, [retroData.endDate, retroData.name]);
 
-  const onCreateBoard = useCallback(async () => {
-    if (!validate() || isCreating) return;
-    setIsCreating(true);
-    setError({ name: "", startDate: "", endDate: "" });
+  const onCreateRetro = useCallback(async () => {
+    if (!open) {
+      setOpen(true);
+      return;
+    }
+    if (!validate() || isCreationInProgress) return;
+    setIsCreationInProgress(true);
+    setError({ name: "", endDate: "" });
 
     try {
+      const duration = getDuration(retroData.startTime, retroData.endTime);
+      // Parse time components
+      const [startHours, startMinutes] = retroData.startTime
+        .split(":")
+        .map(Number);
+
+      // Create date in user's timezone
+      const endDateStr = format(retroData.endDate!, "yyyy-MM-dd");
+      const startTimeStr = `${startHours.toString().padStart(2, "0")}:${startMinutes.toString().padStart(2, "0")}:00`;
+      const dateTimeStr = `${endDateStr}T${startTimeStr}`;
+
+      // Convert to UTC for storage
+      const endDateTime = toDate(dateTimeStr, {
+        timeZone: profile!.timezone,
+      });
+
       const documentId = await createDocument({
         organizationId: activeOrganization!.id,
-        name,
-        startDate: getFormattedStartDate(startDate!),
-        endDate: getFormattedEndDate(endDate!),
+        name: retroData.name,
+        endDateTime,
+        duration,
       });
       console.log(`Created document with id: ${documentId}`);
     } catch (error) {
       console.error("Error creating board:", error);
     } finally {
-      setOpen(false);
+      setIsCreationInProgress(false);
+      setShowGcalIntegration(true);
       resetForm();
     }
-  }, [isCreating, name, startDate, endDate]);
+  }, [
+    isCreationInProgress,
+    retroData.endDate,
+    retroData.name,
+    open,
+    createDocument,
+    activeOrganization,
+    profile!.timezone,
+  ]);
 
-  const resetForm = useCallback(() => {
-    setName("");
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setError({ name: "", startDate: "", endDate: "" });
-    setIsCreating(false);
-  }, []);
-
-  const onOpenChange = useCallback((open: boolean) => {
-    setOpen(open);
-    if (!open) {
-      resetForm();
-    }
-  }, []);
-
-  const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    setError((prev) => ({ ...prev, name: "" }));
-  };
+  const updateFormData = useCallback(
+    <K extends keyof RetroFormData>(key: K, value: RetroFormData[K]) => {
+      setRetroData((prev) => ({ ...prev, [key]: value }));
+      setError((prev) => ({ ...prev, [key]: "" }));
+    },
+    [],
+  );
 
   return (
-    <footer className="flex justify-center gap-2 fixed bottom-4 left-0 right-0">
+    <footer
+      className={cn(
+        `flex justify-center gap-2 fixed bottom-4 left-0 right-0`,
+        open && !showGcalIntegration && "z-[100]",
+      )}
+    >
       <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
-          {open ? (
+          <motion.div
+            className={cn("flex justify-center rounded-md")}
+            initial={false}
+            animate={{
+              width: open ? 336 : "auto",
+            }}
+            transition={{
+              duration: 0.125,
+            }}
+          >
             <Button
-              isLoading={isCreating}
+              className={cn(
+                "w-full",
+                open && "bg-white text-black hover:bg-white hover:text-black",
+              )}
+              formId={formId}
+              isLoading={isCreationInProgress}
               onClick={(event) => {
                 event.preventDefault();
-                onCreateBoard();
+                onCreateRetro();
               }}
             >
               Create new retro
             </Button>
-          ) : (
-            <Button onClick={() => setOpen(true)}>Create new retro</Button>
-          )}
+          </motion.div>
         </PopoverTrigger>
-        <PopoverContent className="flex flex-col w-[360px] bg-black rounded-[12px] p-3">
-          <h3 className="font-bold text-white">Create new retro</h3>
-          <div className="flex flex-col">
-            <p className="text-[#808080] text-xs mb-1 mt-4">Retro title</p>
-            <Input
-              placeholder="Enter retro title"
-              className="text-white placeholder:text-[#5f5f5f] focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base px-[10px] py-2 bg-[#1a1a1a] rounded-[6px] outline-none border-none"
-              value={name}
-              onChange={onChangeName}
+        <PopoverContent
+          sideOffset={-52}
+          className={cn(
+            `flex flex-col w-[360px] bg-black rounded-[12px] p-3`,
+            !showGcalIntegration && "pb-[72px]",
+          )}
+          onInteractOutside={(event) => {
+            !showGcalIntegration && event.preventDefault();
+          }}
+        >
+          <PopoverClose className="absolute right-3 top-3">
+            <X className="h-4 w-4 text-[#808080] hover:text-white cursor-pointer" />
+          </PopoverClose>
+          {showGcalIntegration ? (
+            <RetroGcalIntegration retroData={retroData} />
+          ) : (
+            <RetroForm
+              formId={formId}
+              formData={retroData}
+              error={error}
+              updateFormData={updateFormData}
+              onFormSubmit={onCreateRetro}
             />
-            {error.name && (
-              <span className="text-red-500 text-xs mt-0.5">{error.name}</span>
-            )}
-          </div>
-          <div className="flex gap-3">
-            <div className="flex flex-col flex-grow">
-              <p className="text-[#808080] text-xs mb-1 mt-4">Start date</p>
-              <DatePicker
-                date={startDate}
-                onSelect={setStartDate}
-                className="rounded-md border"
-                btnClassName="w-auto px-[10px] text-white placeholder:text-[#5f5f5f] bg-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none border-none"
-                hideCalendar
-              />
-              {error.startDate && (
-                <span className="text-red-500 text-xs mt-0.5">
-                  {error.startDate}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col flex-grow">
-              <p className="text-[#808080] text-xs mb-1 mt-4">End date</p>
-              <DatePicker
-                date={endDate}
-                onSelect={setEndDate}
-                className="rounded-md border"
-                btnClassName="w-auto px-[10px] text-white placeholder:text-[#5f5f5f] bg-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none border-none"
-                hideCalendar
-              />
-              {error.endDate && (
-                <span className="text-red-500 text-xs mt-0.5">
-                  {error.endDate}
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </PopoverContent>
       </Popover>
     </footer>

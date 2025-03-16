@@ -1,4 +1,5 @@
 import { DocumentListFilter } from "@retro/common";
+import { sql } from "kysely";
 import { z } from "zod";
 import { getInitialYDoc } from "../collab/utils.js";
 import { db, dbUtil } from "../db/index.js";
@@ -27,21 +28,31 @@ const documentRouter = router({
             "createdBy",
             "createdAt",
             "updatedAt",
-            "startDate",
-            "endDate",
+            "endDateTime",
+            "duration",
             "yDocUpdatedAt",
             "organizationId",
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
           .$if(input.filter === DocumentListFilter.ACTIVE, (b) =>
-            b.where("endDate", ">=", now),
+            b.where(
+              // This adds the duration (in minutes) to the endDateTime
+              // The '::interval' is PostgreSQL type casting that converts the string 'X minutes' to an interval data type
+              sql`"endDateTime" + (duration || ' minutes')::interval`,
+              ">=",
+              now,
+            ),
           )
           .$if(input.filter === DocumentListFilter.PAST, (b) =>
-            b.where("endDate", "<", now),
+            b.where(
+              sql`"endDateTime" + (duration || ' minutes')::interval`,
+              "<",
+              now,
+            ),
           )
           .orderBy("createdAt", "desc")
-          .limit(20)
+          .limit(50)
           .execute();
 
         return documents;
@@ -69,8 +80,8 @@ const documentRouter = router({
             "createdBy",
             "createdAt",
             "updatedAt",
-            "startDate",
-            "endDate",
+            "endDateTime",
+            "duration",
             "yDocUpdatedAt",
             "organizationId",
           ])
@@ -89,8 +100,8 @@ const documentRouter = router({
       z.object({
         name: z.string(),
         organizationId: z.string(),
-        startDate: z.string(),
-        endDate: z.string(),
+        endDateTime: z.string(),
+        duration: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -106,8 +117,8 @@ const documentRouter = router({
             createdBy: ctx.user.id,
             yDoc: getInitialYDoc(),
             yDocUpdatedAt: new Date(),
-            startDate: new Date(input.startDate),
-            endDate: new Date(input.endDate),
+            endDateTime: new Date(input.endDateTime),
+            duration: input.duration,
           })
           .returningAll()
           .executeTakeFirstOrThrow();

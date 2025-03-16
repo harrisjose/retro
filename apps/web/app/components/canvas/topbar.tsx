@@ -44,15 +44,18 @@ const DocumentNameWrapper = () => {
   };
 
   return (
-    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pl-[10px] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full gap-2 flex items-center justify-center">
-      <button onClick={onBack} className="hover:bg-black/[0.04] rounded-sm">
+    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center justify-center">
+      <button
+        onClick={onBack}
+        className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none"
+      >
         <Back className="w-4 h-4" />
       </button>
       <Separator
         orientation="vertical"
         className="bg-black opacity-5 rounded-sm"
       />
-      <div className="text-sm">{document.name}</div>
+      <div className="pl-2 text-sm">{document.name}</div>
     </div>
   );
 };

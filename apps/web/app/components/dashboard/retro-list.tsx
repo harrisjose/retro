@@ -25,7 +25,7 @@ const RetroList = () => {
   return (
     <ul className="flex gap-4 flex-wrap">
       {documentList.map((document) => {
-        const remainingTime = getRemainingTime(new Date(document.endDate));
+        const remainingTime = getRemainingTime(new Date(document.endDateTime));
         return (
           <li key={document.id} className="w-[216px] h-[150px] relative">
             <Link to={`/document/${document.id}`} className="absolute inset-0">
@@ -33,6 +33,7 @@ const RetroList = () => {
                 <Retro className="w-[54px] h-[54px] mb-auto" />
                 <div className="flex flex-col">
                   <div className="font-bold">{document.name}</div>
+                  {/* TODO: @aki check with design and decide on what else we can show */}
                   <div className="inline-flex gap-1 items-center text-[10px] leading-[11.64px] text-gray-500">
                     {getRelativeTime(new Date(document.createdAt))}{" "}
                     {remainingTime && (

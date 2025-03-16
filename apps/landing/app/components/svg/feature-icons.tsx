@@ -28,7 +28,7 @@ function AllInOne() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_397_5656)">
+      <g clipPath="url(#clip0_397_5656)">
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"
@@ -157,7 +157,7 @@ export function EngagingCanvas() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_397_5712)">
+      <g clipPath="url(#clip0_397_5712)">
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"
@@ -287,7 +287,7 @@ function Motivation() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_397_5685)">
+      <g clipPath="url(#clip0_397_5685)">
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"
