@@ -32,10 +32,35 @@ doppler setup
 # Press Y and enter
 ```
 
-### Setup database
+### Setup database, redis and pm2
 
-The server assumes you have a running postgres instance with a database named `retro-db` and an user called `admin` without a password.
-If you need help configuring this, see the postgres section below.
+## Setting up pm2
+
+```bash
+sudo npm i -g pm2
+```
+
+## Setting up redis
+
+```bash
+brew install redis
+```
+
+## Setting up postgres
+
+The server expects a postgres user called `admin` without a password and a database called `retro-db` which the admin user has full access to. Feel free to do this however you want, but heres a quick way to do it from stack-overflow.
+
+```postgres
+sudo -u postgres psql
+postgres=# create database "retro-db";
+postgres=# create user admin;
+postgres=# grant all privileges on database "retro-db" to admin;
+<!-- Go into the database -->
+postgres=# \c "retro-db"
+postgres=# GRANT ALL ON SCHEMA public TO admin;
+postgres=# GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;
+postgres=# ALTER USER admin CREATEDB;
+```
 
 ```bash
 cd apps/server
@@ -65,21 +90,5 @@ cd apps/web
 doppler setup
 # select `retro-web`, then select `dev`
 pnpm run dev
-```
-
-## Setting up postgres
-
-The server expects a postgres user called `admin` without a password and a database called `retro-db` which the admin user has full access to. Feel free to do this however you want, but heres a quick way to do it from stack-overflow.
-
-```postgres
-sudo -u postgres psql
-postgres=# create database retro-db;
-postgres=# create user admin;
-postgres=# grant all privileges on database retro-db to admin;
-<!-- Go into the database -->
-postgres=# \c retro-db
-GRANT ALL ON SCHEMA public TO admin;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;
-ALTER USER admin CREATEDB;
 ```
 
