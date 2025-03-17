@@ -7,10 +7,19 @@ export function FooterCta() {
       id="cta"
       className={cn(
         "max-w-screen-mmax mx-auto w-full flex flex-col text-center",
-        "text-white bg-black rounded-[28px] gap-2.5 p-8",
+        "text-white bg-black rounded-[28px] gap-2.5 p-8 relative",
         "group/footercta",
       )}
     >
+      <img
+        src="/retro-images/footer-emoji.png"
+        className="absolute object-cover"
+        style={{
+          width: "138px",
+          right: "-50px",
+          top: "-20px",
+        }}
+      />
       <span
         className={cn(
           "transition-transform duration-500",
@@ -24,7 +33,6 @@ export function FooterCta() {
       </h2>
       <div className="mt-4">
         <Button
-          variant="inverted"
           className="px-6 py-3 rounded-xl"
           onClick={() => (window.location.href = "/join-waitlist")}
         >

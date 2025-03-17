@@ -31,12 +31,39 @@ export function Hero() {
       </div>
       <div className="overflow-visible relative mt-8 w-full h-auto aspect-[4/3] sm:bg-white rounded-[28px] sm:shadow-[0_0_84px_rgba(0,0,0,0.04),0_0_1px_rgba(0,0,0,0.4)]">
         <img
+          src="/retro-images/hero-left-emoji.png"
+          className="absolute  object-cover"
+          style={{
+            left: "-354px",
+            top: "180px",
+            width: "260px",
+          }}
+        />
+        <img
           src="/hero-image.svg"
           aria-hidden="true"
           className={cn(
             "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-none w-auto h-auto",
             "transition-[transform] duration-300 ease-out",
           )}
+        />
+        <img
+          src="/retro-images/hero-right-emoji.png"
+          className="absolute  object-cover"
+          style={{
+            right: "-354px",
+            top: "180px",
+            width: "260px",
+          }}
+        />
+        <img
+          src="/retro-images/hero-streak.png"
+          className="absolute  object-cover"
+          style={{
+            right: "-68px",
+            width: "96px",
+            bottom: "-60px",
+          }}
         />
       </div>
     </section>
