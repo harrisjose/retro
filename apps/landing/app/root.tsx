@@ -32,6 +32,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script
+          async
+          src="https://cdn.seline.so/seline.js"
+          data-token="f93672876ad43fd"
+        ></script>
       </head>
       <body>
         {children}
