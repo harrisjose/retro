@@ -79,3 +79,42 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     </main>
   );
 }
+
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: "Mellow - Run Engaging Retros That Bring Teams Together" },
+    {
+      name: "description",
+      content:
+        "Helping teams reflect, align, and move forward with confidence.",
+    },
+    {
+      property: "og:title",
+      content: "Mellow - Run Engaging Retros That Bring Teams Together",
+    },
+    {
+      property: "og:description",
+      content:
+        "Helping teams reflect, align, and move forward with confidence.",
+    },
+    { property: "og:image", content: "/og-image.png" },
+    { property: "og:url", content: "https://mellow.team" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:site", content: "@mellow_dot_team" },
+    {
+      name: "twitter:title",
+      content: "Mellow - Run Engaging Retros That Bring Teams Together",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "Helping teams reflect, align, and move forward with confidence.",
+    },
+    { name: "twitter:image", content: "/og-image.png" },
+    {
+      name: "twitter:image:alt",
+      content: "Mellow - Team retrospective platform",
+    },
+  ];
+};

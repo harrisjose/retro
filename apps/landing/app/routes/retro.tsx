@@ -7,13 +7,6 @@ import { Navbar } from "../components/custom/navbar";
 import { Whys } from "../components/custom/whys";
 import type { Route } from "./+types/_index";
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Mellow" },
-    { name: "description", content: "Run Smarter Retros, Build Better Teams." },
-  ];
-}
-
 export default function Home({}: Route.ComponentProps) {
   return (
     <>
