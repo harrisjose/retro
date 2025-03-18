@@ -6,6 +6,10 @@
       "dest": "/assets/$1"
     },
     {
+      "src": "/retro-images/(.*)",
+      "dest": "/retro-images/$1"
+    },
+    {
       "src": "/[^/]+\\.[^/]+$",
       "dest": "/$1"
     },
