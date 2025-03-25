@@ -25,6 +25,7 @@ const CollaboratorAvatars = ({
           style={{
             boxShadow: "0px 0px 1px 0px #00000080",
           }}
+          key={`avatar-${index}`}
         >
           <img
             key={index}
