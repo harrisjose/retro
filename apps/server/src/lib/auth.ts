@@ -1,5 +1,6 @@
 import { emailService } from "@retro/mailer";
 import { type User, betterAuth } from "better-auth";
+import { admin as adminPlugin } from "better-auth/plugins";
 import { organization } from "better-auth/plugins/organization";
 import { db, dialect } from "../db/index.js";
 import config from "./config.js";
@@ -59,6 +60,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    adminPlugin(),
     organization({
       ac: ac,
       roles: {

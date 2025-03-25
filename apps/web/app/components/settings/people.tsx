@@ -21,6 +21,49 @@ import {
   SelectValue,
 } from "../ui/select";
 
+const ChangeRoleButtonsRenderer = ({
+  memberId,
+  memberRole,
+}: { memberId: string; memberRole: Role }) => {
+  const { data, isPending } = authClient.useActiveMember();
+
+  const changeRole = async (userId: string, role: Role) => {
+    await authClient.admin.setRole({
+      userId: userId,
+      role: role,
+    });
+  };
+
+  if (isPending || !data) return <></>;
+
+  if (
+    data.role &&
+    [Role.ADMIN, Role.OWNER].includes(data.role as Role) &&
+    memberRole === Role.MEMBER
+  ) {
+    return (
+      <DropdownMenuItem onClick={() => changeRole(memberId, Role.ADMIN)}>
+        Change role to Admin
+      </DropdownMenuItem>
+    );
+  }
+
+  if (
+    data.role &&
+    [Role.ADMIN, Role.OWNER].includes(data.role as Role) &&
+    memberRole === Role.ADMIN
+  ) {
+    return (
+      <DropdownMenuItem
+        className="text-red-600"
+        onClick={() => changeRole(memberId, Role.MEMBER)}
+      >
+        Change role to Member
+      </DropdownMenuItem>
+    );
+  }
+};
+
 const People = () => {
   const organization = useOrganization();
   const members = organization?.members ?? [];
@@ -137,7 +180,7 @@ const People = () => {
                         <DropdownMenuTrigger className="cursor-pointer">
                           <DotMenu />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent align="start">
                           <DropdownMenuItem
                             className="text-red-600"
                             onClick={() => removeInvitation(invite.id)}
@@ -166,7 +209,11 @@ const People = () => {
                     <DropdownMenuTrigger className="cursor-pointer">
                       <DotMenu />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="start">
+                      <ChangeRoleButtonsRenderer
+                        memberId={member.id}
+                        memberRole={member.role as Role}
+                      />
                       <DropdownMenuItem
                         className="text-red-600"
                         disabled={member.role === "owner"}
