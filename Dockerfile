@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 # Install necessary Alpine packages and build dependencies
 RUN apk add --no-cache libc6-compat gcompat python3 make g++ bash && \
     ln -sf /bin/bash /usr/bin/bash && \
@@ -10,7 +10,7 @@ RUN apk add --no-cache libc6-compat gcompat python3 make g++ bash && \
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm install -g corepack pm2
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+RUN corepack enable && corepack prepare pnpm --activate
 
 FROM base AS build
 COPY . /usr/src/app
