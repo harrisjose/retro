@@ -17,6 +17,7 @@ on:
       - '.github/workflows/server-build.yml'
       - 'Dockerfile'
       - 'pnpm-lock.yaml'
+      - '.npmrc'
 
 jobs:
   build:
