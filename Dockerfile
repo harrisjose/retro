@@ -23,7 +23,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 RUN pnpm run -r --filter="./packages/**" build
 
 # Create production deployments for apps
-RUN pnpm deploy --filter="./apps/server" --prod /prod/server
+RUN pnpm deploy --filter="./apps/server" --prod /prod/server --include-workspace-root
 
 FROM base AS server
 WORKDIR /app
