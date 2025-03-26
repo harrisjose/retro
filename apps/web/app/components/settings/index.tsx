@@ -38,7 +38,7 @@ const settingsTabs = [
 ];
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<string>(settingsTabs[2].value);
+  const [activeTab, setActiveTab] = useState<string>(settingsTabs[0].value);
 
   return (
     <Dialog>
@@ -59,6 +59,10 @@ export default function Settings() {
               <div className="p-3 font-bold text-base">Settings</div>
             </DialogTitle>
             <TabsList className="block h-auto">
+              <div className="mt-[14px] mb-1 opacity-50 text-[10px] ml-[10px] uppercase">
+                Personal
+              </div>
+
               <TabsTrigger
                 value={settingsTabs[0].value}
                 className={cn(

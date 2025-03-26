@@ -51,60 +51,59 @@ export const Integrations = () => {
       <div className="font-bold text-base">Integrations</div>
 
       {slackIntegration ? (
-        <div className="mt-6 flex gap-[6px] items-center">
-          <div className="flex flex-col gap-[2px]">
-            <div className="font-bold">Slack</div>
-            <div className="text-sm font-bold">
-              Connected to {slackIntegration.teamName}
-            </div>
-            <div className="flex flex-col gap-[2px] mt-5">
-              <div className="text-sm font-bold">Primary channel</div>
-              <div className="text-xs text-gray-500">
-                This channel will be used to post updates about the ongoing &
-                upcoming retros
+        <div className="mt-6 p-4 border rounded-lg">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <img src="/slack-logo.svg" alt="Slack" className="w-6 h-6" />
+              <div>
+                <div className="font-semibold text-base">Slack</div>
+                <div className="text-sm text-gray-600">
+                  Connected to {slackIntegration.teamName}
+                </div>
               </div>
-
-              <Select
-                value={slackIntegration.channelId ?? ""}
-                onValueChange={(value) => {
-                  updateSlackChannel(value);
-                }}
-              >
-                <SelectTrigger
-                  className={cn(
-                    "w-fit mt-2",
-                    "outline-none focus:outline-none focus:ring-0 focus:ring-offset-0",
-                    "focus-visible:ring-0 focus-visible:ring-offset-0 text-[14px]",
-                  )}
-                >
-                  <SelectValue placeholder="Choose a channel" />
-                </SelectTrigger>
-                <SelectContent>
-                  {slackChannels.map(
-                    (channel: { id: string; name: string }) => (
-                      <SelectItem
-                        className="capitalize"
-                        key={channel.id}
-                        value={channel.id}
-                      >
-                        {channel.name}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
             </div>
-          </div>
-          <div className="self-start">
             <Button
-              type="reset"
-              className="w-full bg-red-500 align-top"
-              onClick={() => {
-                deleteIntegration("slack");
-              }}
+              variant="destructive"
+              size="sm"
+              onClick={() => deleteIntegration("slack")}
             >
-              Remove
+              Disconnect
             </Button>
+          </div>
+
+          <div className="mt-6">
+            <div className="">
+              <div className="font-medium">Primary Channel</div>
+              <div className="text-sm text-gray-500">
+                Choose where you want retro updates to be posted
+              </div>
+            </div>
+
+            <Select
+              value={slackIntegration.channelId ?? ""}
+              onValueChange={updateSlackChannel}
+            >
+              <SelectTrigger
+                className={cn(
+                  "w-[200px] mt-3",
+                  "border-gray-200 hover:border-gray-300",
+                  "outline-none focus:outline-none",
+                )}
+              >
+                <SelectValue placeholder="Choose a channel" />
+              </SelectTrigger>
+              <SelectContent>
+                {slackChannels.map((channel) => (
+                  <SelectItem
+                    key={channel.id}
+                    value={channel.id}
+                    className="capitalize"
+                  >
+                    # {channel.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       ) : (
