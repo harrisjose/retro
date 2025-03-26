@@ -30,6 +30,10 @@ importers:
       yjs-types:
         specifier: ^0.0.1
         version: 0.0.1(yjs@13.6.23)
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-musl':
+        specifier: '*'
+        version: 4.32.0
     devDependencies:
       '@better-auth/cli':
         specifier: ^1.1.11
@@ -43,10 +47,6 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.7.3
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-musl':
-        specifier: '*'
-        version: 4.32.0
 
   apps/landing:
     dependencies:
@@ -205,6 +205,9 @@ importers:
         specifier: ^3.24.1
         version: 3.24.1
     devDependencies:
+      '@types/luxon':
+        specifier: ^3.4.2
+        version: 3.4.2
       '@types/node':
         specifier: ^20.11.17
         version: 20.17.16
@@ -217,6 +220,9 @@ importers:
       kysely-codegen:
         specifier: ^0.17.0
         version: 0.17.0(better-sqlite3@11.8.1)(kysely@0.27.6)(pg@8.13.1)
+      luxon:
+        specifier: ^3.6.0
+        version: 3.6.0
 
   apps/web:
     dependencies:
@@ -2936,6 +2942,9 @@ packages:
   '@types/lodash@4.17.14':
     resolution: {integrity: sha512-jsxagdikDiDBeIRaPYtArcT8my4tN1og7MtMRquFT3XNA6axxyHDRUemqDz/taRDdOUn0GnGHRCuff4q48sW9A==}
 
+  '@types/luxon@3.4.2':
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -4555,8 +4564,8 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  luxon@3.5.0:
-    resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
+  luxon@3.6.0:
+    resolution: {integrity: sha512-WE7p0p7W1xji9qxkLYsvcIxZyfP48GuFrWIBQZIsbjCyf65dG1rv4n83HcOyEyhvzxJCrUoObCRNFgRNIQ5KNA==}
     engines: {node: '>=12'}
 
   make-dir@3.1.0:
@@ -8439,6 +8448,8 @@ snapshots:
 
   '@types/lodash@4.17.14': {}
 
+  '@types/luxon@3.4.2': {}
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -9030,7 +9041,7 @@ snapshots:
 
   cron-parser@4.9.0:
     dependencies:
-      luxon: 3.5.0
+      luxon: 3.6.0
 
   cross-env@7.0.3:
     dependencies:
@@ -10034,7 +10045,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  luxon@3.5.0: {}
+  luxon@3.6.0: {}
 
   make-dir@3.1.0:
     dependencies:

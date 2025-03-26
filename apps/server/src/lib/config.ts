@@ -13,6 +13,10 @@ const config = {
   },
   api: {
     port: Number(process.env.API_PORT ?? 3000),
+    url:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : process.env.API_URL!,
     origin:
       process.env.NODE_ENV === "development"
         ? ["http://localhost:5175"]

@@ -1,13 +1,11 @@
 import { WebClient } from "@slack/web-api";
 import { type Context, Hono } from "hono";
+import { DateTime } from "luxon";
 import { getInitialYDoc } from "../collab/utils.js";
 import { db } from "../db/index.js";
 import config from "../lib/config.js";
 
 const slack = new Hono();
-
-// const SLACK_REDIRECT_URI = `https://bbb2-121-200-54-151.ngrok-free.app/api/slack/oauth/callback`;
-// const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 
 slack.get("/oauth", async (c) => {
   try {
@@ -44,9 +42,10 @@ slack.get("/oauth", async (c) => {
       "chat:write",
       "chat:write.public",
       "commands",
+      "users:read",
     ];
     const scopeParam = scopes.join(",");
-    const redirectUri = `${config.app.url}/${config.integrations.slack.redirectUri}`;
+    const redirectUri = `${config.api.url}/${config.integrations.slack.redirectUri}`;
     const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${config.integrations.slack.clientId}&scope=${scopeParam}&user_scope=&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
     return c.redirect(authUrl);
@@ -89,7 +88,7 @@ slack.get("/oauth/callback", async (c) => {
         client_id: config.integrations.slack.clientId,
         client_secret: config.integrations.slack.clientSecret,
         code,
-        redirect_uri: `${config.app.url}/${config.integrations.slack.redirectUri}`,
+        redirect_uri: `${config.api.url}/${config.integrations.slack.redirectUri}`,
       }),
     });
 
@@ -174,6 +173,47 @@ interface SlackPayload {
 type ProcessRequestResult = Awaited<ReturnType<typeof processRequest>>;
 function getFormattedDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function getFomattedDateTime(timezone: string | undefined) {
+  const userTimezone = timezone || "UTC";
+  const now = new Date();
+  const userLocalDate = new Date(
+    now.toLocaleString("en-US", { timeZone: userTimezone }),
+  );
+  const formattedDate = getFormattedDate(userLocalDate);
+
+  // Get current time in user's timezone and format it for the time picker
+  const userLocalTime = new Date(
+    now.toLocaleString("en-US", { timeZone: userTimezone }),
+  );
+
+  // Round to nearest 15 minutes
+  const startMinute = Math.ceil(userLocalTime.getMinutes() / 15) * 15;
+  let startHour = userLocalTime.getHours();
+
+  // If minutes rounded to 60, increment the hour and set minutes to 0
+  if (startMinute === 60) {
+    startHour += 1;
+    startHour = startHour % 24; // Handle day rollover
+  }
+
+  // Format time for Slack's time picker (HH:MM)
+  const formattedStartTime = `${String(startHour).padStart(2, "0")}:${String(startMinute % 60).padStart(2, "0")}`;
+
+  // Calculate end time (2 hours later)
+  const endTime = new Date(userLocalTime);
+  endTime.setMinutes(startMinute % 60); // Use the rounded minutes
+  endTime.setHours(startHour + 2); // Add 2 hours to the rounded hour
+  const endHour = endTime.getHours();
+  const endMinute = endTime.getMinutes();
+  const formattedEndTime = `${String(endHour).padStart(2, "0")}:${String(endMinute).padStart(2, "0")}`;
+
+  return {
+    formattedDate,
+    formattedStartTime,
+    formattedEndTime,
+  };
 }
 
 async function sendSlackResponse(responseUrl: string, blocks: any[]) {
@@ -291,7 +331,21 @@ async function processRequest(c: Context) {
   };
 }
 
-async function handleCreateRetroForm({ payload }: ProcessRequestResult) {
+async function handleCreateRetroForm({
+  payload,
+  integration,
+}: ProcessRequestResult) {
+  // Get user timezone from Slack API
+  const slackClient = new WebClient(integration.botToken);
+  const userInfo = await slackClient.users.info({
+    user: payload.user.id,
+  });
+
+  const { formattedDate, formattedStartTime, formattedEndTime } =
+    getFomattedDateTime(userInfo.user?.tz);
+
+  // Default to current date in user's timezone if available
+
   await sendSlackResponse(payload.response_url, [
     {
       type: "section",
@@ -319,30 +373,51 @@ async function handleCreateRetroForm({ payload }: ProcessRequestResult) {
     },
     {
       type: "input",
-      block_id: "start_date",
+      block_id: "date",
       label: {
         type: "plain_text",
-        text: "Start Date",
+        text: "Pick a date",
       },
       element: {
         type: "datepicker",
-        action_id: "start_date_input",
-        initial_date: getFormattedDate(new Date()),
+        action_id: "date_input",
+        initial_date: formattedDate,
       },
     },
     {
       type: "input",
-      block_id: "end_date",
+      block_id: "start_time",
       label: {
         type: "plain_text",
-        text: "End Date",
+        text: "Start time",
       },
       element: {
-        type: "datepicker",
-        action_id: "end_date_input",
-        initial_date: getFormattedDate(
-          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        ),
+        type: "timepicker",
+        placeholder: {
+          type: "plain_text",
+          text: "Select time",
+          emoji: true,
+        },
+        initial_time: formattedStartTime,
+        action_id: "start_time_input",
+      },
+    },
+    {
+      type: "input",
+      block_id: "end_time",
+      label: {
+        type: "plain_text",
+        text: "End time",
+      },
+      element: {
+        type: "timepicker",
+        placeholder: {
+          type: "plain_text",
+          text: "Select time",
+          emoji: true,
+        },
+        initial_time: formattedEndTime,
+        action_id: "end_time_input",
       },
     },
     {
@@ -371,18 +446,30 @@ async function handleCreateRetroSubmit({
   try {
     const slackClient = new WebClient(integration.botToken);
 
+    // Get user timezone
+    const userInfo = await slackClient.users.info({
+      user: payload.user.id,
+    });
+    const userTimezone = userInfo.user?.tz || "UTC";
+
+    const { formattedDate, formattedStartTime, formattedEndTime } =
+      getFomattedDateTime(userInfo.user?.tz);
+
     const name = payload.state?.values?.name?.name_input?.value?.trim();
-    const startDate =
-      payload.state?.values?.start_date?.start_date_input?.selected_date ??
-      new Date();
-    const endDate =
-      payload.state?.values?.end_date?.end_date_input?.selected_date ??
-      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const date =
+      payload.state?.values?.date?.date_input?.selected_date ?? formattedDate;
+    const startTime =
+      payload.state?.values?.start_time?.start_time_input?.selected_time ??
+      formattedStartTime;
+    const endTime =
+      payload.state?.values?.end_time?.end_time_input?.selected_time ??
+      formattedEndTime;
 
     let errorMessage = "";
     if (!name) errorMessage += "❌ Retro name is required.\n";
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-      errorMessage += "❌ End date must be after the start date.\n";
+
+    if (startTime && endTime && startTime >= endTime) {
+      errorMessage += "❌ End time must be after the start time.\n";
     }
 
     // 🔹 If errors exist, send a new message
@@ -395,6 +482,25 @@ async function handleCreateRetroSubmit({
       return new Response(null, { status: 200 });
     }
 
+    // Create DateTime objects in user's timezone
+    const userStartDateTime = DateTime.fromFormat(
+      `${date} ${startTime}`,
+      "yyyy-MM-dd HH:mm",
+      { zone: userTimezone },
+    );
+
+    const userEndDateTime = DateTime.fromFormat(
+      `${date} ${endTime}`,
+      "yyyy-MM-dd HH:mm",
+      { zone: userTimezone },
+    );
+
+    // Convert end time to UTC for storage
+    const retroStartDateTime = userStartDateTime.toJSDate();
+
+    // Calculate duration in minutes
+    const duration = userEndDateTime.diff(userStartDateTime, "minutes").minutes;
+
     const document = await db
       .insertInto("document")
       .values({
@@ -403,8 +509,8 @@ async function handleCreateRetroSubmit({
         createdBy: integration.createdBy,
         yDoc: getInitialYDoc(),
         yDocUpdatedAt: new Date(),
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        endDateTime: retroStartDateTime,
+        duration,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
