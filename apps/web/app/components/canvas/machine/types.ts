@@ -47,6 +47,8 @@ export enum BlockEventType {
   BlockDragEnd = "BLOCK_DRAG_END",
   BlockExitEditing = "BLOCK_EXIT_EDITING",
   BlockEnterEditing = "BLOCK_ENTER_EDITING",
+  BlockDuplicate = "BLOCK_DUPLICATE",
+  BlockDelete = "BLOCK_DELETE",
 }
 
 export type BlockToInsert = {
@@ -144,6 +146,14 @@ export type Events =
     }
   | {
       type: BlockEventType.BlockEnterEditing;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockDuplicate;
+      blockId: string;
+    }
+  | {
+      type: BlockEventType.BlockDelete;
       blockId: string;
     }
   | EditorEvents

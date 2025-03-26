@@ -174,6 +174,58 @@ export const canvasController = setup({
     },
   ],
   on: {
+    [BlockEventType.BlockDuplicate]: [
+      {
+        // multiple blocks selected and doing right click on one of selected widget should duplicate all the selected widget
+        guard: ({ event, context }) =>
+          context.selection.includes(event.blockId),
+        actions: [
+          {
+            type: "duplicateBlock",
+            params: ({ context }) => ({
+              selected: context.selection,
+            }),
+          },
+        ],
+      },
+      {
+        // If a different block is selected and doing right click on it should duplicate the current block
+        actions: [
+          {
+            type: "duplicateBlock",
+            params: ({ event }) => ({
+              selected: [event.blockId],
+            }),
+          },
+        ],
+      },
+    ],
+
+    [BlockEventType.BlockDelete]: [
+      {
+        guard: ({ event, context }) =>
+          context.selection.includes(event.blockId),
+        actions: [
+          {
+            type: "deleteBlock",
+            params: ({ context }) => ({
+              selected: context.selection,
+            }),
+          },
+        ],
+      },
+      {
+        actions: [
+          {
+            type: "deleteBlock",
+            params: ({ event }) => ({
+              selected: [event.blockId],
+            }),
+          },
+        ],
+      },
+    ],
+
     [CanvasEventType.InsertStart]: {
       target: `#${CanvasMode.Inserting}`,
       actions: [

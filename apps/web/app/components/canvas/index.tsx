@@ -6,7 +6,11 @@ import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
 import { InsertDragCursor } from "./cursors/insert-drag-cursor";
 import { UserCursor } from "./cursors/user-cursor";
-import { CanvasControllerContext, CanvasEventType } from "./machine";
+import {
+  BlockEventType,
+  CanvasControllerContext,
+  CanvasEventType,
+} from "./machine";
 import IntroSection from "./sections/intro";
 import SectionRenderer from "./sections/section";
 import SummarySection from "./sections/summary";
@@ -87,6 +91,20 @@ export default function Canvas() {
   //   JSON.stringify(context, null, 2),
   // );
 
+  const onDuplicate = (blockId: string) => {
+    controller.send({
+      type: BlockEventType.BlockDuplicate,
+      blockId,
+    });
+  };
+
+  const onDelete = (blockId: string) => {
+    controller.send({
+      type: BlockEventType.BlockDelete,
+      blockId,
+    });
+  };
+
   return (
     <>
       <div
@@ -110,7 +128,7 @@ export default function Canvas() {
           {Object.keys(sections).map((sectionId) => (
             <SectionRenderer key={sectionId} id={sectionId} />
           ))}
-          <BlocksRenderer />
+          <BlocksRenderer onDuplicate={onDuplicate} onDelete={onDelete} />
 
           <SummarySection />
         </div>
