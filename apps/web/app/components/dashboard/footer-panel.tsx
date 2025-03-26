@@ -46,14 +46,15 @@ const FooterPanel = () => {
     endDate: "",
   });
 
-  const onOpenChange = useCallback((open: boolean) => {
+  const onOpenChange = (open: boolean) => {
     if (!open) {
       resetForm();
-    } else if (showGcalIntegration) {
+    }
+    if (showGcalIntegration) {
       setShowGcalIntegration(false);
     }
     setOpen(open);
-  }, []);
+  };
 
   const resetForm = useCallback(() => {
     setRetroData({
@@ -126,7 +127,6 @@ const FooterPanel = () => {
     } finally {
       setIsCreationInProgress(false);
       setShowGcalIntegration(true);
-      resetForm();
     }
   }, [
     isCreationInProgress,
