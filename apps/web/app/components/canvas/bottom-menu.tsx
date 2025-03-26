@@ -18,7 +18,6 @@ import ArrowDown from "../svg/arrow-down";
 import CardCreatePlus from "../svg/card-create-plus";
 import { Separator } from "../ui/separator";
 import { useInsertDrag } from "./hooks/use-insert-drag";
-import { CanvasControllerContext } from "./machine";
 
 const getRandomCardColor = () => {
   return Object.values(CardColor)[
@@ -29,7 +28,6 @@ const getRandomCardColor = () => {
 const StickerMenu = () => {
   const [open, setOpen] = useState(false);
 
-  const controllerRef = CanvasControllerContext.useActorRef();
   const { handleInsertInteraction } = useInsertDrag();
 
   const createStickerBlockToInsert = (stickerType: StickerType) => ({
@@ -82,16 +80,20 @@ const StickerMenu = () => {
 const CardMenu = () => {
   const { profile } = useProfile();
   const { handleInsertInteraction } = useInsertDrag();
+  const document = useDocument();
 
   const createCardBlockToInsert = () => ({
     type: BlockType.Card,
     properties: {
       color: getRandomCardColor(),
       content: raw(new Y.XmlFragment()),
-      createdBy: {
-        id: profile.id,
-        name: profile.name,
-      },
+      // Do not store user info for anonymous retros
+      createdBy: document.isAnonymous
+        ? null
+        : {
+            id: profile.id,
+            name: profile.name,
+          },
     },
   });
 

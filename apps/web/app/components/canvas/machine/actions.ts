@@ -16,11 +16,13 @@ export const createBlockAtPosition = ({
   point,
   profile,
   createBlock,
+  isAnonymousRetro,
 }: {
   blockToInsert: BlockToInsert;
   point: { x: number; y: number };
   profile: { id: string; name: string };
   createBlock: Function;
+  isAnonymousRetro: boolean;
 }): string | null => {
   switch (blockToInsert.type) {
     case BlockType.Sticker: {
@@ -63,10 +65,13 @@ export const createBlockAtPosition = ({
         {
           color: properties.color,
           content: raw(new Y.XmlFragment()),
-          createdBy: {
-            id: profile.id,
-            name: profile.name,
-          },
+          // Do not store user info for anonymous retros
+          createdBy: isAnonymousRetro
+            ? null
+            : {
+                id: profile.id,
+                name: profile.name,
+              },
         },
       );
 

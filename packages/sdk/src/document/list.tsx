@@ -128,11 +128,13 @@ export const useCreateDocument = () => {
     name,
     endDateTime,
     duration,
+    isAnonymous,
   }: {
     organizationId: string;
     name: string;
     endDateTime: Date;
     duration: number;
+    isAnonymous: boolean;
   }) => {
     try {
       const document = await apiClient.document.create.mutate({
@@ -140,6 +142,7 @@ export const useCreateDocument = () => {
         organizationId,
         endDateTime: endDateTime.toISOString(),
         duration,
+        isAnonymous,
       });
       documents[document.id] = { ...document };
       return document.id;

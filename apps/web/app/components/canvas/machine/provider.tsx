@@ -3,6 +3,7 @@ import {
   useAwarenessActions,
   useBlockMap,
   useCreateBlock,
+  useDocument,
   useHistory,
   useMultiBlockActions,
   useProfile,
@@ -41,6 +42,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     [],
   );
   const blocks = useBlockMap();
+  const document = useDocument();
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
   const createBlock = useCreateBlock();
   const { profile } = useProfile();
@@ -201,6 +203,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               point,
               profile,
               createBlock,
+              isAnonymousRetro: document.isAnonymous,
             });
 
             if (blockId) {

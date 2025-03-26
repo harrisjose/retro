@@ -40,6 +40,7 @@ const FooterPanel = () => {
     endDate: new Date(),
     startTime: "",
     endTime: "",
+    isAnonymous: false,
   });
   const [error, setError] = useState<RetroFormError>({
     name: "",
@@ -62,6 +63,7 @@ const FooterPanel = () => {
       endDate: new Date(),
       startTime: getStartAndEndTime(profile!.timezone).startTime,
       endTime: getStartAndEndTime(profile!.timezone).endTime,
+      isAnonymous: false,
     });
     setError({ name: "", endDate: "" });
   }, [profile!.timezone]);
@@ -120,6 +122,7 @@ const FooterPanel = () => {
         name: retroData.name,
         endDateTime,
         duration,
+        isAnonymous: retroData.isAnonymous,
       });
       console.log(`Created document with id: ${documentId}`);
     } catch (error) {

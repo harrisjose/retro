@@ -80,6 +80,9 @@ const updateUserPresence = async (state: DocumentState) => {
 
 const usePresenceSync = (state: DocumentState) => {
   useEffect(() => {
+    const isAnonymousRetro = state.document.isAnonymous;
+    if (isAnonymousRetro) return;
+
     updateUserPresence(state);
     state.syncProvider.on(
       "awarenessUpdate",
@@ -278,6 +281,9 @@ export const useAwarenessActions = () => {
 
   return {
     updateSelectionAwareness: async (selected: string[]) => {
+      const isAnonymousRetro = state.document.isAnonymous;
+      if (isAnonymousRetro) return;
+
       const { data } = await authClient.getSession();
       if (data?.user) {
         state.syncProvider.setAwarenessField("selection", {
@@ -291,6 +297,9 @@ export const useAwarenessActions = () => {
       x: number;
       y: number;
     }) => {
+      const isAnonymousRetro = state.document.isAnonymous;
+      if (isAnonymousRetro) return;
+
       if (data?.user.id) {
         state.syncProvider.setAwarenessField("pointers", {
           id: data.user.id,

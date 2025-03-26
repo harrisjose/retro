@@ -34,6 +34,7 @@ export interface Document {
   duration: number;
   endDateTime: Timestamp;
   id: Generated<string>;
+  isAnonymous: Generated<boolean>;
   name: string;
   organizationId: string;
   updatedAt: Generated<Timestamp>;
