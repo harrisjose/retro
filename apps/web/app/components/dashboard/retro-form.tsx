@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   getEndTimeIntervals,
   getTimeIntervals,
@@ -19,6 +20,7 @@ export type RetroFormData = {
   endDate: Date | undefined;
   startTime: string;
   endTime: string;
+  isAnonymous: boolean;
 };
 export type RetroFormError = {
   name: string;
@@ -143,6 +145,13 @@ const RetroForm = ({
             </SelectContent>
           </Select>
         </div>
+      </div>
+      <div className="flex items-end justify-between">
+        <p className="text-[#808080] text-sm mb-1 mt-4">Is Anonymous retro?</p>
+        <Switch
+          checked={formData.isAnonymous}
+          onCheckedChange={(checked) => updateFormData("isAnonymous", checked)}
+        />
       </div>
     </form>
   );

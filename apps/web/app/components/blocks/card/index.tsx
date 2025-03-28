@@ -23,6 +23,7 @@ import {
   useBlock,
   useBlockAwareness,
   useBlockProperties,
+  useDocument,
   useRawBlockProperty,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
@@ -90,6 +91,7 @@ const CardColorPicker = ({ id }: { id: string }) => {
 
 const CardCollaborators = ({ id }: { id: string }) => {
   const { collaborators } = useBlockAwareness(id);
+
   return (
     <div className="absolute top-1 right-1 flex -space-x-0.5 translate-x-1/2 -translate-y-1/2">
       {collaborators.map((c) => (
@@ -116,6 +118,7 @@ const CardCollaborators = ({ id }: { id: string }) => {
 
 export default function CardBlock({ id }: { id: string }) {
   const { block, setSize } = useBlock(id);
+  const document = useDocument();
 
   const { properties } = useBlockProperties<CardProperties>(id);
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");
@@ -187,7 +190,7 @@ export default function CardBlock({ id }: { id: string }) {
           </EditorContextProvider>
         )}
         <div className="mt-auto h-7">
-          {properties.createdBy && (
+          {properties.createdBy && !document.isAnonymous && (
             <div
               className="text-xs shrink-0 text-black opacity-60"
               style={{

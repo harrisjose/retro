@@ -81,6 +81,7 @@ export type Document = {
   updatedAt: string;
   endDateTime: string;
   duration: number;
+  isAnonymous: boolean;
 };
 
 /**

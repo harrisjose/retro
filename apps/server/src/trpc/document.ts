@@ -32,6 +32,7 @@ const documentRouter = router({
             "duration",
             "yDocUpdatedAt",
             "organizationId",
+            "isAnonymous",
           ])
           .where("organizationId", "=", input.organizationId)
           .where("deletedAt", "is", null)
@@ -84,6 +85,7 @@ const documentRouter = router({
             "duration",
             "yDocUpdatedAt",
             "organizationId",
+            "isAnonymous",
           ])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
@@ -102,6 +104,7 @@ const documentRouter = router({
         organizationId: z.string(),
         endDateTime: z.string(),
         duration: z.number(),
+        isAnonymous: z.boolean(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -119,6 +122,7 @@ const documentRouter = router({
             yDocUpdatedAt: new Date(),
             endDateTime: new Date(input.endDateTime),
             duration: input.duration,
+            isAnonymous: input.isAnonymous,
           })
           .returningAll()
           .executeTakeFirstOrThrow();
