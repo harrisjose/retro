@@ -1,6 +1,8 @@
+import { Toaster } from "@/components/ui/sonner";
 import { ProfileProvider, authClient } from "@retro/sdk";
 import { Navigate, Outlet, useNavigation } from "react-router";
 import Spinner from "./svg/spinner";
+
 const ProtectedLayout = () => {
   const { data, isPending, error } = authClient.useSession();
   const navigation = useNavigation();
@@ -21,6 +23,7 @@ const ProtectedLayout = () => {
 
   return (
     <ProfileProvider>
+      <Toaster richColors />
       <Outlet />
     </ProfileProvider>
   );
