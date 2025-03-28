@@ -93,11 +93,12 @@ const CardCollaborators = ({ id }: { id: string }) => {
   const { collaborators } = useBlockAwareness(id);
 
   return (
-    <div className="absolute top-1 right-1 flex -space-x-0.5 translate-x-1/2 -translate-y-1/2">
+    <div className="absolute top-1 right-1 flex -space-x-3 translate-x-1/2 -translate-y-1/2">
       {collaborators.map((c) => (
         <div
           key={c.id}
           className="w-[28px] h-[28px] rounded-full border-2 border-white overflow-hidden"
+          title={c.name}
         >
           {c.image ? (
             <img
