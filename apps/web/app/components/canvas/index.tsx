@@ -131,8 +131,8 @@ export default function Canvas() {
           <BlocksRenderer onDuplicate={onDuplicate} onDelete={onDelete} />
 
           <SummarySection />
+          <UserCursor />
         </div>
-        <UserCursor />
         <CanvasCursor />
         <InsertDragCursor />
         <SelectionRectangle />

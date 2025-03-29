@@ -34,7 +34,7 @@ export function CollaboratorCursor({
   useEffect(() => {
     cursorXSpring.set(x);
     cursorYSpring.set(y);
-  }, [x, y, cursorXSpring, cursorYSpring]);
+  }, [x, y]);
 
   return (
     <motion.div

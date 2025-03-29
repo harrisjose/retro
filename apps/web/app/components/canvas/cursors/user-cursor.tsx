@@ -2,7 +2,7 @@ import { CollaboratorCursor } from "@/components/ui/collaborator-cursor";
 import { useAwarenessActions, useCollaborators, usePointers } from "@retro/sdk";
 import { throttle } from "lodash-es";
 import { useEffect, useMemo } from "react";
-import { canvasToScreen, screenToCanvas, useCamera } from "../store";
+import { screenToCanvas, useCamera } from "../store";
 
 const UserCursorPointer = ({
   id,
@@ -18,8 +18,6 @@ const UserCursorPointer = ({
     text: string;
   };
 }) => {
-  const { camera } = useCamera();
-  const point = useMemo(() => canvasToScreen({ x, y }, camera), [x, y, camera]);
   const collaborators = useCollaborators();
 
   const user = useMemo(() => {
@@ -29,8 +27,8 @@ const UserCursorPointer = ({
   return (
     <CollaboratorCursor
       key={id}
-      x={point.x}
-      y={point.y}
+      x={x}
+      y={y}
       color={color}
       userName={user?.name ?? ""}
     />
