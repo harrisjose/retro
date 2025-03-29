@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
@@ -183,10 +184,14 @@ const People = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                           <DropdownMenuItem
-                            className="text-red-600"
                             onClick={() => removeInvitation(invite.id)}
                           >
-                            Delete invitation
+                            <Label
+                              variant="destructive"
+                              className="cursor-pointer"
+                            >
+                              Delete invitation
+                            </Label>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -216,11 +221,12 @@ const People = () => {
                         memberRole={member.role as Role}
                       />
                       <DropdownMenuItem
-                        className="text-red-600"
                         disabled={member.role === "owner"}
                         onClick={() => removeUser(member.id)}
                       >
-                        Remove
+                        <Label variant="destructive" className="cursor-pointer">
+                          Remove
+                        </Label>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

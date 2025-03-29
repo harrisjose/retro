@@ -133,6 +133,65 @@ const documentRouter = router({
         throw new Error("Failed to create document");
       }
     }),
+  rename: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        if (!ctx.user) {
+          throw new Error("Unauthorized");
+        }
+
+        const document = await db
+          .updateTable("document")
+          .set({
+            name: input.name,
+            updatedAt: new Date(),
+          })
+          .where("id", "=", dbUtil.asUuid(input.id))
+          .where("deletedAt", "is", null)
+          .returningAll()
+          .executeTakeFirstOrThrow();
+
+        return document;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to rename document");
+      }
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        if (!ctx.user) {
+          throw new Error("Unauthorized");
+        }
+
+        // Soft delete by setting deletedAt
+        const document = await db
+          .updateTable("document")
+          .set({
+            deletedAt: new Date(),
+          })
+          .where("id", "=", dbUtil.asUuid(input.id))
+          .where("deletedAt", "is", null)
+          .returningAll()
+          .executeTakeFirstOrThrow();
+
+        return document;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to delete document");
+      }
+    }),
   generateSummary: publicProcedure
     .input(
       z.object({
