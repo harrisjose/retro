@@ -32,10 +32,7 @@ function SectionNameEditor({
 
   return (
     <div
-      className={cn(
-        "absolute left-[10px] top-[10px] border rounded-full border-gray-200 font-normal px-3 py-1 text-xs",
-        isEditing && "border-gray-600",
-      )}
+      className={cn("absolute left-[10px] top-[10px] border rounded-full")}
       onDoubleClick={onEdit}
       style={{
         transform: `scale(${1 / camera.z})`,
@@ -49,10 +46,12 @@ function SectionNameEditor({
           onKeyDown={handleKeyDown}
           onBlur={() => onSave(editValue)}
           autoFocus
-          className="w-auto min-w-[80px] h-4 px-0 py-0 text-xs outline-none border-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="w-auto min-w-[80px] h-5 px-3 py-1 text-xs outline-none border-transparent"
         />
       ) : (
-        name
+        <div className="border-gray-200 font-normal px-3 py-1 text-xs">
+          {name}
+        </div>
       )}
     </div>
   );

@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 import { Role } from "@retro/common";
 import { authClient, useOrganization } from "@retro/sdk";
 import { isEmpty } from "lodash-es";
+import { toast } from "sonner";
+
 import { useState } from "react";
 import isEmail from "validator/lib/isEmail";
 import DotMenu from "../svg/dot-menu";
@@ -13,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
@@ -20,6 +23,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+
+const ChangeRoleButtonsRenderer = ({
+  memberId,
+
+  memberRole,
+}: { memberId: string; memberRole: Role }) => {
+  const { data: activeMember, isPending } = authClient.useActiveMember();
+  const changeRole = async (role: Role) => {
+    await authClient.organization.updateMemberRole({
+      memberId,
+      role: role,
+    });
+    toast.success("Role updated successfully!");
+  };
+
+  if (isPending || !activeMember) return <></>;
+  if (activeMember.id === memberId) return <></>;
+
+  if (
+    activeMember.role &&
+    [Role.ADMIN, Role.OWNER].includes(activeMember.role as Role) &&
+    memberRole === Role.MEMBER
+  ) {
+    return (
+      <DropdownMenuItem onClick={() => changeRole(Role.ADMIN)}>
+        Change role to Admin
+      </DropdownMenuItem>
+    );
+  }
+
+  if (
+    activeMember.role &&
+    [Role.ADMIN, Role.OWNER].includes(activeMember.role as Role) &&
+    memberRole === Role.ADMIN
+  ) {
+    return (
+      <DropdownMenuItem onClick={() => changeRole(Role.MEMBER)}>
+        Change role to Member
+      </DropdownMenuItem>
+    );
+  }
+};
 
 const People = () => {
   const organization = useOrganization();
@@ -137,12 +182,16 @@ const People = () => {
                         <DropdownMenuTrigger className="cursor-pointer">
                           <DotMenu />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent align="start">
                           <DropdownMenuItem
-                            className="text-red-600"
                             onClick={() => removeInvitation(invite.id)}
                           >
-                            Delete invitation
+                            <Label
+                              variant="destructive"
+                              className="cursor-pointer"
+                            >
+                              Delete invitation
+                            </Label>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -166,13 +215,18 @@ const People = () => {
                     <DropdownMenuTrigger className="cursor-pointer">
                       <DotMenu />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent align="start">
+                      <ChangeRoleButtonsRenderer
+                        memberId={member.id}
+                        memberRole={member.role as Role}
+                      />
                       <DropdownMenuItem
-                        className="text-red-600"
                         disabled={member.role === "owner"}
                         onClick={() => removeUser(member.id)}
                       >
-                        Remove
+                        <Label variant="destructive" className="cursor-pointer">
+                          Remove
+                        </Label>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

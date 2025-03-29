@@ -120,7 +120,7 @@ export const useDocumentList = () => {
   };
 };
 
-export const useCreateDocument = () => {
+export const useDocumentCRUD = () => {
   const { documents } = useContext(DocumentListContext);
 
   const createDocument = async ({
@@ -152,5 +152,23 @@ export const useCreateDocument = () => {
     }
   };
 
-  return { createDocument };
+  const renameDocument = async ({ id, name }: { id: string; name: string }) => {
+    try {
+      const document = await apiClient.document.rename.mutate({ id, name });
+      documents[document.id] = { ...document };
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteDocument = async ({ id }: { id: string }) => {
+    try {
+      const document = await apiClient.document.delete.mutate({ id });
+      delete documents[document.id];
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return { createDocument, renameDocument, deleteDocument };
 };
