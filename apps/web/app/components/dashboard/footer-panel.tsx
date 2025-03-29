@@ -12,7 +12,7 @@ import {
   toDate,
   toZonedTime,
 } from "@retro/common";
-import { authClient, useCreateDocument, useProfile } from "@retro/sdk";
+import { authClient, useDocumentCRUD, useProfile } from "@retro/sdk";
 import { format } from "date-fns";
 import { X } from "lucide-react";
 import { motion } from "motion/react";
@@ -25,7 +25,7 @@ const FooterPanel = () => {
   const { profile } = useProfile();
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
-  const { createDocument } = useCreateDocument();
+  const { createDocument } = useDocumentCRUD();
 
   const [open, setOpen] = useState<boolean>(false);
   const [isCreationInProgress, setIsCreationInProgress] =
