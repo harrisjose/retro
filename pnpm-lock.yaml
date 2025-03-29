@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
+  injectWorkspacePackages: true
 
 importers:
 
@@ -29,10 +30,6 @@ importers:
       yjs-types:
         specifier: ^0.0.1
         version: 0.0.1(yjs@13.6.23)
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-musl':
-        specifier: '*'
-        version: 4.32.0
     devDependencies:
       '@better-auth/cli':
         specifier: ^1.1.11
@@ -46,6 +43,10 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.7.3
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-musl':
+        specifier: '*'
+        version: 4.32.0
 
   apps/landing:
     dependencies:
@@ -188,6 +189,9 @@ importers:
       kysely-ctl:
         specifier: ^0.12.1
         version: 0.12.1(kysely@0.27.6)
+      luxon:
+        specifier: ^3.6.0
+        version: 3.6.0
       pg:
         specifier: ^8.13.1
         version: 8.13.1
@@ -219,9 +223,6 @@ importers:
       kysely-codegen:
         specifier: ^0.17.0
         version: 0.17.0(better-sqlite3@11.8.1)(kysely@0.27.6)(pg@8.13.1)
-      luxon:
-        specifier: ^3.6.0
-        version: 3.6.0
 
   apps/web:
     dependencies:
