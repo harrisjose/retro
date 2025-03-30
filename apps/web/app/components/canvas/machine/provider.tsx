@@ -53,12 +53,12 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
         guards: {
           isEditableBlock: ({ event }) => {
             assertEvent(event, [
-              ...Object.values(BlockEventType),
+              BlockEventType.BlockClick,
               CanvasEventType.InsertDone,
             ]);
+            console.log("event", event);
             try {
-              const [block] = getBlocks([event.blockId]);
-              return block.type === BlockType.Card;
+              return event.blockType === BlockType.Card;
             } catch (error) {
               return false;
             }
@@ -207,7 +207,11 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (blockId) {
-              enqueue.raise({ type: CanvasEventType.InsertDone, blockId });
+              enqueue.raise({
+                type: CanvasEventType.InsertDone,
+                blockId,
+                blockType: blockToInsert.type,
+              });
             }
           }),
           undo,

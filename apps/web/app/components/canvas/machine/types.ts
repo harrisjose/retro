@@ -123,6 +123,7 @@ export type Events =
   | {
       type: CanvasEventType.InsertDone;
       blockId: string;
+      blockType: BlockType;
     }
   | {
       type: CanvasEventType.InsertCancel;
@@ -130,6 +131,7 @@ export type Events =
   | {
       type: BlockEventType.BlockClick;
       blockId: string;
+      blockType: BlockType;
     }
   | {
       type: BlockEventType.BlockDrag;

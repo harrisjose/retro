@@ -55,6 +55,7 @@ export const CanvasCursor = () => {
       controllerRef.send({
         type: CanvasEventType.InsertDone,
         blockId: blockId,
+        blockType: blockToInsert.type,
       });
     }
   };
