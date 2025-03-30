@@ -123,7 +123,7 @@ export const InviteEmail = ({
               If you were not expecting this invitation, you can ignore this
               email. If you are concerned about your account's safety, please
               reach out to{" "}
-              <a href="mailto:help@mellow.team">help@mellow.team</a>.
+              <a href="mailto:support@mellow.team">support@mellow.team</a>.
             </Text>
           </Container>
         </Body>
