@@ -150,9 +150,17 @@ export const useCanvasGestures = (
   const [hasPassedThreshold, setHasPassedThreshold] = useState(false);
 
   function handleWheel(event: WheelEvent) {
+    // Check if the target is a scrollable element and is actually scrollable
+    const target = event.target as HTMLElement;
+    const scrollableParent = target.closest("[data-scrollable]") as HTMLElement;
+
+    if (scrollableParent) {
+      return; // Let the default scroll behavior happen
+    }
+
     event.preventDefault();
 
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
       onPinch(event);
     } else {
       onWheel(event);

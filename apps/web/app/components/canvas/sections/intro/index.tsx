@@ -72,6 +72,7 @@ export default function IntroSection() {
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
+        height: CanvasConstants.IntroSectionHeight,
       }}
     >
       <div className="absolute top-0 right-0 repeat-3 rounded-2xl overflow-hidden">
@@ -82,7 +83,7 @@ export default function IntroSection() {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col h-full">
         <div className="flex">
           <div>
             <StartHere className="w-7 h-auto" />
@@ -91,12 +92,12 @@ export default function IntroSection() {
             <StartHereArrow></StartHereArrow>
           </div>
         </div>
-        <div className=" text-xs text-secondary-foreground w-72 mt-2 mb-10 opacity-50">
+        <div className="text-xs text-secondary-foreground w-72 mt-2 mb-10 opacity-50">
           You can write an introduction on how to engage in this retro meeting
           below
         </div>
 
-        <div>
+        <div className="flex-1 overflow-y-auto" data-scrollable>
           {content && (
             <EditorContextProvider
               id={`intro-section`}
@@ -106,12 +107,12 @@ export default function IntroSection() {
             </EditorContextProvider>
           )}
         </div>
-      </div>
 
-      <div className="pt-[25px] w-full flex justify-start">
-        <Button variant={"brand"} size={"brand"} onClick={onClick}>
-          Let’s go →
-        </Button>
+        <div className="pt-[25px] w-full flex justify-start">
+          <Button variant={"brand"} size={"brand"} onClick={onClick}>
+            Let's go →
+          </Button>
+        </div>
       </div>
     </div>
   );

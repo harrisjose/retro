@@ -3,6 +3,7 @@ export const CanvasConstants = {
   SectionHeight: 748,
   PaddingBetween: 24,
   IntroSectionWidth: 600,
+  IntroSectionHeight: 748,
 };
 
 export const CardConstants = {

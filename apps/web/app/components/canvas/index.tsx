@@ -128,9 +128,10 @@ export default function Canvas() {
           {Object.keys(sections).map((sectionId) => (
             <SectionRenderer key={sectionId} id={sectionId} />
           ))}
+          <SummarySection />
+
           <BlocksRenderer onDuplicate={onDuplicate} onDelete={onDelete} />
 
-          <SummarySection />
           <UserCursor />
         </div>
         <CanvasCursor />
