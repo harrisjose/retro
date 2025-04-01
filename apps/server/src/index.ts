@@ -8,6 +8,7 @@ console.info(`Allowed origins: ${config.api.origin}`);
 console.info(`NodeEnv: ${process.env.NODE_ENV}`);
 
 withCollab(
+  // @ts-expect-error
   serve({
     fetch: app.fetch,
     port: config.api.port,

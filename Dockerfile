@@ -21,8 +21,10 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 # Build in the correct order: shared packages first, then apps
 RUN pnpm run -r --filter="./packages/**" build
+# RUN pnpm run -r --filter="./apps/server" build
 
-# Create production deployments for apps
+# Create production deployment with only runtime dependencies
+WORKDIR /usr/src/app
 RUN pnpm deploy --filter="./apps/server" --prod /prod/server
 
 FROM base AS server
@@ -31,7 +33,13 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 hono
 
-COPY --from=build --chown=hono:nodejs /prod/server /app
+# Copy the production dependencies and compiled code
+COPY --from=build /prod/server /app
+# COPY --from=build /usr/src/app/apps/server/dist /app/dist
+
+# Fix permissions for the hono user
+RUN chown -R hono:nodejs /app
+
 USER hono
 
 CMD ["pm2-runtime", "ecosystem.prod.config.cjs"]

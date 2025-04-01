@@ -17,6 +17,7 @@
     "db:setup": "pnpm run setup-better-auth && pnpm run migrate-latest",
     "db:generate": "doppler run -- tsx src/db/scripts/generate.ts",
     "api:dev": "doppler run -- tsx watch --inspect src/index.ts",
+    "preapi:start": "pnpm run migrate-latest",
     "api:start": "doppler run -- tsx src/index.ts",
     "worker:summary:dev": "doppler run -- tsx watch --inspect src/queue/summary/worker.ts",
     "worker:summary:start": "doppler run -- tsx src/queue/summary/worker.ts",
@@ -24,7 +25,6 @@
     "worker:slack:start": "doppler run -- tsx src/queue/slack/worker.ts",
     "predev": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
     "dev": "pm2 start --no-daemon ecosystem.dev.config.cjs",
-    "prestart": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
     "start": "pm2 start ecosystem.prod.config.cjs"
   },
   "dependencies": {
@@ -47,7 +47,7 @@
     "luxon": "^3.6.0",
     "pg": "^8.13.1",
     "redis": "^4.7.0",
-    "tsx": "^4.12.1",
+    "tsx": "^4.19.2",
     "ws": "^8.18.0",
     "zod": "^3.24.1"
   },
