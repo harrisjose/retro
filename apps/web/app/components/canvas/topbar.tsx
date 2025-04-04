@@ -1,7 +1,7 @@
 import { cn } from "@retro/common";
 import { useCollaborators, useDocument, useSectionMap } from "@retro/sdk";
 import { isNil } from "lodash-es";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import Back from "../svg/back";
 import Link from "../svg/link";
@@ -38,10 +38,49 @@ const SectionButton = ({
 
 const DocumentNameWrapper = () => {
   const navigate = useNavigate();
-  const document = useDocument();
+  const { document, renameDocument } = useDocument();
+  const [isEditing, setIsEditing] = useState(false);
+  const [documentName, setDocumentName] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const onBack = () => {
     navigate("/");
   };
+
+  const startEditing = useCallback(() => {
+    setIsEditing(true);
+    setDocumentName(document.name);
+    setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 0);
+  }, [document.name]);
+
+  const saveDocumentName = useCallback(async () => {
+    if (documentName.trim() && documentName !== document.name) {
+      try {
+        await renameDocument({ id: document.id, name: documentName.trim() });
+      } catch (error) {
+        console.error("Failed to rename document", error);
+        setDocumentName(document.name);
+      }
+    } else {
+      setDocumentName(document.name);
+    }
+    setIsEditing(false);
+  }, [document, documentName, renameDocument]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        saveDocumentName();
+      } else if (e.key === "Escape") {
+        setIsEditing(false);
+        setDocumentName(document.name);
+      }
+    },
+    [document.name, saveDocumentName],
+  );
 
   return (
     <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center justify-center">
@@ -55,7 +94,23 @@ const DocumentNameWrapper = () => {
         orientation="vertical"
         className="bg-black opacity-5 rounded-sm"
       />
-      <div className="pl-2 text-sm">{document.name}</div>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          className="pl-2 text-sm bg-transparent outline-none border-none w-full"
+          value={documentName}
+          onChange={(e) => setDocumentName(e.target.value)}
+          onBlur={saveDocumentName}
+          onKeyDown={handleKeyDown}
+        />
+      ) : (
+        <div
+          className="pl-2 text-sm cursor-pointer"
+          onDoubleClick={startEditing}
+        >
+          {document.name}
+        </div>
+      )}
     </div>
   );
 };

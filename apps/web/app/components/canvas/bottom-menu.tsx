@@ -80,7 +80,7 @@ const StickerMenu = () => {
 const CardMenu = () => {
   const { profile } = useProfile();
   const { handleInsertInteraction } = useInsertDrag();
-  const document = useDocument();
+  const { document } = useDocument();
 
   const createCardBlockToInsert = () => ({
     type: BlockType.Card,
@@ -127,7 +127,7 @@ const CardMenu = () => {
 
 export const InsertionMenu = () => {
   const navigate = useNavigate();
-  const document = useDocument();
+  const { document } = useDocument();
   const onBack = () => {
     navigate("/");
   };

@@ -42,7 +42,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     [],
   );
   const blocks = useBlockMap();
-  const document = useDocument();
+  const { document } = useDocument();
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
   const createBlock = useCreateBlock();
   const { profile } = useProfile();

@@ -25,7 +25,7 @@ export const CanvasCursor = () => {
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();
   const { profile } = useProfile();
-  const document = useDocument();
+  const { document } = useDocument();
 
   const [isInsertionActive, blockToInsert] =
     CanvasControllerContext.useSelector((snapshot) => {

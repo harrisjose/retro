@@ -119,7 +119,7 @@ const CardCollaborators = ({ id }: { id: string }) => {
 
 export default function CardBlock({ id }: { id: string }) {
   const { block, setSize } = useBlock(id);
-  const document = useDocument();
+  const { document } = useDocument();
 
   const { properties } = useBlockProperties<CardProperties>(id);
   const content = useRawBlockProperty<Y.XmlFragment>(id, "content");

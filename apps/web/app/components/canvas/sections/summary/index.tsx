@@ -47,7 +47,7 @@ function createEditorState(fragment: Y.XmlFragment) {
 
 export default function SummarySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const document = useDocument();
+  const { document } = useDocument();
   const content = useRawSummaryContent();
 
   const [isLoading, setIsLoading] = useState(false);

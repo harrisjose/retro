@@ -238,9 +238,23 @@ export const DocProvider = ({
 };
 
 export const useDocument = () => {
-  const { document } = useContext(DocContext);
-  const snapshot = useSnapshot(document);
-  return snapshot;
+  const state = useContext(DocContext);
+  const snapshot = useSnapshot(state.document);
+
+  const renameDocument = async ({ id, name }: { id: string; name: string }) => {
+    try {
+      const updatedDocument = await apiClient.document.rename.mutate({
+        id,
+        name,
+      });
+      updateProxyState(state.document, updatedDocument);
+      await fetchDocument(state);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return { document: snapshot, renameDocument };
 };
 
 export const useCollaborators = () => {
