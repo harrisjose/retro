@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -26,8 +27,15 @@ const DatePicker = ({
   btnClassName,
   hideCalendar,
 }: DatePickerProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    onSelect(selectedDate);
+    setIsOpen(false);
+  };
+
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -45,7 +53,7 @@ const DatePicker = ({
         <Calendar
           mode="single"
           selected={date}
-          onSelect={onSelect}
+          onSelect={handleDateSelect}
           initialFocus
         />
       </PopoverContent>
