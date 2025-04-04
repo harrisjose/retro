@@ -6,7 +6,7 @@ import {
   type StickerProperties,
   cardColorsMap,
 } from "@retro/common";
-import { useCreateBlock, useProfile } from "@retro/sdk";
+import { useCreateBlock, useDocument, useProfile } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
 import { match } from "ts-pattern";
 import {
@@ -25,6 +25,7 @@ export const CanvasCursor = () => {
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();
   const { profile } = useProfile();
+  const document = useDocument();
 
   const [isInsertionActive, blockToInsert] =
     CanvasControllerContext.useSelector((snapshot) => {
@@ -47,6 +48,7 @@ export const CanvasCursor = () => {
       point,
       profile,
       createBlock,
+      isAnonymousRetro: document.isAnonymous,
     });
 
     if (blockId) {
