@@ -15,6 +15,13 @@ export type Pointer = {
   y: number;
 };
 
+export type CameraPosition = {
+  id: string;
+  x: number;
+  y: number;
+  z: number;
+};
+
 export enum CollaboratorColors {
   BLUE = "Blue",
   PURPLE = "Purple",
@@ -65,12 +72,14 @@ export type Presence = {
   collaborators: Collaborator[];
   pointers: Pointer[];
   selections: CollaboratorSelection[];
+  cameraPositions: CameraPosition[];
 };
 
 export type Awareness = {
   user: Collaborator;
   selection: CollaboratorSelection;
   pointers: Pointer;
+  cameraPositions: CameraPosition;
 };
 
 export type Document = {

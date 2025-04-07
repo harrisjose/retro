@@ -1,6 +1,10 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
-import { useSectionMap } from "@retro/sdk";
+import {
+  useAwarenessActions,
+  useFollowAlongCameraPosition,
+  useSectionMap,
+} from "@retro/sdk";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
@@ -20,19 +24,42 @@ import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const { sections } = useSectionMap();
-  const { camera, zoomBy, moveBy } = useCamera();
+  const { updateCameraPositionAwareness } = useAwarenessActions();
+  const { camera, zoomBy, moveBy, moveTo } = useCamera({
+    onCameraChange: (camera) => {
+      updateCameraPositionAwareness({
+        x: camera.x,
+        y: camera.y,
+        z: camera.z,
+      });
+    },
+  });
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
   const controller = CanvasControllerContext.useActorRef();
 
+  const { followAlongUser, setFollowAlongUserId } =
+    useFollowAlongCameraPosition({
+      onCameraChange: (camera) => {
+        moveTo({
+          x: camera.x,
+          y: camera.y,
+          z: camera.z,
+        });
+      },
+    });
+
   useCanvasGestures(canvasRootRef, {
     onPinch: (event) => {
       const { clientX, clientY, deltaY } = event;
+      if (followAlongUser) setFollowAlongUserId(null);
+
       zoomBy(deltaY / 100, { x: clientX, y: clientY });
     },
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
+      if (followAlongUser) setFollowAlongUserId(null);
       moveBy(deltaX, deltaY);
     },
     onDragStart(event) {
