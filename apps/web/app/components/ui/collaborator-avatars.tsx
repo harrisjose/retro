@@ -28,8 +28,8 @@ const CollaboratorAvatar = memo(
       image: string | null;
       email: string;
       color: {
-        background: string;
-        text: string;
+        secondary: string;
+        primary: string;
       };
     } | null;
   }) => {
@@ -44,9 +44,7 @@ const CollaboratorAvatar = memo(
         className="p-[0.5px] bg-white rounded-full border-2"
         style={{
           boxShadow: "0px 0px 1px 0px #00000080",
-          borderColor: isFollowing
-            ? followAlongUser!.color.background
-            : "white",
+          borderColor: isFollowing ? followAlongUser!.color.primary : "white",
         }}
         onClick={() => {
           // Skipping setting current user as the follow along user

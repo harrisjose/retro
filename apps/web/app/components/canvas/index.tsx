@@ -5,6 +5,7 @@ import {
   useFollowAlongCameraPosition,
   useSectionMap,
 } from "@retro/sdk";
+import { throttle } from "lodash-es";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
@@ -25,6 +26,7 @@ import Zoom from "./zoom-menu";
 export default function Canvas() {
   const { sections } = useSectionMap();
   const { updateCameraPositionAwareness } = useAwarenessActions();
+  // This updates the current user camera position to awareness by subscribing to the camera state
   const { camera, zoomBy, moveBy, moveTo } = useCamera({
     onCameraChange: (camera) => {
       updateCameraPositionAwareness({
@@ -41,6 +43,7 @@ export default function Canvas() {
 
   const { followAlongUser, setFollowAlongUserId } =
     useFollowAlongCameraPosition({
+      // This moves the current user camera based on the user camera they are following
       onCameraChange: (camera) => {
         moveTo({
           x: camera.x,
@@ -49,6 +52,12 @@ export default function Canvas() {
         });
       },
     });
+  const { updatePointersAwareness } = useAwarenessActions();
+
+  const updatePosition = throttle((e: MouseEvent) => {
+    const point = screenToCanvas({ x: e.clientX, y: e.clientY }, camera);
+    updatePointersAwareness({ x: point.x, y: point.y });
+  }, 100);
 
   useCanvasGestures(canvasRootRef, {
     onPinch: (event) => {
@@ -60,7 +69,9 @@ export default function Canvas() {
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
       if (followAlongUser) setFollowAlongUserId(null);
+
       moveBy(deltaX, deltaY);
+      updatePosition(event);
     },
     onDragStart(event) {
       const point = screenToCanvas(

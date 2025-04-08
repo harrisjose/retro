@@ -34,32 +34,32 @@ export enum CollaboratorColors {
 
 export const collaboratorsColorMap = {
   [CollaboratorColors.BLUE]: {
-    background: "#dbeafe",
-    text: "#3b82f6",
+    secondary: "#dbeafe",
+    primary: "#3b82f6",
   },
   [CollaboratorColors.PURPLE]: {
-    background: "#f3e8ff",
-    text: "#a855f7",
+    secondary: "#f3e8ff",
+    primary: "#a855f7",
   },
   [CollaboratorColors.TEAL]: {
-    background: "#ccfbf1",
-    text: "#14b8a6",
+    secondary: "#ccfbf1",
+    primary: "#14b8a6",
   },
   [CollaboratorColors.PINK]: {
-    background: "#fce7f3",
-    text: "#ec4899",
+    secondary: "#fce7f3",
+    primary: "#ec4899",
   },
   [CollaboratorColors.INDIGO]: {
-    background: "#e0e7ff",
-    text: "#6366f1",
+    secondary: "#e0e7ff",
+    primary: "#6366f1",
   },
   [CollaboratorColors.CYAN]: {
-    background: "#cffafe",
-    text: "#06b6d4",
+    secondary: "#cffafe",
+    primary: "#06b6d4",
   },
   [CollaboratorColors.LIME]: {
-    background: "#ecfccb",
-    text: "#84cc16",
+    secondary: "#ecfccb",
+    primary: "#84cc16",
   },
 };
 
