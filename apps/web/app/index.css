@@ -85,6 +85,8 @@
   }
   body {
     @apply bg-background text-foreground select-none user-drag-none;
+    /* To prevent the browser scroll from being triggered when swiping left on non canvas elements */
+    overscroll-behavior-x: none;
   }
 }
 
