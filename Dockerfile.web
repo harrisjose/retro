@@ -1,0 +1,51 @@
+FROM node:22-alpine AS base
+# Install necessary Alpine packages and build dependencies
+RUN apk add --no-cache libc6-compat gcompat python3 make g++ bash && \
+    ln -sf /bin/bash /usr/bin/bash && \
+    wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
+    echo 'https://packages.doppler.com/public/cli/alpine/any-version/main' | tee -a /etc/apk/repositories && \
+    apk add doppler
+
+# Setup pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN npm install -g corepack
+RUN corepack enable && corepack prepare pnpm --activate
+
+FROM base AS development-dependencies
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+
+# Install all dependencies
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+
+# Build shared packages first
+RUN pnpm run -r --filter="./packages/**" build
+
+FROM base AS build
+COPY --from=development-dependencies /usr/src/app /usr/src/app
+WORKDIR /usr/src/app
+
+# Build the web app
+RUN pnpm run -r --filter="./apps/web" build
+
+# Create production deployment with only runtime dependencies
+RUN pnpm deploy --filter="./apps/web" --prod /prod/web
+
+FROM base AS web
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 webapp
+
+# Copy the production dependencies and compiled code
+COPY --from=build /prod/web /app
+COPY --from=build /usr/src/app/apps/web/build /app/build
+
+# Fix permissions for the webapp user
+RUN chown -R webapp:nodejs /app
+
+USER webapp
+
+# Assuming you have a start script in your package.json
+CMD ["pnpm", "start"]
