@@ -10,6 +10,7 @@ const summarySchema = z.discriminatedUnion("ok", [
   z.object({
     ok: z.literal(true),
     summary: z.string(),
+    keyInsights: z.array(z.string()),
     actionables: z.array(z.string()),
   }),
   z.object({
@@ -56,14 +57,26 @@ export class AiService {
       AiProvider.OpenRouter,
       AiModel.Gemini2_Flash_Free,
     );
+
     const prompt = `
-      You are a helpful assistant that summarizes retro boards. Retro boards are structured as a list of sections,
-      and each section can contain a list of blocks (stickies/cards). The intro section usually contains a description of
-      how the retro is usually conducted. 
-      
-      Your task is to summarize the stickies that are in the sections and to create a list of actionable items. 
-      If there is not enough data for the summary, you should return an error message. If there is enough data,
-      you should return a summary ( a paragraph with under 100 words ) and a list of actionable items ( 1 sentence each, 6-10 words )
+      You are a specialized assistant for analyzing retrospective boards. A retro board contains multiple sections (e.g., “What went well”, “What could be improved”), each with blocks written by steam members. Each block includes a createdBy field to indicate who wrote it.
+
+      Your task is to analyze the full document and return output in three clearly labeled sections:
+
+      1. Summary
+      Briefly summarize the overall tone of the retro, key highlights, and major challenges discussed. Cover all the achievements, challenges, and lessons learned by team members.Keep it concise (max 100 words).
+
+      2. Key Insights
+      Extract key themes or lessons that the team should take forward. These should reflect observations from the section titles and block contents. Avoid phrasing these as tasks — they should guide thinking, not execution.
+
+      3. Actionables
+      List only specific, trackable action items that the team can immediately act on. These must be:
+      - Clearly executable tasks (not general suggestions or abstract ideas)
+      - Ideally assigned to someone (from the block text or inferred via createdBy)
+      - 10-15 words long
+      - Include any mentioned deadline or urgency
+
+      If something is a team-wide improvement or general principle (e.g., “Have shorter meetings” or “Encourage open feedback”), do not include it here — move it to Key Insights instead.
 
       Here is the document to summarize in json format:
       \`\`\`json

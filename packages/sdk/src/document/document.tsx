@@ -208,6 +208,8 @@ export const DocProvider = ({
       undoManager: ref(
         new Y.UndoManager(
           [
+            yDoc.getMap("intro"),
+            yDoc.getMap("summary"),
             yDoc.getMap("sections"),
             yDoc.getMap("blocks"),
             yDoc.getMap("properties"),

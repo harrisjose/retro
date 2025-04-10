@@ -120,6 +120,7 @@ function serializeBlock(
 ): {
   type: string;
   content: string;
+  createdBy: string;
 } {
   const properties = yDoc.getMap("properties") as YPropertiesMap;
   const blockProps = properties.get(id) as YCardProperties;
@@ -128,9 +129,11 @@ function serializeBlock(
     yXmlFragmentToProseMirrorRootNode(content, EditorSchema.CardSchema),
     EditorSchema.CardSchema,
   );
+
   return {
     type: BlockType.Card,
     content: html,
+    createdBy: (blockProps.get("createdBy")?.get("name") ?? "") as string,
   };
 }
 
