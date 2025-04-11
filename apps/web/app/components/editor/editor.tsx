@@ -106,13 +106,17 @@ const EditorEventHandlers = () => {
   return <></>;
 };
 
+type ProsemirrorEditorProps = {
+  fragment: Y.XmlFragment;
+  className?: string;
+  nodeViews?: any;
+};
+
 export function MemoProsemirrorEditor({
   fragment,
   className,
-}: {
-  fragment: Y.XmlFragment;
-  className?: string;
-}) {
+  nodeViews,
+}: ProsemirrorEditorProps) {
   const [mount, setMount] = useState<HTMLDivElement | null>(null);
   const { editorState, dispatch } = useEditorState(fragment);
 
@@ -121,6 +125,7 @@ export function MemoProsemirrorEditor({
       state={editorState}
       dispatchTransaction={dispatch}
       mount={mount}
+      nodeViews={nodeViews}
     >
       <EditorEventHandlers />
       <div

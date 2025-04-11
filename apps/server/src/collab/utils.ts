@@ -105,12 +105,12 @@ export const patchFragmentWithSummary = (
     throw new Error("Invalid input in summary generation");
   }
   let html = `
-    <h2 class="summary-header">Summary</h2>
-    <p class="summary-content">${response.summary}</p>
+    <h2>Summary</h2>
+    <p>${response.summary}</p>
   `;
   if (!isEmpty(response.keyInsights)) {
     html += `
-      <h3 class="key-insights-header">Key insights</h3>
+      <h3>Key insights</h3>
       <ul>
         ${response.keyInsights
           .map((item) => {
@@ -123,24 +123,21 @@ export const patchFragmentWithSummary = (
       </ul>
     `;
   }
+
+  // Generate actionable items as a taskList node
   if (!isEmpty(response.actionables)) {
     html += `
       <h3 class="actionable-items-header">Actionable items</h3>
-      <ul>
-        ${response.actionables
-          .map((item) => {
-            return `
-            <div class="prosemirror-flat-list" data-list-kind="task">
-              <div class="list-marker list-marker-click-target" contenteditable="false">
-                <label><input type="checkbox"></label>
-              </div>
-              <div class="list-content"><p>${item}</p></div>
-            </div>`;
-          })
-          .join("")}
-      </ul>
+      <div class="task-list-container" data-tasks='${JSON.stringify(
+        response.actionables.map((item, index) => ({
+          id: `task-${index}`,
+          text: item,
+          completed: false,
+        })),
+      )}'></div>
     `;
   }
+
   const doc = HtmlUtils.generateDocFromHtml(html, EditorSchema.SummarySchema);
   return prosemirrorToYXmlFragment(doc, fragment);
 };

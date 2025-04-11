@@ -16,12 +16,14 @@ import {
   keymap,
   listInputRules,
   listKeymap,
+  useNodeViews,
   ySyncPlugin,
 } from "@retro/pm";
 import { apiClient, useDocument, useRawSummaryContent } from "@retro/sdk";
 import { useRef, useState } from "react";
 import * as Y from "yjs";
 import { buildDefaultKeymap } from "../../../editor/keymap";
+import { TaskListNodeView } from "./task-list-node-view";
 
 function createEditorState(fragment: Y.XmlFragment) {
   const state = EditorState.create({
@@ -57,6 +59,11 @@ export default function SummarySection() {
     setIsLoading(false);
   };
 
+  // Create nodeViews using the useNodeViews hook
+  const nodeViews = useNodeViews({
+    taskList: TaskListNodeView,
+  });
+
   return (
     <div
       key={`summary-section`}
@@ -74,7 +81,11 @@ export default function SummarySection() {
             id={`summary-section`}
             createEditorState={createEditorState}
           >
-            <ProsemirrorEditor fragment={content} className="summary-pm" />
+            <ProsemirrorEditor
+              fragment={content}
+              className="summary-pm"
+              nodeViews={nodeViews}
+            />
           </EditorContextProvider>
         )}
       </div>

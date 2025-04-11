@@ -1,4 +1,9 @@
-import { Schema, createListSpec } from "./prosemirror.js";
+import {
+  type DOMOutputSpec,
+  type NodeSpec,
+  Schema,
+  createListSpec,
+} from "./prosemirror.js";
 import {
   createCodeMarkSpec,
   createEmMarkSpec,
@@ -35,6 +40,39 @@ export const IntroSchema = new Schema({
 
 export type IntroSchemaType = typeof IntroSchema;
 
+function createTaskListSpec(): NodeSpec {
+  return {
+    group: "block",
+    attrs: {
+      tasks: { default: [] },
+    },
+    parseDOM: [
+      {
+        tag: "div.task-list-container",
+        getAttrs(dom: HTMLElement) {
+          try {
+            const tasksData = dom.getAttribute("data-tasks");
+            console.log("taskdata", tasksData);
+            return { tasks: tasksData ? JSON.parse(tasksData) : [] };
+          } catch (e) {
+            console.error("Error parsing task list data:", e);
+            return { tasks: [] };
+          }
+        },
+      },
+    ],
+    toDOM(node: { attrs: { tasks: any[] } }): DOMOutputSpec {
+      return [
+        "div",
+        {
+          class: "task-list-container",
+          "data-tasks": JSON.stringify(node.attrs.tasks || []),
+        },
+      ];
+    },
+  };
+}
+
 export const SummarySchema = new Schema({
   nodes: {
     doc: {
@@ -44,6 +82,7 @@ export const SummarySchema = new Schema({
     heading: createHeadingSpec(),
     subheading: createHeadingSpec("h3"),
     list: createListSpec(),
+    taskList: createTaskListSpec(),
     hard_break: createHardBreakSpec(),
     text: {
       group: "inline",
