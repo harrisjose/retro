@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production react-router build",
     "postbuild": "cp _redirects build/client/ && cp vercel.json build/client/",
     "dev": "doppler run -- react-router dev",
-    "start": "doppler run -- react-router-serve ./build/server/index.js",
+    "start": "doppler run -- serve -s build/client -l 3000",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "^19.0.0",
     "react-router": "^7.5.0",
+    "serve": "^14.2.4",
     "sonner": "^2.0.2",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
