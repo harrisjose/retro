@@ -27,9 +27,11 @@ const SectionButton = ({
       key={id}
       className={cn(
         "py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]",
+        "py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]",
         active && "bg-white",
       )}
       onClick={onClick}
+      title={name}
       title={name}
     >
       {name}
@@ -84,13 +86,10 @@ const DocumentNameWrapper = () => {
   );
 
   return (
-<<<<<<< HEAD
     <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center w-full">
-=======
-    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center justify-center w-full">
->>>>>>> 2f00ce3 (Make intro section auto height and fix browser back during swipe)
       <button
         onClick={onBack}
+        className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
         className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
       >
         <Back className="w-4 h-4" />
@@ -98,10 +97,12 @@ const DocumentNameWrapper = () => {
       <Separator
         orientation="vertical"
         className="bg-black opacity-5 rounded-sm flex-shrink-0"
+        className="bg-black opacity-5 rounded-sm flex-shrink-0"
       />
       {isEditing ? (
         <input
           ref={inputRef}
+          className="pl-2 text-sm bg-transparent outline-none border-none w-full min-w-0"
           className="pl-2 text-sm bg-transparent outline-none border-none w-full min-w-0"
           value={documentName}
           onChange={(e) => setDocumentName(e.target.value)}
@@ -110,11 +111,7 @@ const DocumentNameWrapper = () => {
         />
       ) : (
         <div
-<<<<<<< HEAD
           className="pl-2 text-sm cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap w-full"
-=======
-          className="pl-2 text-sm cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap"
->>>>>>> 2f00ce3 (Make intro section auto height and fix browser back during swipe)
           onDoubleClick={startEditing}
         >
           {document.name}
@@ -155,6 +152,7 @@ export default function Topbar() {
 
   return (
     <>
+      <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
       <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
         <DocumentNameWrapper />
       </div>
