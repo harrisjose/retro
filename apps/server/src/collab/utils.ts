@@ -115,7 +115,7 @@ export const patchFragmentWithSummary = (
         ${response.keyInsights
           .map((item) => {
             return `
-            <div class="prosemirror-flat-list" data-list-kind="key-insight">
+            <div class="prosemirror-flat-list" data-list-kind="bullet">
               <div class="list-content"><p>${item}</p></div>
             </div>`;
           })

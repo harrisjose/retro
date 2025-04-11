@@ -1,9 +1,9 @@
+import type { IncomingMessage, Server } from "http";
 import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Hocuspocus } from "@hocuspocus/server";
 import type { Http2Bindings, HttpBindings } from "@hono/node-server";
 import type { Context, Hono, Next } from "hono";
-import type { IncomingMessage, Server } from "http";
 import type { WebSocket } from "ws";
 import { WebSocketServer } from "ws";
 import * as Y from "yjs";
@@ -87,7 +87,10 @@ export const collabHandler = async (c: Context, next: Next) => {
 
 export function withCollab<T extends Server>(
   server: T,
-  config: { app: Hono<{ Bindings: HttpBindings | Http2Bindings }>; baseUrl: string },
+  config: {
+    app: Hono<{ Bindings: HttpBindings | Http2Bindings }>;
+    baseUrl: string;
+  },
 ): T {
   server.on("upgrade", async (request, socket, head) => {
     const url = new URL(
