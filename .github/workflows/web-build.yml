@@ -1,0 +1,82 @@
+name: Build Web Docker Image
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - '.github/workflows/web-build.yml'
+      - 'Dockerfile.web'
+      - 'pnpm-lock.yaml'
+      - '.npmrc'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - '.github/workflows/web-build.yml'
+      - 'Dockerfile.web'
+      - 'pnpm-lock.yaml'
+      - '.npmrc'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v41
+      with:
+        files: |
+          apps/web/**
+          packages/**
+          Dockerfile.web
+          pnpm-lock.yaml
+          .npmrc
+    
+    - name: Debug changed files
+      run: |
+        echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
+    
+    - name: Check if workflow should run
+      id: check-run
+      run: |
+        if [[ "${{ steps.changed-files.outputs.any_changed }}" == "true" || "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "should_run=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_run=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Debug run decision
+      run: echo "Should run? ${{ steps.check-run.outputs.should_run }}"
+    
+    - name: Login to GitHub Container Registry
+      if: steps.check-run.outputs.should_run == 'true'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build and push Docker image
+      if: steps.check-run.outputs.should_run == 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.web
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/web:latest
+          ghcr.io/${{ github.repository }}/web:${{ github.sha }}
+        labels: |
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+        provenance: false 

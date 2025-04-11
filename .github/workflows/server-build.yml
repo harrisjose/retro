@@ -7,15 +7,16 @@ on:
       - 'apps/server/**'
       - 'packages/**'
       - '.github/workflows/server-build.yml'
-      - 'Dockerfile'
+      - 'Dockerfile.server'
       - 'pnpm-lock.yaml'
+      - '.npmrc'
   pull_request:
     branches: [ main ]
     paths:
       - 'apps/server/**'
       - 'packages/**'
       - '.github/workflows/server-build.yml'
-      - 'Dockerfile'
+      - 'Dockerfile.server'
       - 'pnpm-lock.yaml'
       - '.npmrc'
 
@@ -29,7 +30,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 2
+        fetch-depth: 0
     
     - name: Get changed files
       id: changed-files
@@ -38,29 +39,28 @@ jobs:
         files: |
           apps/server/**
           packages/**
+          Dockerfile.server
+          pnpm-lock.yaml
+          .npmrc
     
-    - name: Setup Node.js
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+    - name: Debug changed files
+      run: |
+        echo "Changed files: ${{ steps.changed-files.outputs.all_changed_files }}"
     
-    - name: Install pnpm
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
-      uses: pnpm/action-setup@v4
-      with:
-        version: 10.7.0
+    - name: Check if workflow should run
+      id: check-run
+      run: |
+        if [[ "${{ steps.changed-files.outputs.any_changed }}" == "true" || "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "should_run=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_run=false" >> $GITHUB_OUTPUT
+        fi
     
-    - name: Install dependencies
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
-      run: pnpm install
-    
-    - name: Build server
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
-      run: pnpm build:server
+    - name: Debug run decision
+      run: echo "Should run? ${{ steps.check-run.outputs.should_run }}"
     
     - name: Login to GitHub Container Registry
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      if: steps.check-run.outputs.should_run == 'true'
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
@@ -68,10 +68,11 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build and push Docker image
-      if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+      if: steps.check-run.outputs.should_run == 'true'
       uses: docker/build-push-action@v5
       with:
         context: .
+        file: ./Dockerfile.server
         push: true
         tags: |
           ghcr.io/${{ github.repository }}/server:latest
