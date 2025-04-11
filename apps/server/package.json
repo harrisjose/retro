@@ -35,6 +35,7 @@
     "@hono/node-ws": "^1.0.5",
     "@hono/trpc-server": "^0.3.4",
     "@retro/ai": "workspace:*",
+    "@retro/auth": "workspace:*",
     "@retro/common": "workspace:*",
     "@retro/mailer": "workspace:*",
     "@retro/pm": "workspace:*",

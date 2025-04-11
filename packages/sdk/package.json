@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@hocuspocus/provider": "^2.15.0",
+    "@retro/auth": "workspace:*",
     "@retro/common": "workspace:*",
     "@retro/pm": "workspace:*",
     "@trpc/client": "11.0.0-rc.682",

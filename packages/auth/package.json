@@ -1,0 +1,17 @@
+{
+  "name": "@retro/auth",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./server": "./server/index.ts",
+    "./permissions": "./server/permissions.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2"
+  }
+}

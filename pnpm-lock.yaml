@@ -162,6 +162,9 @@ importers:
       '@retro/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@retro/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@retro/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -433,6 +436,15 @@ importers:
         specifier: ^5.7.2
         version: 5.7.3
 
+  packages/auth:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.17.10
+        version: 20.17.16
+      typescript:
+        specifier: ^5.7.2
+        version: 5.8.2
+
   packages/common:
     dependencies:
       clsx:
@@ -528,6 +540,9 @@ importers:
       '@hocuspocus/provider':
         specifier: ^2.15.0
         version: 2.15.0(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
+      '@retro/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@retro/common':
         specifier: workspace:*
         version: link:../common
@@ -2864,6 +2879,9 @@ packages:
 
   '@remirror/core-constants@3.0.0':
     resolution: {integrity: sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==}
+
+  '@retro/auth@file:packages/auth':
+    resolution: {directory: packages/auth, type: directory}
 
   '@retro/common@file:packages/common':
     resolution: {directory: packages/common, type: directory}
@@ -8697,6 +8715,8 @@ snapshots:
 
   '@remirror/core-constants@3.0.0': {}
 
+  '@retro/auth@file:packages/auth': {}
+
   '@retro/common@file:packages/common':
     dependencies:
       clsx: 2.1.1
@@ -8723,6 +8743,7 @@ snapshots:
   '@retro/sdk@file:packages/sdk(@trpc/server@11.0.0-rc.682(typescript@5.8.2))(@types/react@19.0.8)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.2)(typescript@5.8.2)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)':
     dependencies:
       '@hocuspocus/provider': 2.15.0(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
+      '@retro/auth': file:packages/auth
       '@retro/common': file:packages/common
       '@retro/pm': file:packages/pm(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-view@1.37.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(y-protocols@1.0.6(yjs@13.6.23))(yjs@13.6.23)
       '@trpc/client': 11.0.0-rc.682(@trpc/server@11.0.0-rc.682(typescript@5.8.2))(typescript@5.8.2)

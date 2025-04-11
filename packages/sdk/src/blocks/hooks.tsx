@@ -13,13 +13,13 @@ import {
   CanvasTransactionOrigin,
   fromSerialized,
 } from "@retro/common";
-import { authClient } from "lib/auth-client.js";
 import * as random from "lib0/random";
 import { isEqual, isNil, isUndefined } from "lodash-es";
 import { useContext } from "react";
 import { useSnapshot } from "valtio";
 import { YKeyValue } from "y-utility/y-keyvalue";
 import * as Y from "yjs";
+import { authClient } from "../../lib/auth-client.js";
 import { DocContext, useYDoc } from "../document/document.js";
 
 const insertBlock =
