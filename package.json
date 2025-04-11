@@ -7,7 +7,7 @@
   "scripts": {
     "format": "biome format --write .",
     "cleanup": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
-    "pkg:build": "pnpm --parallel --filter \"./packages/**\" build",
+    "pkg:build": "pnpm --filter \"@retro/common\" build && pnpm --filter \"@retro/pm\" build && pnpm --filter \"@retro/sdk\" build && pnpm --filter \"@retro/ai\" build && pnpm --filter \"@retro/mailer\" build",
     "build:server": "docker build -f Dockerfile.server --platform=linux/amd64 . --target server --tag retro-server:latest",
     "build:web": "docker build -f Dockerfile.web --platform=linux/amd64 . --target web --tag retro-web:latest"
   },

@@ -1,9 +1,9 @@
+import { ac, admin, member, owner } from "@retro/common";
 import { emailService } from "@retro/mailer";
 import { type User, betterAuth } from "better-auth";
 import { organization } from "better-auth/plugins/organization";
 import { db, dialect } from "../db/index.js";
 import config from "./config.js";
-import { ac, admin, member, owner } from "./permission.js";
 import redis from "./redis.js";
 
 const REDIS_PREFIX = "better-auth:";

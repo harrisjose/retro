@@ -19,8 +19,8 @@ WORKDIR /usr/src/app
 # Install all dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
-# Build shared packages first
-RUN pnpm run -r --filter="./packages/**" build
+# Build shared packages first with explicit order
+RUN pnpm run pkg:build
 
 FROM base AS build
 COPY --from=development-dependencies /usr/src/app /usr/src/app

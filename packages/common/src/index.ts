@@ -1,5 +1,6 @@
 export * from "./constants.js";
 export * from "./datefns.js";
+export * from "./permissions.js";
 export * from "./proxyutils.js";
 export * from "./syncutils.js";
 export * from "./timefns.js";

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useProfile } from "@retro/sdk/src/profile";
+import { useProfile } from "@retro/sdk";
 import { format } from "date-fns";
 import { useCallback } from "react";
 import BaloonOutlineSvg from "../svg/balloon-outline";

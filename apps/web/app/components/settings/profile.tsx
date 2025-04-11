@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useProfile } from "@retro/sdk/src/profile";
+import { useProfile } from "@retro/sdk";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { TimezoneInput } from "./timezone-input";
