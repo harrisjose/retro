@@ -32,7 +32,6 @@ const SectionButton = ({
       )}
       onClick={onClick}
       title={name}
-      title={name}
     >
       {name}
     </a>
@@ -90,19 +89,16 @@ const DocumentNameWrapper = () => {
       <button
         onClick={onBack}
         className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
-        className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
       >
         <Back className="w-4 h-4" />
       </button>
       <Separator
         orientation="vertical"
         className="bg-black opacity-5 rounded-sm flex-shrink-0"
-        className="bg-black opacity-5 rounded-sm flex-shrink-0"
       />
       {isEditing ? (
         <input
           ref={inputRef}
-          className="pl-2 text-sm bg-transparent outline-none border-none w-full min-w-0"
           className="pl-2 text-sm bg-transparent outline-none border-none w-full min-w-0"
           value={documentName}
           onChange={(e) => setDocumentName(e.target.value)}
@@ -152,7 +148,6 @@ export default function Topbar() {
 
   return (
     <>
-      <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
       <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
         <DocumentNameWrapper />
       </div>

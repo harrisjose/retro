@@ -105,12 +105,12 @@ export const patchFragmentWithSummary = (
     throw new Error("Invalid input in summary generation");
   }
   let html = `
-    <h2>Summary</h2>
-    <p>${response.summary}</p>
+    <h2 class="summary-header">Summary</h2>
+    <p class="summary-content">${response.summary}</p>
   `;
   if (!isEmpty(response.keyInsights)) {
     html += `
-      <h3>Key insights</h3>
+      <h3 class="key-insights-header">Key insights</h3>
       <ul>
         ${response.keyInsights
           .map((item) => {
@@ -124,17 +124,18 @@ export const patchFragmentWithSummary = (
     `;
   }
 
-  // Generate actionable items as a taskList node
+  // Generate actionable items as individual task nodes
   if (!isEmpty(response.actionables)) {
     html += `
       <h3 class="actionable-items-header">Actionable items</h3>
-      <div class="task-list-container" data-tasks='${JSON.stringify(
-        response.actionables.map((item, index) => ({
-          id: `task-${index}`,
-          text: item,
-          completed: false,
-        })),
-      )}'></div>
+      <ul class="task-list">
+        ${response.actionables
+          .map((item, index) => {
+            return `
+            <li class="task-item" data-id="task-${index}" data-completed="false">${item}</li>`;
+          })
+          .join("")}
+      </ul>
     `;
   }
 

@@ -23,6 +23,7 @@ import { apiClient, useDocument, useRawSummaryContent } from "@retro/sdk";
 import { useRef, useState } from "react";
 import * as Y from "yjs";
 import { buildDefaultKeymap } from "../../../editor/keymap";
+import { TaskItemNodeView } from "./task-item-node-view";
 import { TaskListNodeView } from "./task-list-node-view";
 
 function createEditorState(fragment: Y.XmlFragment) {
@@ -62,6 +63,7 @@ export default function SummarySection() {
   // Create nodeViews using the useNodeViews hook
   const nodeViews = useNodeViews({
     taskList: TaskListNodeView,
+    taskItem: TaskItemNodeView,
   });
 
   return (

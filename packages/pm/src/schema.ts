@@ -1,9 +1,4 @@
-import {
-  type DOMOutputSpec,
-  type NodeSpec,
-  Schema,
-  createListSpec,
-} from "./prosemirror.js";
+import { Schema, createListSpec } from "./prosemirror.js";
 import {
   createCodeMarkSpec,
   createEmMarkSpec,
@@ -40,35 +35,49 @@ export const IntroSchema = new Schema({
 
 export type IntroSchemaType = typeof IntroSchema;
 
-function createTaskListSpec(): NodeSpec {
+// Define a task item node
+function createTaskItemSpec() {
   return {
-    group: "block",
+    content: "inline*",
+    group: "listItem",
     attrs: {
-      tasks: { default: [] },
+      id: { default: "" },
+      completed: { default: false },
     },
     parseDOM: [
       {
-        tag: "div.task-list-container",
-        getAttrs(dom: HTMLElement) {
-          try {
-            const tasksData = dom.getAttribute("data-tasks");
-            console.log("taskdata", tasksData);
-            return { tasks: tasksData ? JSON.parse(tasksData) : [] };
-          } catch (e) {
-            console.error("Error parsing task list data:", e);
-            return { tasks: [] };
-          }
+        tag: "li.task-item",
+        getAttrs(dom) {
+          const element = dom as HTMLElement;
+          return {
+            id: element.getAttribute("data-id") || "",
+            completed: element.getAttribute("data-completed") === "true",
+          };
         },
       },
     ],
-    toDOM(node: { attrs: { tasks: any[] } }): DOMOutputSpec {
+    toDOM(node) {
       return [
-        "div",
+        "li",
         {
-          class: "task-list-container",
-          "data-tasks": JSON.stringify(node.attrs.tasks || []),
+          class: "task-item",
+          "data-id": node.attrs.id,
+          "data-completed": node.attrs.completed.toString(),
         },
+        0,
       ];
+    },
+  };
+}
+
+// Define a task list container
+function createTaskListSpec() {
+  return {
+    content: "taskItem+",
+    group: "block",
+    parseDOM: [{ tag: "ul.task-list" }],
+    toDOM() {
+      return ["ul", { class: "task-list" }, 0];
     },
   };
 }
@@ -82,7 +91,8 @@ export const SummarySchema = new Schema({
     heading: createHeadingSpec(),
     subheading: createHeadingSpec("h3"),
     list: createListSpec(),
-    taskList: createTaskListSpec(),
+    taskList: createTaskListSpec(), // Task list container
+    taskItem: createTaskItemSpec(), // Individual task items
     hard_break: createHardBreakSpec(),
     text: {
       group: "inline",
