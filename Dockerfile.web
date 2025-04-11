@@ -1,4 +1,8 @@
 FROM node:22-alpine AS base
+
+# Add ARG for Doppler token
+ARG DOPPLER_TOKEN
+
 # Install necessary Alpine packages and build dependencies
 RUN apk add --no-cache libc6-compat gcompat python3 make g++ bash && \
     ln -sf /bin/bash /usr/bin/bash && \

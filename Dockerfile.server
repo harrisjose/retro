@@ -21,7 +21,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 # Build in the correct order: shared packages first, then apps
 RUN pnpm run -r --filter="./packages/**" build
-# RUN pnpm run -r --filter="./apps/server" build
 
 # Create production deployment with only runtime dependencies
 WORKDIR /usr/src/app

@@ -6,8 +6,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production react-router build",
-    "postbuild": "cp _redirects build/client/ && cp vercel.json build/client/",
+    "postbuild": "cp _redirects build/client/",
+    "build": "doppler run -- react-router build",
     "dev": "doppler run -- react-router dev",
     "start": "doppler run -- serve -s build/client -l 3000",
     "typecheck": "react-router typegen && tsc"

@@ -75,6 +75,8 @@ jobs:
         context: .
         file: ./Dockerfile.web
         push: true
+        build-args: |
+          DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}
         tags: |
           ghcr.io/${{ github.repository }}/web:latest
           ghcr.io/${{ github.repository }}/web:${{ github.sha }}
