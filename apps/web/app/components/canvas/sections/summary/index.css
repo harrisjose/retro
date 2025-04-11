@@ -1,14 +1,24 @@
 .summary-pm {
   h2 {
-    @apply font-sans text-[32px] font-bold leading-[36px] tracking-[-0.02em] text-left underline-offset-[from-font];
+    @apply text-[32px] font-bold leading-[36px] tracking-[-0.02em] text-left underline-offset-[from-font];
     @apply mb-[25px];
   }
   h3 {
-    @apply font-sans text-[14px] font-bold leading-[16.3px] text-left underline-offset-[from-font];
+    @apply text-[14px] font-bold leading-[16.3px] text-left underline-offset-[from-font];
     @apply mb-3;
   }
   p {
-    @apply font-sans text-[14px] font-normal leading-[18.11px] text-left underline-offset-[from-font];
+    @apply text-[14px] font-normal leading-[18.11px] text-left underline-offset-[from-font];
     @apply mb-4;
+  }
+
+  .prosemirror-flat-list[data-list-kind="bullet"] .list-content p {
+    @apply mb-[4px];
+  }
+  .prosemirror-flat-list[data-list-kind="bullet"] {
+    @apply ml-3;
+  }
+  .actionable-items-header {
+    @apply mt-[6px];
   }
 }
