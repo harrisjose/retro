@@ -9,7 +9,6 @@ type CursorProps = {
   x: number;
   y: number;
   color: {
-    secondary: string;
     primary: string;
   };
   userName: string;

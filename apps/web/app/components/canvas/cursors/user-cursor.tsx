@@ -15,7 +15,6 @@ const UserCursorPointer = ({
   y: number;
   color: {
     primary: string;
-    secondary: string;
   };
 }) => {
   const collaborators = useCollaborators();
