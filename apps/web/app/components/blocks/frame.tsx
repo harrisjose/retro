@@ -14,7 +14,7 @@ export default function Frame({
 
   const {
     camera: { z },
-  } = useCamera({});
+  } = useCamera();
 
   const controllerRef = CanvasControllerContext.useActorRef();
   const ref = useRef<HTMLDivElement>(null);

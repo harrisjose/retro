@@ -15,13 +15,6 @@ export type Pointer = {
   y: number;
 };
 
-export type CameraPosition = {
-  id: string;
-  x: number;
-  y: number;
-  z: number;
-};
-
 export enum CollaboratorColors {
   BLUE = "Blue",
   PURPLE = "Purple",
@@ -34,32 +27,32 @@ export enum CollaboratorColors {
 
 export const collaboratorsColorMap = {
   [CollaboratorColors.BLUE]: {
-    secondary: "#dbeafe",
-    primary: "#3b82f6",
+    background: "#dbeafe",
+    text: "#3b82f6",
   },
   [CollaboratorColors.PURPLE]: {
-    secondary: "#f3e8ff",
-    primary: "#a855f7",
+    background: "#f3e8ff",
+    text: "#a855f7",
   },
   [CollaboratorColors.TEAL]: {
-    secondary: "#ccfbf1",
-    primary: "#14b8a6",
+    background: "#ccfbf1",
+    text: "#14b8a6",
   },
   [CollaboratorColors.PINK]: {
-    secondary: "#fce7f3",
-    primary: "#ec4899",
+    background: "#fce7f3",
+    text: "#ec4899",
   },
   [CollaboratorColors.INDIGO]: {
-    secondary: "#e0e7ff",
-    primary: "#6366f1",
+    background: "#e0e7ff",
+    text: "#6366f1",
   },
   [CollaboratorColors.CYAN]: {
-    secondary: "#cffafe",
-    primary: "#06b6d4",
+    background: "#cffafe",
+    text: "#06b6d4",
   },
   [CollaboratorColors.LIME]: {
-    secondary: "#ecfccb",
-    primary: "#84cc16",
+    background: "#ecfccb",
+    text: "#84cc16",
   },
 };
 
@@ -72,14 +65,12 @@ export type Presence = {
   collaborators: Collaborator[];
   pointers: Pointer[];
   selections: CollaboratorSelection[];
-  cameraPositions: CameraPosition[];
 };
 
 export type Awareness = {
   user: Collaborator;
   selection: CollaboratorSelection;
   pointers: Pointer;
-  cameraPositions: CameraPosition;
 };
 
 export type Document = {

@@ -1,5 +1,6 @@
 import { cn } from "@retro/common";
 import { useCollaborators, useDocument, useSectionMap } from "@retro/sdk";
+import { isNil } from "lodash-es";
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import Back from "../svg/back";
@@ -176,16 +177,10 @@ export default function Topbar() {
 
       <div className="absolute right-4 top-4 h-[28px] flex gap-2 items-center">
         <div className="w-fit">
-          {/* TODO - Fix the types here */}
           <CollaboratorAvatars
-            collaborators={
-              collaborators as {
-                id: string;
-                name: string;
-                image: string | null;
-                email: string;
-              }[]
-            }
+            avatarUrls={collaborators
+              .map((c) => c.image)
+              .filter((i) => !isNil(i))}
           />
         </div>
         <CopyLinkButton />

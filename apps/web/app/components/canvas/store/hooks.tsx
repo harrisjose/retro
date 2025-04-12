@@ -35,31 +35,12 @@ export const useCanvas = () => {
   return omit(snap, ["camera"]);
 };
 
-export const useCamera = ({
-  onCameraChange,
-}: {
-  onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
-}) => {
+export const useCamera = () => {
   const { sections } = useSectionMap();
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
 
   const zBounds = useMemo(() => computeZoomBounds(sections), [sections]);
-
-  // Subscribe to camera changes and update presence
-  useEffect(() => {
-    const unsubscribe = subscribe(state.camera, () => {
-      if (onCameraChange) {
-        onCameraChange({
-          x: state.camera.x,
-          y: state.camera.y,
-          z: state.camera.z,
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, [onCameraChange]);
 
   return {
     camera: snap,
@@ -75,8 +56,8 @@ export const useCamera = ({
     moveBy: (dx: number = 0, dy: number = 0) => {
       updateProxyState(state.camera, panCamera(state.camera, dx, dy));
     },
-    moveTo: ({ x, y, z }: { x: number; y: number; z: number }) => {
-      updateProxyState(state.camera, { ...state.camera, x, y, z });
+    moveTo: (x: number, y: number) => {
+      updateProxyState(state.camera, { ...state.camera, x, y });
     },
   };
 };

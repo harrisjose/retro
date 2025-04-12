@@ -23,8 +23,6 @@ export type DocumentState = {
   undoManager: UndoManager | null;
   isReady: boolean;
   presence: Presence;
-
-  followAlongUserId: string | null;
 };
 
 export type UndoManagerEvent = {
