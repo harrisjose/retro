@@ -25,10 +25,11 @@ const SectionButton = ({
     <a
       key={id}
       className={cn(
-        "py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D] cursor-pointer",
+        "py-1.5 px-3 font-bold text-sm leading-4 bg-[#f1f1f1] rounded-2xl shadow-[0px_0px_1px_0px_#0000004D] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]",
         active && "bg-white",
       )}
       onClick={onClick}
+      title={name}
     >
       {name}
     </a>
@@ -82,21 +83,21 @@ const DocumentNameWrapper = () => {
   );
 
   return (
-    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center justify-center">
+    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center w-full">
       <button
         onClick={onBack}
-        className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none"
+        className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
       >
         <Back className="w-4 h-4" />
       </button>
       <Separator
         orientation="vertical"
-        className="bg-black opacity-5 rounded-sm"
+        className="bg-black opacity-5 rounded-sm flex-shrink-0"
       />
       {isEditing ? (
         <input
           ref={inputRef}
-          className="pl-2 text-sm bg-transparent outline-none border-none w-full"
+          className="pl-2 text-sm bg-transparent outline-none border-none w-full min-w-0"
           value={documentName}
           onChange={(e) => setDocumentName(e.target.value)}
           onBlur={saveDocumentName}
@@ -104,7 +105,7 @@ const DocumentNameWrapper = () => {
         />
       ) : (
         <div
-          className="pl-2 text-sm cursor-pointer"
+          className="pl-2 text-sm cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap w-full"
           onDoubleClick={startEditing}
         >
           {document.name}
@@ -144,12 +145,12 @@ export default function Topbar() {
   const { activeSection, moveToSection } = useSectionNavigation();
 
   return (
-    <div className="w-screen h-[28px] relative z-20 px-4">
-      <div className="absolute left-0 top-4 w-full h-full">
+    <>
+      <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
         <DocumentNameWrapper />
       </div>
 
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 items-center h-full">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 items-center h-[28px]">
         <SectionButton
           id="intro"
           name="Intro"
@@ -173,7 +174,7 @@ export default function Topbar() {
         />
       </div>
 
-      <div className="absolute right-4 top-4 h-full flex gap-2 items-center">
+      <div className="absolute right-4 top-4 h-[28px] flex gap-2 items-center">
         <div className="w-fit">
           {/* TODO - Fix the types here */}
           <CollaboratorAvatars
@@ -189,6 +190,6 @@ export default function Topbar() {
         </div>
         <CopyLinkButton />
       </div>
-    </div>
+    </>
   );
 }

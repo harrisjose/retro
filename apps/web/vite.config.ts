@@ -1,6 +1,6 @@
+import path from "path";
 import { reactRouter } from "@react-router/dev/vite";
 import autoprefixer from "autoprefixer";
-import path from "path";
 import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";

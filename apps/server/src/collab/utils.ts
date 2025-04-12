@@ -108,6 +108,21 @@ export const patchFragmentWithSummary = (
     <h2>Summary</h2>
     <p>${response.summary}</p>
   `;
+  if (!isEmpty(response.keyInsights)) {
+    html += `
+      <h3>Key insights</h3>
+      <ul>
+        ${response.keyInsights
+          .map((item) => {
+            return `
+            <div class="prosemirror-flat-list" data-list-kind="bullet">
+              <div class="list-content"><p>${item}</p></div>
+            </div>`;
+          })
+          .join("")}
+      </ul>
+    `;
+  }
   if (!isEmpty(response.actionables)) {
     html += `
       <h3>Actionable items</h3>

@@ -65,7 +65,7 @@ export default function SummarySection() {
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
-        height: CanvasConstants.SectionHeight,
+        height: "auto",
       }}
     >
       <div className="overflow-y-scroll w-full">

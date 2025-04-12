@@ -72,7 +72,7 @@ export default function IntroSection() {
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
-        height: CanvasConstants.IntroSectionHeight,
+        height: "auto",
       }}
     >
       <div className="absolute top-0 right-0 repeat-3 rounded-2xl overflow-hidden">
@@ -83,7 +83,7 @@ export default function IntroSection() {
         />
       </div>
 
-      <div className="flex flex-col h-full">
+      <div>
         <div className="flex">
           <div>
             <StartHere className="w-7 h-auto" />
@@ -97,16 +97,14 @@ export default function IntroSection() {
           below
         </div>
 
-        <div className="flex-1 overflow-y-auto" data-scrollable>
-          {content && (
-            <EditorContextProvider
-              id={`intro-section`}
-              createEditorState={createEditorState}
-            >
-              <ProsemirrorEditor fragment={content} className="intro-pm" />
-            </EditorContextProvider>
-          )}
-        </div>
+        {content && (
+          <EditorContextProvider
+            id={`intro-section`}
+            createEditorState={createEditorState}
+          >
+            <ProsemirrorEditor fragment={content} className="intro-pm" />
+          </EditorContextProvider>
+        )}
 
         <div className="pt-[25px] w-full flex justify-start">
           <Button variant={"brand"} size={"brand"} onClick={onClick}>

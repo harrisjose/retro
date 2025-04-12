@@ -25,7 +25,8 @@
     "worker:slack:start": "doppler run -- tsx src/queue/slack/worker.ts",
     "predev": "pnpm run migrate-latest && pnpm --filter \"../../packages/**\" run build",
     "dev": "pm2 start --no-daemon ecosystem.dev.config.cjs",
-    "start": "pm2 start ecosystem.prod.config.cjs"
+    "start": "pm2 start ecosystem.prod.config.cjs",
+    "test-summary-generation": "doppler run -- tsx src/scripts/generate-summary.ts"
   },
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
