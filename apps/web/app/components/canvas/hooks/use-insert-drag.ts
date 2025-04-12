@@ -8,7 +8,7 @@ import { screenToCanvas, useCamera } from "../store";
 
 export const useInsertDrag = () => {
   const controllerRef = CanvasControllerContext.useActorRef();
-  const { camera } = useCamera();
+  const { camera } = useCamera({});
   const [isDragging, setIsDragging] = useState(false);
 
   const handleInsertInteraction = useCallback(

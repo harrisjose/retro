@@ -9,8 +9,8 @@ type CursorProps = {
   x: number;
   y: number;
   color: {
-    background: string;
-    text: string;
+    secondary: string;
+    primary: string;
   };
   userName: string;
 };
@@ -55,15 +55,15 @@ export function CollaboratorCursor({
           viewBox="0 0 20 20"
         >
           <path
-            style={{ fill: color.text }}
+            style={{ fill: color.primary }}
             d="M19.438 6.716 1.115.05A.832.832 0 0 0 .05 1.116L6.712 19.45a.834.834 0 0 0 1.557.025l3.198-8 7.995-3.2a.833.833 0 0 0 0-1.559h-.024Z"
           />
         </svg>
         <span
           className="relative ml-3.5 flex flex-col whitespace-nowrap rounded-xl py-1 pr-3 pl-2.5 text-xs"
           style={{
-            backgroundColor: color.background,
-            color: color.text,
+            backgroundColor: color.primary,
+            color: "#fff",
           }}
         >
           <span>{userName}</span>

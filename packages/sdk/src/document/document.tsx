@@ -2,6 +2,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import type {
   Awareness,
   Block,
+  CameraPosition,
   Collaborator,
   CollaboratorSelection,
   Document,
@@ -30,9 +31,9 @@ import {
   ySyncPluginKey,
 } from "@retro/pm";
 import { isNil, uniqBy } from "lodash-es";
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { useInterval } from "usehooks-ts";
-import { proxy, ref, useSnapshot } from "valtio";
+import { proxy, ref, subscribe, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
 import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
@@ -99,6 +100,12 @@ const usePresenceSync = (state: DocumentState) => {
 
         const pointers = states.map((s) => s.pointers).filter((p) => !isNil(p));
         state.presence.pointers = uniqBy(pointers, "id");
+
+        const cameraPositions = states
+          .map((s) => s.cameraPositions)
+          .filter((c) => !isNil(c));
+
+        state.presence.cameraPositions = uniqBy(cameraPositions, "id");
       },
     );
   }, []);
@@ -221,8 +228,10 @@ export const DocProvider = ({
         collaborators: [],
         selections: [],
         pointers: [],
+        cameraPositions: [],
       },
       isReady: false,
+      followAlongUserId: null,
     }),
   ).current;
 
@@ -262,10 +271,11 @@ export const useDocument = () => {
 export const useCollaborators = () => {
   const { presence } = useContext(DocContext);
   const snapshot = useSnapshot(presence); // collaborators is reassigned so dont snapshot on that
+
   return snapshot.collaborators ?? [];
 };
 
-const idToColor = (id: string) => {
+export const idToColor = (id: string) => {
   return collaboratorsColorMap[
     Object.values(CollaboratorColors)[
       id.charCodeAt(0) % Object.values(CollaboratorColors).length
@@ -289,6 +299,70 @@ export const usePointers = () => {
         color: idToColor(p.id),
       })) ?? []
   );
+};
+
+export const useFollowAlongCameraPosition = ({
+  onCameraChange,
+}: {
+  onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
+}) => {
+  const state = useContext(DocContext);
+  const snapshot = useSnapshot(state);
+  const collaborators = useSnapshot(state.presence.collaborators);
+
+  useEffect(() => {
+    if (snapshot.followAlongUserId && onCameraChange) {
+      // Find the initial camera position for the user we're following
+      const cameraPosition = snapshot.presence.cameraPositions.find(
+        (p) => p.id === snapshot.followAlongUserId,
+      );
+
+      // Set up a subscription to track camera position changes for this user
+      const unsubscribe = subscribe(state.presence, () => {
+        const updatedPosition = state.presence.cameraPositions.find(
+          (p) => p.id === snapshot.followAlongUserId,
+        );
+
+        if (updatedPosition) {
+          onCameraChange({
+            x: updatedPosition.x,
+            y: updatedPosition.y,
+            z: updatedPosition.z,
+          });
+        }
+      });
+
+      // Apply initial camera position if available
+      if (cameraPosition) {
+        onCameraChange({
+          x: cameraPosition.x,
+          y: cameraPosition.y,
+          z: cameraPosition.z,
+        });
+      }
+
+      // Clean up subscription when followAlongUserId changes
+      return () => unsubscribe();
+    }
+  }, [snapshot.followAlongUserId]);
+
+  const setFollowAlongUserId = async (userId: string | null) => {
+    state.followAlongUserId = userId;
+  };
+
+  const followAlongUser = useMemo(() => {
+    return collaborators.find((c) => c.id === snapshot.followAlongUserId);
+  }, [snapshot.followAlongUserId, collaborators]);
+
+  return {
+    setFollowAlongUserId,
+    followAlongUser: followAlongUser
+      ? {
+          ...followAlongUser,
+          color: idToColor(followAlongUser?.id ?? ""),
+        }
+      : null,
+  };
 };
 
 export const useAwarenessActions = () => {
@@ -322,6 +396,24 @@ export const useAwarenessActions = () => {
           x: pointer.x,
           y: pointer.y,
         } satisfies Pointer);
+      }
+    },
+
+    updateCameraPositionAwareness: async (
+      cameraPosition: Omit<CameraPosition, "id">,
+    ) => {
+      const isAnonymousRetro = state.document.isAnonymous;
+      if (isAnonymousRetro) return;
+
+      const { data } = await authClient.getSession();
+
+      if (data?.user) {
+        state.syncProvider.setAwarenessField("cameraPositions", {
+          id: data?.user.id,
+          x: cameraPosition.x,
+          y: cameraPosition.y,
+          z: cameraPosition.z,
+        } satisfies CameraPosition);
       }
     },
   };

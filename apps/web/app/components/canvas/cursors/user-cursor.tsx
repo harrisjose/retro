@@ -14,8 +14,8 @@ const UserCursorPointer = ({
   x: number;
   y: number;
   color: {
-    background: string;
-    text: string;
+    primary: string;
+    secondary: string;
   };
 }) => {
   const collaborators = useCollaborators();
@@ -37,7 +37,7 @@ const UserCursorPointer = ({
 
 export const UserCursor = () => {
   const { updatePointersAwareness } = useAwarenessActions();
-  const { camera } = useCamera();
+  const { camera } = useCamera({});
   const pointers = usePointers();
 
   useEffect(() => {
