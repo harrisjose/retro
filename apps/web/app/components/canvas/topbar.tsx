@@ -83,7 +83,7 @@ const DocumentNameWrapper = () => {
   );
 
   return (
-    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-[-2px] h-full flex items-center w-full">
+    <div className="shadow-[0px_0px_1px_0px_rgba(0,0,0,0.34)] pr-[12px] rounded-2xl bg-white absolute left-[24px] top-4 h-full flex items-center max-w-[200px] pointer-events-auto">
       <button
         onClick={onBack}
         className="hover:bg-black/[0.04] pl-[10px] pr-2 h-full rounded-2xl rounded-r-none flex-shrink-0"
@@ -145,12 +145,10 @@ export default function Topbar() {
   const { activeSection, moveToSection } = useSectionNavigation();
 
   return (
-    <>
-      <div className="fixed left-0 top-4 h-[28px] min-w-[150px]">
-        <DocumentNameWrapper />
-      </div>
+    <div className="w-screen h-[28px] relative z-20 px-4 pointer-events-none">
+      <DocumentNameWrapper />
 
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 items-center h-[28px]">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 items-center h-full pointer-events-auto">
         <SectionButton
           id="intro"
           name="Intro"
@@ -174,7 +172,7 @@ export default function Topbar() {
         />
       </div>
 
-      <div className="absolute right-4 top-4 h-[28px] flex gap-2 items-center">
+      <div className="absolute right-4 top-4 h-full flex gap-2 items-center pointer-events-auto">
         <div className="w-fit">
           {/* TODO - Fix the types here */}
           <CollaboratorAvatars
@@ -190,6 +188,6 @@ export default function Topbar() {
         </div>
         <CopyLinkButton />
       </div>
-    </>
+    </div>
   );
 }
