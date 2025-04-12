@@ -20,7 +20,7 @@ import CardCursor from "./card-cursor";
 import StickerCursor from "./sticker-cursor";
 
 export const CanvasCursor = () => {
-  const { camera } = useCamera();
+  const { camera } = useCamera({});
 
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();

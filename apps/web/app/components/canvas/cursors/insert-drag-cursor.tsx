@@ -19,7 +19,7 @@ import CardCursor from "./card-cursor";
 import StickerCursor from "./sticker-cursor";
 
 export const InsertDragCursor = () => {
-  const { camera } = useCamera();
+  const { camera } = useCamera({});
 
   const [isInsertDragging, blockToInsert] = CanvasControllerContext.useSelector(
     (snapshot) => {

@@ -17,7 +17,7 @@ function SectionNameEditor({
   onSave: (value: string) => void;
   onCancel: () => void;
 }) {
-  const { camera } = useCamera();
+  const { camera } = useCamera({});
   const [editValue, setEditValue] = useState(name);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
