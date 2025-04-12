@@ -1,0 +1,19 @@
+{
+  "name": "@retro/runtime-env",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./vite": "./src/vite-plugin.js"
+  },
+  "bin": {
+    "@retro/runtime-env": "./bin/replace.js"
+  },
+  "dependencies": {
+    "envsub": "^4.1.0",
+    "magic-string": "^0.30.17",
+    "vite": "^5.4.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10"
+  }
+}

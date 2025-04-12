@@ -1,6 +1,7 @@
-import path from "path";
 import { reactRouter } from "@react-router/dev/vite";
+import runtimeEnv from "@retro/runtime-env/vite";
 import autoprefixer from "autoprefixer";
+import path from "path";
 import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
@@ -17,7 +18,7 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
-  plugins: [reactRouter(), tsconfigPaths(), svgr()],
+  plugins: [runtimeEnv(), reactRouter(), tsconfigPaths(), svgr()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./app"),
