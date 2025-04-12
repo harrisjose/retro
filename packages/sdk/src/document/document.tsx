@@ -401,20 +401,17 @@ export const useAwarenessActions = () => {
 
     updateCameraPositionAwareness: async (
       cameraPosition: Omit<CameraPosition, "id">,
+      userId: string,
     ) => {
       const isAnonymousRetro = state.document.isAnonymous;
       if (isAnonymousRetro) return;
 
-      const { data } = await authClient.getSession();
-
-      if (data?.user) {
-        state.syncProvider.setAwarenessField("cameraPositions", {
-          id: data?.user.id,
-          x: cameraPosition.x,
-          y: cameraPosition.y,
-          z: cameraPosition.z,
-        } satisfies CameraPosition);
-      }
+      state.syncProvider.setAwarenessField("cameraPositions", {
+        id: userId,
+        x: cameraPosition.x,
+        y: cameraPosition.y,
+        z: cameraPosition.z,
+      } satisfies CameraPosition);
     },
   };
 };

@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
 import {
+  authClient,
   useAwarenessActions,
   useFollowAlongCameraPosition,
   useSectionMap,
@@ -24,15 +25,22 @@ import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const { sections } = useSectionMap();
+  const { data: sessionData } = authClient.useSession();
   const { updateCameraPositionAwareness } = useAwarenessActions();
   // This updates the current user camera position to awareness by subscribing to the camera state
   const { camera, zoomBy, moveBy, moveTo } = useCamera({
     onCameraChange: (camera) => {
-      updateCameraPositionAwareness({
-        x: camera.x,
-        y: camera.y,
-        z: camera.z,
-      });
+      const userId = sessionData?.user.id;
+      if (userId) {
+        updateCameraPositionAwareness(
+          {
+            x: camera.x,
+            y: camera.y,
+            z: camera.z,
+          },
+          userId,
+        );
+      }
     },
   });
 

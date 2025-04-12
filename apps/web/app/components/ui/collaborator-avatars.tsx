@@ -68,8 +68,6 @@ const CollaboratorAvatar = memo(
   },
 );
 
-CollaboratorAvatar.displayName = "CollaboratorAvatar";
-
 const RemainingCount = memo(({ count }: { count: number }) => {
   if (count <= 0) return null;
 
@@ -86,8 +84,6 @@ const RemainingCount = memo(({ count }: { count: number }) => {
     </div>
   );
 });
-
-RemainingCount.displayName = "RemainingCount";
 
 const CollaboratorAvatars = memo(
   ({ collaborators }: CollaboratorAvatarsProps) => {
@@ -120,7 +116,5 @@ const CollaboratorAvatars = memo(
     );
   },
 );
-
-CollaboratorAvatars.displayName = "CollaboratorAvatars";
 
 export { CollaboratorAvatars };
