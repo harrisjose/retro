@@ -28,7 +28,6 @@ const CollaboratorAvatar = memo(
       image: string | null;
       email: string;
       color: {
-        secondary: string;
         primary: string;
       };
     } | null;

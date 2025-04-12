@@ -68,11 +68,11 @@ export default function IntroSection() {
     <div
       key={`intro-section`}
       ref={sectionRef}
-      className="relative shrink-0 bg-white rounded-2xl border border-[#0000000F] p-12 flex flex-col justify-between"
+      className="relative shrink-0 bg-white rounded-2xl border border-[#0000000F] p-12 flex flex-col justify-between h-full"
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
-        height: "auto",
+        minHeight: CanvasConstants.IntroSectionHeight,
       }}
     >
       <div className="absolute top-0 right-0 repeat-3 rounded-2xl overflow-hidden">
