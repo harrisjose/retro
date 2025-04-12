@@ -4,5 +4,5 @@ export default {
   authCallbackUrl:
     import.meta.env.VITE_AUTH_CALLBACK_URL ??
     "http://localhost:5175/loginCallback",
-  pollingInterval: import.meta.env.VITE_POLLING_INTERVAL ?? 5 * 60 * 1000, // 5 minutes
+  pollingInterval: import.meta.env.VITE_API_POLLING_INTERVAL ?? 5 * 60 * 1000, // 5 minutes
 };
