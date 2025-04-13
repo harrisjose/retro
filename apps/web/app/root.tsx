@@ -1,6 +1,3 @@
-import config from "@retro/sdk/lib/config";
-import type { PostHogConfig } from "posthog-js";
-import { PostHogProvider } from "posthog-js/react";
 import {
   Links,
   Meta,
@@ -23,12 +20,6 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
-const options = {
-  api_host: config.postHogHost,
-  enabled: config.isPostHogEnabled,
-  person_profiles: "always",
-} as Partial<PostHogConfig>;
-
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -39,11 +30,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <PostHogProvider apiKey={config.postHogKey!} options={options}>
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-        </PostHogProvider>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );
