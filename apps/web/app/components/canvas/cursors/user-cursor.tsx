@@ -36,7 +36,7 @@ const UserCursorPointer = ({
 
 export const UserCursor = () => {
   const { updatePointersAwareness } = useAwarenessActions();
-  const { camera } = useCamera({});
+  const { camera } = useCamera();
   const pointers = usePointers();
 
   useEffect(() => {

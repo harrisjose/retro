@@ -1,4 +1,4 @@
-import { cn } from "@retro/common";
+import { type Collaborator, cn } from "@retro/common";
 import { useCollaborators, useDocument, useSectionMap } from "@retro/sdk";
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router";
@@ -174,16 +174,8 @@ export default function Topbar() {
 
       <div className="absolute right-4 top-4 h-full flex gap-2 items-center pointer-events-auto">
         <div className="w-fit">
-          {/* TODO - Fix the types here */}
           <CollaboratorAvatars
-            collaborators={
-              collaborators as {
-                id: string;
-                name: string;
-                image: string | null;
-                email: string;
-              }[]
-            }
+            collaborators={collaborators as Collaborator[]}
           />
         </div>
         <CopyLinkButton />

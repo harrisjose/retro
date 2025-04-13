@@ -39,7 +39,7 @@ export const useCamera = ({
   onCameraChange,
 }: {
   onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
-}) => {
+} = {}) => {
   const { sections } = useSectionMap();
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);

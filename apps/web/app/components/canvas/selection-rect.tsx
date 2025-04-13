@@ -37,7 +37,7 @@ export function useRafLoop(
 }
 
 export function SelectionRectangle() {
-  const { camera } = useCamera({});
+  const { camera } = useCamera();
   const controllerRef = CanvasControllerContext.useActorRef();
   const [rectangle, setRectangle] = useState<{
     x: number;

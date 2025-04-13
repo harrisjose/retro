@@ -71,8 +71,8 @@ export type Presence = {
 export type Awareness = {
   user: Collaborator;
   selection: CollaboratorSelection;
-  pointers: Pointer;
-  cameraPositions: CameraPosition;
+  pointer: Pointer;
+  cameraPosition: CameraPosition;
 };
 
 export type Document = {

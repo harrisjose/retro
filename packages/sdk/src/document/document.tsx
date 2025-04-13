@@ -98,11 +98,11 @@ const usePresenceSync = (state: DocumentState) => {
           .filter((s) => !isNil(s));
         state.presence.selections = uniqBy(selections, "id");
 
-        const pointers = states.map((s) => s.pointers).filter((p) => !isNil(p));
+        const pointers = states.map((s) => s.pointer).filter((p) => !isNil(p));
         state.presence.pointers = uniqBy(pointers, "id");
 
         const cameraPositions = states
-          .map((s) => s.cameraPositions)
+          .map((s) => s.cameraPosition)
           .filter((c) => !isNil(c));
 
         state.presence.cameraPositions = uniqBy(cameraPositions, "id");
@@ -305,7 +305,7 @@ export const useFollowAlongCameraPosition = ({
   onCameraChange,
 }: {
   onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
-}) => {
+} = {}) => {
   const state = useContext(DocContext);
   const snapshot = useSnapshot(state);
   const collaborators = useSnapshot(state.presence.collaborators);

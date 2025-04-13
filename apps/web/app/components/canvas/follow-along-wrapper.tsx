@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 
 export const FollowAlongWrapper = () => {
   const { followAlongUser, setFollowAlongUserId } =
-    useFollowAlongCameraPosition({});
+    useFollowAlongCameraPosition();
 
   return (
     <>
