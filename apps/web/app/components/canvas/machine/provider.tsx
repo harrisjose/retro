@@ -2,11 +2,8 @@ import { BlockType, SectionMaxHeight, SectionMinHeight } from "@retro/common";
 import {
   useAwarenessActions,
   useBlockMap,
-  useCreateBlock,
-  useDocument,
   useHistory,
   useMultiBlockActions,
-  useProfile,
   useSectionMap,
 } from "@retro/sdk";
 import { isNil } from "lodash-es";
@@ -18,7 +15,6 @@ import {
   getSectionBounds,
   useCanvasSearch,
 } from "../store";
-import { createBlockAtPosition } from "./actions";
 import { createHistoryEventListenerLogic } from "./actors";
 import { CanvasControllerContext, canvasController } from "./canvas-controller";
 import {
@@ -42,10 +38,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
     [],
   );
   const blocks = useBlockMap();
-  const { document } = useDocument();
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
-  const createBlock = useCreateBlock();
-  const { profile } = useProfile();
 
   return (
     <CanvasControllerContext.Provider
@@ -55,6 +48,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
             assertEvent(event, [
               BlockEventType.BlockClick,
               CanvasEventType.InsertDone,
+              CanvasEventType.InsertDragDone,
             ]);
             return event.blockType === BlockType.Card;
           },
@@ -188,27 +182,6 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               setSectionHeight(sectionId, height);
             });
           },
-
-          handleInsertDragEnd: enqueueActions(({ enqueue }, params) => {
-            const point = params.point;
-            const blockToInsert = params.blockToInsert;
-
-            const blockId = createBlockAtPosition({
-              blockToInsert,
-              point,
-              profile,
-              createBlock,
-              isAnonymousRetro: document.isAnonymous,
-            });
-
-            if (blockId) {
-              enqueue.raise({
-                type: CanvasEventType.InsertDone,
-                blockId,
-                blockType: blockToInsert.type,
-              });
-            }
-          }),
           undo,
           redo,
         },

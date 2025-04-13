@@ -8,6 +8,7 @@ import {
 } from "@retro/common";
 import { useCreateBlock, useDocument, useProfile } from "@retro/sdk";
 import { shallowEqual } from "@xstate/react";
+import { useEffect } from "react";
 import { match } from "ts-pattern";
 import {
   CanvasControllerContext,
@@ -25,18 +26,23 @@ export const CanvasCursor = () => {
   const createBlock = useCreateBlock();
   const controllerRef = CanvasControllerContext.useActorRef();
   const { profile } = useProfile();
-  const { document } = useDocument();
+  const { document: retroDocument } = useDocument();
 
-  const [isInsertionActive, blockToInsert] =
+  const [isInsertionActive, isInsertDragActive, blockToInsert] =
     CanvasControllerContext.useSelector((snapshot) => {
       return [
         snapshot.matches(CanvasMode.Inserting),
+        snapshot.matches(CanvasMode.InsertDragging),
         snapshot?.context.insertion.selectedBlock,
       ];
     }, shallowEqual);
 
+  const isActive = isInsertionActive || isInsertDragActive;
+  const cursorType = isInsertDragActive ? "grabbing" : "auto";
+
+  // Handle click for normal insertion mode
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (blockToInsert === null) return;
+    if (!isInsertionActive || blockToInsert === null) return;
 
     const point = screenToCanvas(
       { x: event.clientX, y: event.clientY },
@@ -48,7 +54,7 @@ export const CanvasCursor = () => {
       point,
       profile,
       createBlock,
-      isAnonymousRetro: document.isAnonymous,
+      isAnonymousRetro: retroDocument.isAnonymous,
     });
 
     if (blockId) {
@@ -64,7 +70,54 @@ export const CanvasCursor = () => {
     }
   };
 
-  if (!isInsertionActive || !blockToInsert) return null;
+  const handleMouseUp = (e: MouseEvent) => {
+    if (!isInsertDragActive || blockToInsert === null) return;
+
+    const point = screenToCanvas({ x: e.clientX, y: e.clientY }, camera);
+
+    const blockId = createBlockAtPosition({
+      blockToInsert,
+      point,
+      profile,
+      createBlock,
+      isAnonymousRetro: retroDocument.isAnonymous,
+    });
+
+    if (blockId) {
+      // Adding an artificial delay to ensure that react has rendered the
+      // block and the editor has started listening to events
+      requestAnimationFrame(() => {
+        controllerRef.send({
+          type: CanvasEventType.InsertDragDone,
+          blockId: blockId,
+          blockType: blockToInsert.type,
+        });
+      });
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      controllerRef.send({
+        type: CanvasEventType.InsertDragCancel,
+      });
+    }
+  };
+
+  // Handle drag insertion mode
+  useEffect(() => {
+    if (!isInsertDragActive) return () => {};
+
+    window.document.addEventListener("mouseup", handleMouseUp);
+    window.document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.document.removeEventListener("mouseup", handleMouseUp);
+      window.document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isInsertDragActive, camera, controllerRef]);
+
+  if (!isActive || !blockToInsert) return null;
 
   return (
     <div
@@ -80,7 +133,7 @@ export const CanvasCursor = () => {
               cardColorsMap[(blockToInsert.properties as CardProperties).color]
             }
             cameraZ={camera.z}
-            cursorType="auto"
+            cursorType={cursorType}
           />
         ))
         .with(BlockType.Sticker, () => (
@@ -91,7 +144,7 @@ export const CanvasCursor = () => {
               (blockToInsert.properties as StickerProperties).stickerType
             }
             cameraZ={camera.z}
-            cursorType="auto"
+            cursorType={cursorType}
           />
         ))
         .exhaustive()}

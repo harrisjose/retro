@@ -36,7 +36,7 @@ export enum CanvasEventType {
   InsertDone = "COMPLETE_INSERTION",
   InsertCancel = "CANCEL_INSERTION",
   InsertDragStart = "START_DRAG_INSERTION",
-  InsertDragEnd = "END_DRAG_INSERTION",
+  InsertDragDone = "COMPLETE_DRAG_INSERTION",
   InsertDragCancel = "CANCEL_DRAG_INSERTION",
 }
 
@@ -129,6 +129,19 @@ export type Events =
       type: CanvasEventType.InsertCancel;
     }
   | {
+      type: CanvasEventType.InsertDragStart;
+      blockToInsert: BlockToInsert;
+      payload: PointerEventPayload;
+    }
+  | {
+      type: CanvasEventType.InsertDragDone;
+      blockId: string;
+      blockType: BlockType;
+    }
+  | {
+      type: CanvasEventType.InsertDragCancel;
+    }
+  | {
       type: BlockEventType.BlockClick;
       blockId: string;
       blockType: BlockType;
@@ -160,19 +173,7 @@ export type Events =
     }
   | EditorEvents
   | KeyboardEvents
-  | HistoryEvents
-  | {
-      type: CanvasEventType.InsertDragStart;
-      blockToInsert: BlockToInsert;
-      payload: PointerEventPayload;
-    }
-  | {
-      type: CanvasEventType.InsertDragEnd;
-      payload: PointerEventPayload;
-    }
-  | {
-      type: CanvasEventType.InsertDragCancel;
-    };
+  | HistoryEvents;
 
 export type CanvasContext = {
   selection: string[];
@@ -226,11 +227,3 @@ export type UndoActionParams = [any];
 export type RedoActionParams = [any];
 
 export type RecalculateSectionHeightAfterBlockDragActionParams = [any];
-
-export type InsertDragEndActionParams = [
-  any,
-  {
-    point: PointerEventPayload;
-    blockToInsert: BlockToInsert;
-  },
-];
