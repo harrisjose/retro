@@ -101,7 +101,7 @@ const StickerRenderer = ({
       }}
       speed={1.5}
       renderConfig={{
-        devicePixelRatio: 20,
+        devicePixelRatio: window.devicePixelRatio || 2,
         autoResize: true,
       }}
       src={src}
