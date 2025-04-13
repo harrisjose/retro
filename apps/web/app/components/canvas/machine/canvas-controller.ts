@@ -430,10 +430,7 @@ export const canvasController = setup({
           },
         },
         [SelectionMode.Editing]: {
-          entry: [
-            "focusEditor",
-            () => console.log("focusEditor edit state called"),
-          ],
+          entry: ["focusEditor"],
           exit: ["blurEditor"],
           on: {
             [BlockEventType.BlockClick]: [

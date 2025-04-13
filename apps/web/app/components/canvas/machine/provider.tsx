@@ -56,12 +56,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
               BlockEventType.BlockClick,
               CanvasEventType.InsertDone,
             ]);
-            console.log("event", event);
-            try {
-              return event.blockType === BlockType.Card;
-            } catch (error) {
-              return false;
-            }
+            return event.blockType === BlockType.Card;
           },
         },
         actors: {

@@ -52,10 +52,14 @@ export const CanvasCursor = () => {
     });
 
     if (blockId) {
-      controllerRef.send({
-        type: CanvasEventType.InsertDone,
-        blockId: blockId,
-        blockType: blockToInsert.type,
+      // Adding an artificial delay to ensure that react has rendered the
+      // block and the editor has started listening to events
+      requestAnimationFrame(() => {
+        controllerRef.send({
+          type: CanvasEventType.InsertDone,
+          blockId: blockId,
+          blockType: blockToInsert.type,
+        });
       });
     }
   };
