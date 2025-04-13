@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { ProfileProvider, authClient } from "@retro/sdk";
 import { Navigate, Outlet, useNavigation } from "react-router";
+import { AnalyticsProvider } from "./analytics-provider";
 import Spinner from "./svg/spinner";
 
 const ProtectedLayout = () => {
@@ -24,7 +25,9 @@ const ProtectedLayout = () => {
   return (
     <ProfileProvider>
       <Toaster richColors />
-      <Outlet />
+      <AnalyticsProvider>
+        <Outlet />
+      </AnalyticsProvider>
     </ProfileProvider>
   );
 };
