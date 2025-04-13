@@ -15,7 +15,6 @@ import {
 } from "./actors";
 import {
   BlockEventType,
-  type BlockToInsert,
   type BringBlockToFrontActionParams,
   type CanvasContext,
   CanvasEventType,
@@ -27,7 +26,6 @@ import {
   type EditorEvents,
   type Events,
   HistoryEventType,
-  type InsertDragEndActionParams,
   type NotifySelectionActionParams,
   type OnBlockDragActionParams,
   type OnCanvasDragActionParams,
@@ -85,9 +83,6 @@ export const canvasController = setup({
     ) => {
       console.log("Default recalculateSectionHeightAfterBlockDrag action");
     },
-    handleInsertDragEnd: (...args: InsertDragEndActionParams) => {
-      console.log("Default insertDragEnd action", args);
-    },
     //
     setSelection: enqueueActions(({ event, enqueue }) => {
       assertEvent(event, Object.values(BlockEventType));
@@ -107,7 +102,10 @@ export const canvasController = setup({
       });
     }),
     afterInsert: enqueueActions(({ event, enqueue }) => {
-      assertEvent(event, [CanvasEventType.InsertDone]);
+      assertEvent(event, [
+        CanvasEventType.InsertDone,
+        CanvasEventType.InsertDragDone,
+      ]);
       const selected = [event.blockId];
       enqueue.assign({
         insertion: {
@@ -593,18 +591,7 @@ export const canvasController = setup({
     [CanvasMode.InsertDragging]: {
       id: CanvasMode.InsertDragging,
       on: {
-        [CanvasEventType.InsertDragEnd]: {
-          actions: [
-            {
-              type: "handleInsertDragEnd",
-              params: ({ context, event }) => ({
-                point: event.payload,
-                blockToInsert: context.insertion.selectedBlock as BlockToInsert,
-              }),
-            },
-          ],
-        },
-        [CanvasEventType.InsertDone]: [
+        [CanvasEventType.InsertDragDone]: [
           {
             guard: "isEditableBlock",
             actions: ["afterInsert"],

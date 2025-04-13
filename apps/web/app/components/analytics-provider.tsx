@@ -1,7 +1,13 @@
-import { authClient, config, useProfile } from "@retro/sdk";
+import { authClient, useProfile } from "@retro/sdk";
 import type { PostHogConfig } from "posthog-js";
 import { PostHogProvider, usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
+
+const config = {
+  postHogKey: import.meta.env.VITE_POSTHOG_KEY,
+  postHogHost: import.meta.env.VITE_POSTHOG_HOST,
+  isPostHogEnabled: import.meta.env.PROD,
+};
 
 const options = {
   api_host: config.postHogHost,
@@ -26,7 +32,14 @@ export const AnalyticsProvider = ({
         OrganizationName: activeOrganization.name,
       });
     }
-  }, [posthog, profile, activeOrganization]);
+  }, [
+    posthog,
+    profile.id,
+    profile.email,
+    profile.name,
+    activeOrganization?.id,
+    activeOrganization?.name,
+  ]);
 
   return (
     <PostHogProvider apiKey={config.postHogKey!} options={options}>

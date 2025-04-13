@@ -37,6 +37,7 @@ export default function Frame({
           controllerRef.send({
             type: BlockEventType.BlockClick,
             blockId: id,
+            blockType: block.type,
           });
           return;
         }

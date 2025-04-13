@@ -1,10 +1,11 @@
+import { createAccessControl } from "better-auth/plugins/access";
+
 import {
   adminAc,
-  createAccessControl,
   defaultStatements,
   memberAc,
   ownerAc,
-} from "better-auth/plugins/access";
+} from "better-auth/plugins/organization/access";
 
 // These are the default roles from better-auth. Once we have
 // permissions for documents, we can add them to these statements.
