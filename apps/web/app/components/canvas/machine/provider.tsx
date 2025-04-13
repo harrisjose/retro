@@ -16,6 +16,8 @@ import { assertEvent, assign, enqueueActions } from "xstate";
 import {
   getRectangleFromPoints,
   getSectionBounds,
+  getViewport,
+  useCamera,
   useCanvasSearch,
 } from "../store";
 import { createBlockAtPosition } from "./actions";
@@ -46,6 +48,7 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
   const debouncedMoveBlocks = useDebounceCallback(moveBlocks, 4);
   const createBlock = useCreateBlock();
   const { profile } = useProfile();
+  const { camera, moveBy } = useCamera();
 
   return (
     <CanvasControllerContext.Provider
@@ -108,13 +111,63 @@ export const CanvasMachineProvider = ({ children }: PropsWithChildren) => {
             };
           }),
           onBlockDrag: ({ context }, params) => {
-            const positions = Object.entries(context.selectionPositions).map(
-              ([id, position]) => ({
-                blockId: id,
-                x: position.x + params.payload.dx,
-                y: position.y + params.payload.dy,
-              }),
+            // Get blocks and create a lookup map for faster access
+            const blocks = getBlocks(Object.keys(context.selectionPositions));
+            const blocksMap = Object.fromEntries(
+              blocks.map((block) => [block.id, block]),
             );
+
+            // Calculate positions in a single pass
+            const positions = Object.entries(context.selectionPositions).map(
+              ([id, position]) => {
+                const block = blocksMap[id];
+                return {
+                  blockId: id,
+                  x: position.x + params.payload.dx,
+                  y: position.y + params.payload.dy,
+                  width: block?.width || 0,
+                  height: block?.height || 0,
+                };
+              },
+            );
+
+            // Pre-calculate viewport once
+            const viewport = getViewport(camera, {
+              minX: 0,
+              minY: 0,
+              maxX: window.innerWidth,
+              maxY: window.innerHeight,
+              width: window.innerWidth,
+              height: window.innerHeight,
+            });
+
+            // Calculate bounds in a single pass
+            let rightmostBlock = -Infinity;
+            let leftmostBlock = Infinity;
+
+            for (const p of positions) {
+              const right = p.x + p.width;
+              if (right > rightmostBlock) rightmostBlock = right;
+              if (p.x < leftmostBlock) leftmostBlock = p.x;
+            }
+
+            // Define threshold and pan speed
+            const threshold = 50; // pixels from edge
+            const panSpeed = 10 * camera.z;
+
+            // Determine camera pan direction
+            let cameraPanX = 0;
+            if (rightmostBlock > viewport.maxX - threshold) {
+              cameraPanX = panSpeed;
+            } else if (leftmostBlock < viewport.minX + threshold) {
+              cameraPanX = -panSpeed;
+            }
+
+            // Move camera if needed
+            if (cameraPanX !== 0) {
+              moveBy(cameraPanX, 0);
+            }
+
             debouncedMoveBlocks(positions);
           },
           onCanvasDrag: enqueueActions(({ enqueue }, params) => {

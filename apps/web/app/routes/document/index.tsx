@@ -21,13 +21,13 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function DocumentPage({ params }: Route.ComponentProps) {
   return (
     <div className="w-full h-full min-h-screen relative overflow-hidden">
-      <CanvasMachineProvider>
-        <CanvasProvider id={params.id}>
+      <CanvasProvider id={params.id}>
+        <CanvasMachineProvider>
           <Canvas />
           <Topbar />
           <InsertionMenu />
-        </CanvasProvider>
-      </CanvasMachineProvider>
+        </CanvasMachineProvider>
+      </CanvasProvider>
     </div>
   );
 }
