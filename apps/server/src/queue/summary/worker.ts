@@ -1,14 +1,12 @@
 import { aiService, serializeDocForLlm } from "@retro/ai";
 import { Worker } from "bullmq";
 import * as Y from "yjs";
-import { updateLiveYDoc } from "../../collab/index.js";
-import { patchFragmentWithSummary } from "../../collab/utils.js";
 import { db, dbUtil } from "../../db/index.js";
 import { QueueConnection } from "../config.js";
 import { slackQueue } from "../slack/queue.js";
-import { type JobData, QueueName } from "./common.js";
+import { type JobData, QueueName, type ReturnData } from "./common.js";
 
-const summaryWorker = new Worker<JobData>(
+const summaryWorker = new Worker<JobData, ReturnData>(
   QueueName,
   async (job) => {
     const { retroId } = job.data;
@@ -29,18 +27,11 @@ const summaryWorker = new Worker<JobData>(
 
     console.time(`Generating summary for document ${retroId}`);
     const result = await aiService.generateSummary(serializedDocument);
-    console.timeEnd(`Generating summary for document ${retroId}`);
 
     if (!result.ok) {
       throw new Error(result.error);
     }
-
-    await updateLiveYDoc(retroId, (yDoc) => {
-      const summarySection = yDoc.getMap("summary");
-      const contentFragment = summarySection.get("content") as Y.XmlFragment;
-
-      patchFragmentWithSummary(contentFragment, result);
-    });
+    console.timeEnd(`Generating summary for document ${retroId}`);
 
     console.log(`Adding slack notification job for ${retroId}`);
     await slackQueue.add(`${retroId}-slack-summary`, {
@@ -48,7 +39,7 @@ const summaryWorker = new Worker<JobData>(
       summary: result,
     });
 
-    return { success: true };
+    return { success: true, summary: result };
   },
   {
     connection: QueueConnection,
