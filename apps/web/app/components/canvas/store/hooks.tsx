@@ -100,29 +100,32 @@ export const useCameraSync = () => {
   // This is to update current user camera position to awareness
   useEffect(() => {
     const unsubscribe = subscribe(state.camera, () => {
-      updateCameraPositionAwareness(
-        {
-          x: state.camera.x,
-          y: state.camera.y,
-          z: state.camera.z,
-        },
-        profile.id,
-      );
+      // Current user camera position dont have to updated when following another user
+      if (profile.id && !followAlongUser) {
+        updateCameraPositionAwareness(
+          {
+            x: state.camera.x,
+            y: state.camera.y,
+            z: state.camera.z,
+          },
+          profile.id,
+        );
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [profile.id]);
 
   // This is update the local camera position with the followAlongUser camera position
   useEffect(() => {
-    if (followAlongUser?.id && followAlongUserCameraPosition) {
+    if (followAlongUser && followAlongUserCameraPosition) {
       moveTo({
-        x: followAlongUserCameraPosition.x ?? 0,
-        y: followAlongUserCameraPosition.y ?? 0,
-        z: followAlongUserCameraPosition.z ?? 0,
+        x: followAlongUserCameraPosition.x,
+        y: followAlongUserCameraPosition.y,
+        z: followAlongUserCameraPosition.z,
       });
     }
-  }, [followAlongUser?.id, followAlongUserCameraPosition]);
+  }, [followAlongUser, followAlongUserCameraPosition]);
 };
 
 export const useSectionNavigation = () => {

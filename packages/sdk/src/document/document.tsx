@@ -31,9 +31,16 @@ import {
   ySyncPluginKey,
 } from "@retro/pm";
 import { isNil, uniqBy } from "lodash-es";
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useInterval } from "usehooks-ts";
-import { proxy, ref, useSnapshot } from "valtio";
+import { proxy, ref, subscribe, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
 import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
@@ -305,14 +312,51 @@ export const useFollowAlongUser = () => {
   const state = useContext(DocContext);
   const snapshot = useSnapshot(state);
   const collaborators = useSnapshot(state.presence.collaborators);
-  const cameraPositions = useSnapshot(state.presence.cameraPositions);
+  const [cameraPosition, setCameraPosition] = useState<Omit<
+    CameraPosition,
+    "id"
+  > | null>(null);
 
-  const cameraPosition = cameraPositions.find(
-    (p) => p.id === snapshot.followAlongUserId,
-  );
+  // Update camera position whenever cameraPositions changes
+  useEffect(() => {
+    const unsubscribe = subscribe(state.presence, () => {
+      if (state.followAlongUserId) {
+        const position = state.presence.cameraPositions.find(
+          (p) => p.id === state.followAlongUserId,
+        );
+
+        if (position) {
+          setCameraPosition({
+            x: position.x,
+            y: position.y,
+            z: position.z,
+          });
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const setFollowAlong = async (userId: string | null) => {
     state.followAlongUserId = userId;
+
+    // Update camera position immediately when follow along user changes
+    if (userId) {
+      const position = state.presence.cameraPositions.find(
+        (p) => p.id === userId,
+      );
+
+      if (position) {
+        setCameraPosition({
+          x: position.x,
+          y: position.y,
+          z: position.z,
+        });
+      }
+    } else {
+      setCameraPosition(null);
+    }
   };
 
   const followAlongUser = useMemo(() => {
@@ -357,7 +401,7 @@ export const useAwarenessActions = () => {
       if (isAnonymousRetro) return;
 
       if (data?.user.id) {
-        state.syncProvider.setAwarenessField("pointers", {
+        state.syncProvider.setAwarenessField("pointer", {
           id: data.user.id,
           x: pointer.x,
           y: pointer.y,
@@ -372,7 +416,7 @@ export const useAwarenessActions = () => {
       const isAnonymousRetro = state.document.isAnonymous;
       if (isAnonymousRetro) return;
 
-      state.syncProvider.setAwarenessField("cameraPositions", {
+      state.syncProvider.setAwarenessField("cameraPosition", {
         id: userId,
         x: cameraPosition.x,
         y: cameraPosition.y,
