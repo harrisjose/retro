@@ -1,6 +1,6 @@
 import Canvas from "@/components/canvas";
 import { InsertionMenu } from "@/components/canvas/bottom-menu";
-import { FollowAlongWrapper } from "@/components/canvas/follow-along-wrapper";
+import { FollowAlongBoundary } from "@/components/canvas/follow-along-boundary";
 import { CanvasMachineProvider } from "@/components/canvas/machine";
 import { CanvasProvider } from "@/components/canvas/store";
 import Topbar from "@/components/canvas/topbar";
@@ -22,7 +22,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function DocumentPage({ params }: Route.ComponentProps) {
   return (
     <div className="w-full h-full min-h-screen relative overflow-hidden">
-      <FollowAlongWrapper />
+      <FollowAlongBoundary />
       <CanvasMachineProvider>
         <CanvasProvider id={params.id}>
           <Canvas />

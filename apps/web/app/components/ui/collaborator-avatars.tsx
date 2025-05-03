@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { Collaborator } from "@retro/common";
-import { authClient, useFollowAlongCameraPosition } from "@retro/sdk";
+import { authClient, useFollowAlongUser } from "@retro/sdk";
 import { memo, useMemo } from "react";
 
 interface CollaboratorAvatarsProps {
@@ -86,8 +86,7 @@ const CollaboratorAvatars = memo(
     const visibleAvatars = collaborators.slice(0, 5);
     const remainingCount = collaborators.length - 5;
 
-    const { followAlongUser, setFollowAlongUserId } =
-      useFollowAlongCameraPosition();
+    const { user: followAlongUser, setFollowAlong } = useFollowAlongUser();
 
     const currentUserId = data?.user.id;
 
@@ -102,7 +101,7 @@ const CollaboratorAvatars = memo(
             key={collaborator.id}
             collaborator={collaborator}
             currentUserId={currentUserId}
-            onFollow={setFollowAlongUserId}
+            onFollow={setFollowAlong}
             followAlongUser={followAlongUser}
           />
         ))}

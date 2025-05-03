@@ -1,9 +1,8 @@
-import { useFollowAlongCameraPosition } from "@retro/sdk";
+import { useFollowAlongUser } from "@retro/sdk";
 import { Button } from "../ui/button";
 
-export const FollowAlongWrapper = () => {
-  const { followAlongUser, setFollowAlongUserId } =
-    useFollowAlongCameraPosition();
+export const FollowAlongBoundary = () => {
+  const { user: followAlongUser, setFollowAlong } = useFollowAlongUser();
 
   return (
     <>
@@ -29,7 +28,7 @@ export const FollowAlongWrapper = () => {
               variant="outline"
               size="xs"
               className="text-xs text-black"
-              onClick={() => setFollowAlongUserId(null)}
+              onClick={() => setFollowAlong(null)}
             >
               Stop
             </Button>

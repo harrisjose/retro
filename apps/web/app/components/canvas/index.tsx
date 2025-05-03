@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
 import {
-  authClient,
   useAwarenessActions,
-  useFollowAlongCameraPosition,
+  useFollowAlongUser,
   useSectionMap,
 } from "@retro/sdk";
 import { throttle } from "lodash-es";
@@ -11,6 +10,7 @@ import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
 import { UserCursor } from "./cursors/user-cursor";
+import { FollowAlong } from "./follow-along";
 import {
   BlockEventType,
   CanvasControllerContext,
@@ -25,40 +25,14 @@ import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const { sections } = useSectionMap();
-  const { data: sessionData } = authClient.useSession();
-  const { updateCameraPositionAwareness } = useAwarenessActions();
   // This updates the current user camera position to awareness by subscribing to the camera state
-  const { camera, zoomBy, moveBy, moveTo } = useCamera({
-    onCameraChange: (camera) => {
-      const userId = sessionData?.user.id;
-      if (userId) {
-        updateCameraPositionAwareness(
-          {
-            x: camera.x,
-            y: camera.y,
-            z: camera.z,
-          },
-          userId,
-        );
-      }
-    },
-  });
+  const { camera, zoomBy, moveBy, moveTo } = useCamera();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
   const controller = CanvasControllerContext.useActorRef();
 
-  const { followAlongUser, setFollowAlongUserId } =
-    useFollowAlongCameraPosition({
-      // This moves the current user camera based on the user camera they are following
-      onCameraChange: (camera) => {
-        moveTo({
-          x: camera.x,
-          y: camera.y,
-          z: camera.z,
-        });
-      },
-    });
+  const { user: followAlongUser, setFollowAlong } = useFollowAlongUser();
   const { updatePointersAwareness } = useAwarenessActions();
 
   const updatePosition = throttle((e: MouseEvent) => {
@@ -69,13 +43,13 @@ export default function Canvas() {
   useCanvasGestures(canvasRootRef, {
     onPinch: (event) => {
       const { clientX, clientY, deltaY } = event;
-      if (followAlongUser) setFollowAlongUserId(null);
+      if (followAlongUser) setFollowAlong(null);
 
       zoomBy(deltaY / 100, { x: clientX, y: clientY });
     },
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
-      if (followAlongUser) setFollowAlongUserId(null);
+      if (followAlongUser) setFollowAlong(null);
 
       moveBy(deltaX, deltaY);
       updatePosition(event);
@@ -179,6 +153,7 @@ export default function Canvas() {
 
           <UserCursor />
         </div>
+        <FollowAlong />
         <CanvasCursor />
         <SelectionRectangle />
       </div>

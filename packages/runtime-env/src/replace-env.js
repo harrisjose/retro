@@ -1,6 +1,6 @@
+import { join } from "path";
 import envsub from "envsub";
 import { readFile, writeFile } from "fs/promises";
-import { join } from "path";
 
 async function main() {
   try {

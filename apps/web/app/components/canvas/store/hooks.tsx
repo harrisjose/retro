@@ -4,7 +4,13 @@ import {
   type Rectangle,
   updateProxyState,
 } from "@retro/common";
-import { useBlockMapProxy, useSectionMap } from "@retro/sdk";
+import {
+  useAwarenessActions,
+  useBlockMapProxy,
+  useFollowAlongUser,
+  useProfile,
+  useSectionMap,
+} from "@retro/sdk";
 import { omit } from "lodash-es";
 import { animate } from "motion";
 import { useReducedMotion } from "motion/react";
@@ -79,6 +85,44 @@ export const useCamera = ({
       updateProxyState(state.camera, { ...state.camera, x, y, z });
     },
   };
+};
+
+export const useCameraSync = () => {
+  const state = useContext(CanvasContext);
+  const { updateCameraPositionAwareness } = useAwarenessActions();
+  const { profile } = useProfile();
+  const {
+    user: followAlongUser,
+    cameraPosition: followAlongUserCameraPosition,
+  } = useFollowAlongUser();
+  const { moveTo } = useCamera();
+
+  // This is to update current user camera position to awareness
+  useEffect(() => {
+    const unsubscribe = subscribe(state.camera, () => {
+      updateCameraPositionAwareness(
+        {
+          x: state.camera.x,
+          y: state.camera.y,
+          z: state.camera.z,
+        },
+        profile.id,
+      );
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // This is update the local camera position with the followAlongUser camera position
+  useEffect(() => {
+    if (followAlongUser?.id && followAlongUserCameraPosition) {
+      moveTo({
+        x: followAlongUserCameraPosition.x ?? 0,
+        y: followAlongUserCameraPosition.y ?? 0,
+        z: followAlongUserCameraPosition.z ?? 0,
+      });
+    }
+  }, [followAlongUser?.id, followAlongUserCameraPosition]);
 };
 
 export const useSectionNavigation = () => {

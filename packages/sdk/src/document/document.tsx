@@ -33,7 +33,7 @@ import {
 import { isNil, uniqBy } from "lodash-es";
 import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { useInterval } from "usehooks-ts";
-import { proxy, ref, subscribe, useSnapshot } from "valtio";
+import { proxy, ref, useSnapshot } from "valtio";
 import { devtools } from "valtio/utils";
 import * as Y from "yjs";
 import { authClient } from "../../lib/auth-client.js";
@@ -301,52 +301,17 @@ export const usePointers = () => {
   );
 };
 
-export const useFollowAlongCameraPosition = ({
-  onCameraChange,
-}: {
-  onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
-} = {}) => {
+export const useFollowAlongUser = () => {
   const state = useContext(DocContext);
   const snapshot = useSnapshot(state);
   const collaborators = useSnapshot(state.presence.collaborators);
+  const cameraPositions = useSnapshot(state.presence.cameraPositions);
 
-  useEffect(() => {
-    if (snapshot.followAlongUserId && onCameraChange) {
-      // Find the initial camera position for the user we're following
-      const cameraPosition = snapshot.presence.cameraPositions.find(
-        (p) => p.id === snapshot.followAlongUserId,
-      );
+  const cameraPosition = cameraPositions.find(
+    (p) => p.id === snapshot.followAlongUserId,
+  );
 
-      // Set up a subscription to track camera position changes for this user
-      const unsubscribe = subscribe(state.presence, () => {
-        const updatedPosition = state.presence.cameraPositions.find(
-          (p) => p.id === snapshot.followAlongUserId,
-        );
-
-        if (updatedPosition) {
-          onCameraChange({
-            x: updatedPosition.x,
-            y: updatedPosition.y,
-            z: updatedPosition.z,
-          });
-        }
-      });
-
-      // Apply initial camera position if available
-      if (cameraPosition) {
-        onCameraChange({
-          x: cameraPosition.x,
-          y: cameraPosition.y,
-          z: cameraPosition.z,
-        });
-      }
-
-      // Clean up subscription when followAlongUserId changes
-      return () => unsubscribe();
-    }
-  }, [snapshot.followAlongUserId]);
-
-  const setFollowAlongUserId = async (userId: string | null) => {
+  const setFollowAlong = async (userId: string | null) => {
     state.followAlongUserId = userId;
   };
 
@@ -355,13 +320,14 @@ export const useFollowAlongCameraPosition = ({
   }, [snapshot.followAlongUserId, collaborators]);
 
   return {
-    setFollowAlongUserId,
-    followAlongUser: followAlongUser
+    setFollowAlong,
+    user: followAlongUser
       ? {
           ...followAlongUser,
           color: idToColor(followAlongUser?.id ?? ""),
         }
       : null,
+    cameraPosition,
   };
 };
 
