@@ -82,16 +82,7 @@ const boardRouter = router({
 
         const documents = await db
           .selectFrom("document")
-          .select([
-            "id",
-            "name",
-            "createdBy",
-            "createdAt",
-            "updatedAt",
-            "endDateTime",
-            "duration",
-            "boardId",
-          ])
+          .select(["id", "name", "endDateTime", "duration"])
           .where("boardId", "=", input.id)
           .where("deletedAt", "is", null)
           .orderBy("endDateTime", "asc")
