@@ -10,7 +10,7 @@ const documentRouter = router({
   list: publicProcedure
     .input(
       z.object({
-        organizationId: z.string(),
+        boardId: z.string(),
         filter: z.nativeEnum(DocumentListFilter),
       }),
     )
@@ -31,10 +31,9 @@ const documentRouter = router({
             "endDateTime",
             "duration",
             "yDocUpdatedAt",
-            "organizationId",
-            "isAnonymous",
+            "boardId",
           ])
-          .where("organizationId", "=", input.organizationId)
+          .where("boardId", "=", input.boardId)
           .where("deletedAt", "is", null)
           .$if(input.filter === DocumentListFilter.ACTIVE, (b) =>
             b.where(
@@ -84,8 +83,7 @@ const documentRouter = router({
             "endDateTime",
             "duration",
             "yDocUpdatedAt",
-            "organizationId",
-            "isAnonymous",
+            "boardId",
           ])
           .where("id", "=", dbUtil.asUuid(input.id))
           .where("deletedAt", "is", null)
@@ -101,10 +99,9 @@ const documentRouter = router({
     .input(
       z.object({
         name: z.string(),
-        organizationId: z.string(),
+        boardId: z.string(),
         endDateTime: z.string(),
         duration: z.number(),
-        isAnonymous: z.boolean(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -116,13 +113,12 @@ const documentRouter = router({
           .insertInto("document")
           .values({
             name: input.name,
-            organizationId: input.organizationId,
+            boardId: input.boardId,
             createdBy: ctx.user.id,
             yDoc: getInitialYDoc(),
             yDocUpdatedAt: new Date(),
             endDateTime: new Date(input.endDateTime),
             duration: input.duration,
-            isAnonymous: input.isAnonymous,
           })
           .returningAll()
           .executeTakeFirstOrThrow();

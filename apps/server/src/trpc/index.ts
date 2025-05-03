@@ -1,3 +1,4 @@
+import boardRouter from "./board.js";
 import { router } from "./config.js";
 import { documentEventsRouter } from "./document-events.js";
 import documentMusicRouter from "./document-music.js";
@@ -11,6 +12,7 @@ export const appRouter = router({
   documentMusic: documentMusicRouter,
   documentEvents: documentEventsRouter,
   integrations: integrationsRouter,
+  board: boardRouter,
 });
 
 export type AppRouter = typeof appRouter;

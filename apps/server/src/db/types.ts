@@ -27,16 +27,26 @@ export interface Account {
   userId: string;
 }
 
+export interface Board {
+  createdAt: Generated<Timestamp>;
+  createdBy: string;
+  deletedAt: Timestamp | null;
+  id: Generated<string>;
+  isAnonymous: Generated<boolean>;
+  name: string;
+  organizationId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface Document {
+  boardId: string;
   createdAt: Generated<Timestamp>;
   createdBy: string;
   deletedAt: Timestamp | null;
   duration: number;
   endDateTime: Timestamp;
   id: Generated<string>;
-  isAnonymous: Generated<boolean>;
   name: string;
-  organizationId: string;
   updatedAt: Generated<Timestamp>;
   yDoc: Buffer | null;
   yDocUpdatedAt: Timestamp | null;
@@ -107,12 +117,16 @@ export interface Session {
 }
 
 export interface User {
+  banExpires: Timestamp | null;
+  banned: boolean | null;
+  banReason: string | null;
   createdAt: Timestamp;
   email: string;
   emailVerified: boolean;
   id: string;
   image: string | null;
   name: string;
+  role: string | null;
   timezone: Generated<string>;
   updatedAt: Timestamp;
 }
@@ -128,6 +142,7 @@ export interface Verification {
 
 export interface DB {
   account: Account;
+  board: Board;
   document: Document;
   documentMusic: DocumentMusic;
   documentTimer: DocumentTimer;
