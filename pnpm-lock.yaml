@@ -3,7 +3,6 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
-  injectWorkspacePackages: true
 
 importers:
 
@@ -30,6 +29,10 @@ importers:
       yjs-types:
         specifier: ^0.0.1
         version: 0.0.1(yjs@13.6.23)
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-musl':
+        specifier: '*'
+        version: 4.40.0
     devDependencies:
       '@better-auth/cli':
         specifier: ^1.2.5
@@ -43,10 +46,6 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.8.3
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-musl':
-        specifier: '*'
-        version: 4.40.0
 
   apps/landing:
     dependencies:
@@ -183,6 +182,9 @@ importers:
       bullmq:
         specifier: ^5.41.7
         version: 5.48.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       hono:
         specifier: ^4.6.14
         version: 4.7.6

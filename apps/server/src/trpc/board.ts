@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { z } from "zod";
 import { db, dbUtil } from "../db/index.js";
 import { publicProcedure, router } from "./config.js";
@@ -131,6 +132,65 @@ const boardRouter = router({
       } catch (error) {
         console.error(error);
         throw new Error("Failed to delete board");
+      }
+    }),
+
+  create: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        organizationId: z.string(),
+        endDateTime: z.date(),
+        duration: z.number(),
+        isAnonymous: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        if (!ctx.user) {
+          throw new Error("Unauthorized");
+        }
+
+        const userId = ctx.user.id;
+
+        // Start a transaction to create both board and document
+        return await db.transaction().execute(async (trx) => {
+          // Create the board
+          const board = await trx
+            .insertInto("board")
+            .values({
+              name: input.name,
+              organizationId: input.organizationId,
+              createdBy: userId,
+              isAnonymous: input.isAnonymous,
+            })
+            .returningAll()
+            .executeTakeFirstOrThrow();
+
+          // Format the document name
+          const documentName = `Retro - ${format(input.endDateTime, "MMMM d")}`;
+
+          // Create the document
+          const document = await trx
+            .insertInto("document")
+            .values({
+              name: documentName,
+              boardId: board.id,
+              endDateTime: input.endDateTime,
+              duration: input.duration,
+              createdBy: userId,
+            })
+            .returningAll()
+            .executeTakeFirstOrThrow();
+
+          return {
+            board,
+            document,
+          };
+        });
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to create board");
       }
     }),
 
