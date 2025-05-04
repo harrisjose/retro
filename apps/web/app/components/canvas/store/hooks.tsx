@@ -188,6 +188,7 @@ export const useSectionNavigation = () => {
 export const useCanvasGestures = (
   ref: RefObject<HTMLElement | null>,
   {
+    beforeEach,
     onPinch,
     onWheel,
     onClick,
@@ -195,6 +196,7 @@ export const useCanvasGestures = (
     onDrag,
     onDragEnd,
   }: {
+    beforeEach: () => void;
     onPinch: (event: WheelEvent) => void;
     onWheel: (event: WheelEvent) => void;
     onClick: (event: MouseEvent) => void;
@@ -216,6 +218,7 @@ export const useCanvasGestures = (
   const [hasPassedThreshold, setHasPassedThreshold] = useState(false);
 
   function handleWheel(event: WheelEvent) {
+    beforeEach();
     // Check if the target is a scrollable element and is actually scrollable
     const target = event.target as HTMLElement;
     const scrollableParent = target.closest("[data-scrollable]") as HTMLElement;
@@ -234,6 +237,7 @@ export const useCanvasGestures = (
   }
 
   function handleMouseDown(event: MouseEvent) {
+    beforeEach();
     const target = event.target as HTMLElement;
     if (target.getAttribute("data-clear-selection")) {
       setStartPoint({ x: event.clientX, y: event.clientY });
@@ -249,11 +253,13 @@ export const useCanvasGestures = (
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (!hasPassedThreshold && distance >= DRAG_THRESHOLD) {
+        beforeEach();
         setHasPassedThreshold(true);
         onDragStart(event);
       }
 
       if (hasPassedThreshold) {
+        beforeEach();
         onDrag(event);
       }
     }
@@ -261,6 +267,7 @@ export const useCanvasGestures = (
 
   function handleMouseUp(event: MouseEvent) {
     if (isDragging) {
+      beforeEach();
       if (hasPassedThreshold) {
         onDragEnd(event);
       } else {

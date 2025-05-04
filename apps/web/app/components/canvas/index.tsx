@@ -26,7 +26,7 @@ import Zoom from "./zoom-menu";
 export default function Canvas() {
   const { sections } = useSectionMap();
   // This updates the current user camera position to awareness by subscribing to the camera state
-  const { camera, zoomBy, moveBy, moveTo } = useCamera();
+  const { camera, zoomBy, moveBy } = useCamera();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
@@ -41,16 +41,15 @@ export default function Canvas() {
   }, 100);
 
   useCanvasGestures(canvasRootRef, {
+    beforeEach: () => {
+      if (followAlongUser) setFollowAlong(null);
+    },
     onPinch: (event) => {
       const { clientX, clientY, deltaY } = event;
-      if (followAlongUser) setFollowAlong(null);
-
       zoomBy(deltaY / 100, { x: clientX, y: clientY });
     },
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
-      if (followAlongUser) setFollowAlong(null);
-
       moveBy(deltaX, deltaY);
       updatePosition(event);
     },
