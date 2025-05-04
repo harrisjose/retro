@@ -153,7 +153,10 @@ const FooterPanel = () => {
     <footer
       className={cn(
         `flex justify-center gap-2 fixed bottom-4 left-0 right-0`,
+        // This is to hide the create retro button when showing the gcal integration popup
+        // @ahielan revamp this later.
         open && !showGcalIntegration && "z-[100]",
+        !open && "z-[100]",
       )}
     >
       <Popover open={open} onOpenChange={onOpenChange}>

@@ -61,11 +61,11 @@ export default function SummarySection() {
     <div
       key={`summary-section`}
       ref={sectionRef}
-      className="shrink-0 bg-white rounded-2xl border overflow-hidden border-[#0000000F] p-20 flex flex-col justify-center items-center relative"
+      className="shrink-0 bg-white rounded-2xl border overflow-hidden border-[#0000000F] p-20 flex flex-col justify-center items-center relative h-full"
       data-clear-selection
       style={{
         width: CanvasConstants.IntroSectionWidth,
-        height: "auto",
+        minHeight: CanvasConstants.IntroSectionHeight,
       }}
     >
       <div className="overflow-y-scroll w-full">

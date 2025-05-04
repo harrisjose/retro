@@ -4,7 +4,13 @@ import {
   type Rectangle,
   updateProxyState,
 } from "@retro/common";
-import { useBlockMapProxy, useSectionMap } from "@retro/sdk";
+import {
+  useAwarenessActions,
+  useBlockMapProxy,
+  useFollowAlongUser,
+  useProfile,
+  useSectionMap,
+} from "@retro/sdk";
 import { omit } from "lodash-es";
 import { animate } from "motion";
 import { useReducedMotion } from "motion/react";
@@ -35,12 +41,31 @@ export const useCanvas = () => {
   return omit(snap, ["camera"]);
 };
 
-export const useCamera = () => {
+export const useCamera = ({
+  onCameraChange,
+}: {
+  onCameraChange?: (camera: { x: number; y: number; z: number }) => void;
+} = {}) => {
   const { sections } = useSectionMap();
   const state = useContext(CanvasContext);
   const snap = useSnapshot(state.camera);
 
   const zBounds = useMemo(() => computeZoomBounds(sections), [sections]);
+
+  // Subscribe to camera changes and update presence
+  useEffect(() => {
+    const unsubscribe = subscribe(state.camera, () => {
+      if (onCameraChange) {
+        onCameraChange({
+          x: state.camera.x,
+          y: state.camera.y,
+          z: state.camera.z,
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [onCameraChange]);
 
   return {
     camera: snap,
@@ -56,10 +81,51 @@ export const useCamera = () => {
     moveBy: (dx: number = 0, dy: number = 0) => {
       updateProxyState(state.camera, panCamera(state.camera, dx, dy));
     },
-    moveTo: (x: number, y: number) => {
-      updateProxyState(state.camera, { ...state.camera, x, y });
+    moveTo: ({ x, y, z }: { x: number; y: number; z: number }) => {
+      updateProxyState(state.camera, { ...state.camera, x, y, z });
     },
   };
+};
+
+export const useCameraSync = () => {
+  const state = useContext(CanvasContext);
+  const { updateCameraPositionAwareness } = useAwarenessActions();
+  const { profile } = useProfile();
+  const {
+    user: followAlongUser,
+    cameraPosition: followAlongUserCameraPosition,
+  } = useFollowAlongUser();
+  const { moveTo } = useCamera();
+
+  // This is to update current user camera position to awareness
+  useEffect(() => {
+    const unsubscribe = subscribe(state.camera, () => {
+      // Current user camera position dont have to updated when following another user
+      if (profile.id && !followAlongUser) {
+        updateCameraPositionAwareness(
+          {
+            x: state.camera.x,
+            y: state.camera.y,
+            z: state.camera.z,
+          },
+          profile.id,
+        );
+      }
+    });
+
+    return () => unsubscribe();
+  }, [profile.id]);
+
+  // This is update the local camera position with the followAlongUser camera position
+  useEffect(() => {
+    if (followAlongUser && followAlongUserCameraPosition) {
+      moveTo({
+        x: followAlongUserCameraPosition.x,
+        y: followAlongUserCameraPosition.y,
+        z: followAlongUserCameraPosition.z,
+      });
+    }
+  }, [followAlongUser, followAlongUserCameraPosition]);
 };
 
 export const useSectionNavigation = () => {
@@ -122,6 +188,7 @@ export const useSectionNavigation = () => {
 export const useCanvasGestures = (
   ref: RefObject<HTMLElement | null>,
   {
+    beforeEach,
     onPinch,
     onWheel,
     onClick,
@@ -129,6 +196,7 @@ export const useCanvasGestures = (
     onDrag,
     onDragEnd,
   }: {
+    beforeEach: () => void;
     onPinch: (event: WheelEvent) => void;
     onWheel: (event: WheelEvent) => void;
     onClick: (event: MouseEvent) => void;
@@ -150,6 +218,7 @@ export const useCanvasGestures = (
   const [hasPassedThreshold, setHasPassedThreshold] = useState(false);
 
   function handleWheel(event: WheelEvent) {
+    beforeEach();
     // Check if the target is a scrollable element and is actually scrollable
     const target = event.target as HTMLElement;
     const scrollableParent = target.closest("[data-scrollable]") as HTMLElement;
@@ -168,6 +237,7 @@ export const useCanvasGestures = (
   }
 
   function handleMouseDown(event: MouseEvent) {
+    beforeEach();
     const target = event.target as HTMLElement;
     if (target.getAttribute("data-clear-selection")) {
       setStartPoint({ x: event.clientX, y: event.clientY });
@@ -183,11 +253,13 @@ export const useCanvasGestures = (
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (!hasPassedThreshold && distance >= DRAG_THRESHOLD) {
+        beforeEach();
         setHasPassedThreshold(true);
         onDragStart(event);
       }
 
       if (hasPassedThreshold) {
+        beforeEach();
         onDrag(event);
       }
     }
@@ -195,6 +267,7 @@ export const useCanvasGestures = (
 
   function handleMouseUp(event: MouseEvent) {
     if (isDragging) {
+      beforeEach();
       if (hasPassedThreshold) {
         onDragEnd(event);
       } else {

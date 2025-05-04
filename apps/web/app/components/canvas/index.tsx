@@ -1,10 +1,16 @@
 import { cn } from "@/lib/utils";
 import { CanvasConstants } from "@retro/common";
-import { useSectionMap } from "@retro/sdk";
+import {
+  useAwarenessActions,
+  useFollowAlongUser,
+  useSectionMap,
+} from "@retro/sdk";
+import { throttle } from "lodash-es";
 import { useRef } from "react";
 import BlocksRenderer from "./blocks";
 import { CanvasCursor } from "./cursors/canvas-cursor";
 import { UserCursor } from "./cursors/user-cursor";
+import { FollowAlong } from "./follow-along";
 import {
   BlockEventType,
   CanvasControllerContext,
@@ -19,13 +25,25 @@ import Zoom from "./zoom-menu";
 
 export default function Canvas() {
   const { sections } = useSectionMap();
+  // This updates the current user camera position to awareness by subscribing to the camera state
   const { camera, zoomBy, moveBy } = useCamera();
 
   const canvasRootRef = useRef<HTMLDivElement>(null);
   const sectionRootRef = useRef<HTMLDivElement>(null);
   const controller = CanvasControllerContext.useActorRef();
 
+  const { user: followAlongUser, setFollowAlong } = useFollowAlongUser();
+  const { updatePointersAwareness } = useAwarenessActions();
+
+  const updatePosition = throttle((e: MouseEvent) => {
+    const point = screenToCanvas({ x: e.clientX, y: e.clientY }, camera);
+    updatePointersAwareness({ x: point.x, y: point.y });
+  }, 100);
+
   useCanvasGestures(canvasRootRef, {
+    beforeEach: () => {
+      if (followAlongUser) setFollowAlong(null);
+    },
     onPinch: (event) => {
       const { clientX, clientY, deltaY } = event;
       zoomBy(deltaY / 100, { x: clientX, y: clientY });
@@ -33,6 +51,7 @@ export default function Canvas() {
     onWheel: (event) => {
       const { deltaX, deltaY } = event;
       moveBy(deltaX, deltaY);
+      updatePosition(event);
     },
     onDragStart(event) {
       const point = screenToCanvas(
@@ -133,6 +152,7 @@ export default function Canvas() {
 
           <UserCursor />
         </div>
+        <FollowAlong />
         <CanvasCursor />
         <SelectionRectangle />
       </div>
